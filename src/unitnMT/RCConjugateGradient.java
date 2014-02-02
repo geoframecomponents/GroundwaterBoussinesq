@@ -10,6 +10,7 @@ public class RCConjugateGradient {
 	
 	SparseRCDoubleMatrix2D matrix_A;
 	DoubleMatrix1D matrix_x;
+	DoubleMatrix1D matSol;
 	
 	RCConjugateGradient (int SIZE, int[] Mp, int[] Mi, double[] Ml) {
 		
@@ -20,8 +21,14 @@ public class RCConjugateGradient {
 	public void solverCG(SparseDoubleMatrix1D matrix_b) throws IterativeSolverDoubleNotConvergedException {
 		
 		DoubleCG conjugateGradient = new DoubleCG(matrix_x);
-		DoubleMatrix1D matSol = conjugateGradient.solve(matrix_A,
-				matrix_b,matrix_x);
+		matSol = conjugateGradient.solve(matrix_A,matrix_b,matrix_x);
+		
+	}
+	
+	public static void main (String[] args){
+		
+		//Grid grid1 = new Grid();
+		//RCConjugateGradient cg = new RCConjugateGradient(grid1.numberSidesPolygon.length,grid1.Mp,grid1.Mi,grid1.Ml);
 		
 	}
 

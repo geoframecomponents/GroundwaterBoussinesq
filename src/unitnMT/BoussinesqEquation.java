@@ -1,6 +1,5 @@
 package unitnMT;
 
-import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 
@@ -13,9 +12,12 @@ public class BoussinesqEquation {
 	
 	BoussinesqEquation(int Np, int SIZE){
 		
+		System.out.println("Number of polygons:" + Np);
+		System.out.println("Number of elements of T:" + SIZE);
+		
 		arrb = new double[Np];
-		arrR = new SparseDoubleMatrix1D(Np);
 		matT = new double[SIZE];
+		arrR = new SparseDoubleMatrix1D(Np);
 		
 	}
 
@@ -37,8 +39,17 @@ public class BoussinesqEquation {
 		}
 	}
 	
-	public void estimateR(Grid grid1){
-		//calculate R with RC product. ?? values of first attempt
+	public void estimateR(int Np, int[] Mp, double[] eta, double[] p, double[] z){
+		double sum = 0;
+
+		for (int i = 0; i < Np; i++){
+			for (int j = Mp[i]; j < Mp[i+1]; j++){
+				sum += matT[j]*eta[i];
+			}
+			arrR.set(i,p[i]*(eta[i]-z[i])+sum-arrb[i]);
+			sum = 0;
+		}
+		
 	}
 	
 	public void estimateP(){
@@ -48,20 +59,20 @@ public class BoussinesqEquation {
 	public void newtonBEq(Grid grid1) throws IterativeSolverDoubleNotConvergedException {
 		
 		estimateT(grid1);
-		estimateR(grid1);
+		estimateR(grid1.numberSidesPolygon.length, grid1.Mp, grid1.topElevation, grid1.planArea, grid1.bottomElevation);
 		//estimate P
 		//while with R
 		RCConjugateGradient cg = new RCConjugateGradient(grid1.numberSidesPolygon.length,grid1.Mp,grid1.Mi,grid1.Ml);
 		cg.solverCG(arrR);
 		
-		
+		estimateR(grid1.numberSidesPolygon.length, grid1.Mp, cg.matSol.toArray(), grid1.planArea, grid1.bottomElevation);
 		
 	}
 	
 	public static void main(String[] args) throws IterativeSolverDoubleNotConvergedException {
 		
 		Grid grid1 = new Grid();
-		BoussinesqEquation beq = new BoussinesqEquation(grid1.lengthSides.length, grid1.Ml.length);
+		BoussinesqEquation beq = new BoussinesqEquation(grid1.numberSidesPolygon.length, grid1.Ml.length);
 		beq.newtonBEq(grid1);
 		
 		
