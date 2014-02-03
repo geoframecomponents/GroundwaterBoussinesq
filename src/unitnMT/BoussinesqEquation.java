@@ -21,6 +21,7 @@ package unitnMT;
  * */
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
+//import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 
 // TODO: Auto-generated Javadoc
@@ -48,6 +49,8 @@ public class BoussinesqEquation {
 	
 	/** legth of the simulation */
 	int simTime = 2;
+	
+	float tol = 10^(-5);
 	
 	
 	
@@ -172,8 +175,6 @@ public class BoussinesqEquation {
 		
 		System.arraycopy(grid1.eta, 0, sol, 0, grid1.eta.length);
 		
-		System.out.println(sol[6]);
-		
 		for (int t = 0; t < simTime; t += deltat){
 			estimateT(grid1,sol);
 			estimateR(grid1.numberSidesPolygon.length,
@@ -188,10 +189,12 @@ public class BoussinesqEquation {
 					grid1.topElevation,
 					grid1.planArea,
 					grid1.bottomElevation);
-			while (){
+			int indexProva = 0;
+			do {
+				System.out.println("Index prova " + indexProva);
 				RCConjugateGradient cg = new RCConjugateGradient(grid1.numberSidesPolygon.length,
 						grid1.Mp,
-						grid1.Mi,matJr);
+						grid1.Mi,matT);
 				cg.solverCG(arrR);
 				for (int i = 0; i < grid1.eta.length; i++){
 					sol[i] = grid1.eta[i] - cg.matSol.get(i);
@@ -212,7 +215,8 @@ public class BoussinesqEquation {
 						sol,
 						grid1.planArea,
 						grid1.bottomElevation);
-			}
+				indexProva++;
+			} while (arrR.getMaxLocation()[0] > tol | indexProva < 9);
 			
 		}
 	}

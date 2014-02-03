@@ -21,6 +21,8 @@ public class Grid {
 	/** The eta. */
 	double[] eta = {12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12};
 	
+	double[] h;
+	
 	/** The top elevation. */
 	double[] topElevation = {16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16};
 	
@@ -76,7 +78,16 @@ public class Grid {
 	
 
 	
-	//Grid(){}
+	Grid(){
+		
+		h = new double[numberSidesPolygon.length];
+		for (int i = 0; i < numberSidesPolygon.length; i++){
+			
+			h[i] = eta[i] - bottomElevation[i];
+			
+		}
+		
+	}
 	
 	/**
 	 * The main method.
