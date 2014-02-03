@@ -120,8 +120,8 @@ public class BoussinesqEquation {
 					matT[j] = -deltat*(1/grid1.euclideanDistance[(int) grid1.Ml[j]])
 							*grid1.hydrConductivity[(int) grid1.Ml[j]]
 									*grid1.lengthSides[(int) grid1.Ml[j]]
-											*Math.max(eta[grid1.Mi[j]]-grid1.bottomElevation[grid1.Mi[j]],
-													eta[i]-grid1.bottomElevation[i]);
+											*Math.max(Math.max(0, eta[grid1.Mi[j]]-grid1.bottomElevation[grid1.Mi[j]]),
+													Math.max(0, eta[i]-grid1.bottomElevation[i]));
 					colSum += -matT[j];
 				} else {indexDiag[i] = j;}
 			}
@@ -154,8 +154,8 @@ public class BoussinesqEquation {
 			for (int j = Mp[i]; j < Mp[i+1]; j++){
 				sum += matT[j]*eta[Mi[j]];
 			}
-			arrR.set(i,p[i]*(eta[i]-z[i])+sum-arrb[i]);
-			System.out.println("ArrR " + arrR.get(i));
+			arrR.set(i,p[i]*(Math.max(0,eta[i]-z[i]))+sum-arrb[i]);
+			//System.out.println("ArrR " + arrR.get(i));
 			sum = 0;
 		}
 		
@@ -164,7 +164,25 @@ public class BoussinesqEquation {
 	
 	
 	/**
-	 * Estimate p.
+	 * Estimate Jr.
+	 *
+	 * @desc this method needs to define the values of the matrix Jr in Row-Compressed Form.
+	 * 		 From [Cordano Rigon 2013] equation (A6), Jr is the sum of T (evaluated at the
+	 * 		 value of first attempt in the time step) and the Jacobian matrix of V.
+	 * 		 The Jacobian matrix of V is a diagonal matrix with non-null entries that are
+	 * 		 all positive, wich correspond to the horizontal wet area of each cell.
+	 * 		 From [Casulli 2009], P is evaluted as:
+	 * 			1. p[i] if etaOld[i] = etaNew[i]
+	 * 			2. 0.5*p[i] if etaOld[i] or etaNew[i] are null
+	 * 			3. 0 if etaOld[i] and etaNew[i] are null
+	 *
+	 * @param Np: number of polygons in the mesh
+	 * @param Mp: array of row pointers in Row-Compressed Form
+	 * @param Mi: array of column indices of entries in row j
+	 * @param etaOld: holds the values of the eta at the old time step
+	 * @param etaNew: holds the values of the eta at the new time step
+	 * @param p: planimetric area of each polygon
+	 * @param z: bedrock elevation
 	 */
 	public void estimateJr(int Np, int[] Mp, int[] Mi, double[] etaOld, double[] etaNew, double[] p, double[] z){
 		
@@ -172,8 +190,10 @@ public class BoussinesqEquation {
 			for (int j = Mp[i]; j < Mp[i+1]; j++){
 				if (j == indexDiag[i]){
 					
-					if (Math.abs(etaOld[i]-etaNew[i]) < tol){
+					if (Math.max(0, etaOld[i] - z[i]) != 0 & Math.max(0, etaNew[i] - z[i]) != 0){
 						matJr[j] = matT[j] + p[i];
+					} else if (Math.max(0, etaOld[i] - z[i]) == 0 & Math.max(0, etaNew[i] - z[i]) == 0) {
+						matJr[j] = matT[j];
 					} else {
 						matJr[j] = matT[j] + 0.5*p[i];
 					}
@@ -186,6 +206,8 @@ public class BoussinesqEquation {
 			}
 		}
 	}
+	
+	
 	
 	/**
 	 * Newton b eq.
@@ -217,7 +239,7 @@ public class BoussinesqEquation {
 			
 			int indexProva = 0;
 			do {
-				System.out.println("Index prova " + indexProva);
+				//System.out.println("Index prova " + indexProva);
 				RCConjugateGradient cg = new RCConjugateGradient(grid1.numberSidesPolygon.length,
 																	grid1.Mp,
 																	grid1.Mi,matJr);
@@ -225,7 +247,7 @@ public class BoussinesqEquation {
 				for (int i = 0; i < grid1.eta.length; i++){
 					solNew[i] = solOld[i] - cg.matSol.get(i);
 					//System.out.println(cg.matSol.get(i));
-					//System.out.println(solNew[i]);
+					System.out.println(solNew[i]);
 				}
 				
 				estimateR(grid1.numberSidesPolygon.length,
