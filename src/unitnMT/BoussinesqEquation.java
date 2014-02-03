@@ -1,36 +1,90 @@
 package unitnMT;
 
+/**
+ * BoussinesqEquation
+ * 
+ * @desc	This class contains 4 methods:
+ * 				1. estimateT: code to define T, from [Cordano Rigon 2013]
+ * 				2. estimateR: code to define R, from [Cordano Rigon 2013]
+ * 				3. estimateP: code to define P, from [Cordano Rigon 2013]
+ * 				4. newtonBEq: method that call the solver
+ * 
+ * 			The constructor method instantiates the object of BEq:
+ * 				1. arrb: b from [Cordano Rigon 2013]
+ * 				2. matT: T from [Cordano Rigon 2013]
+ * 				3. arrR: R from [cordano Rigon 2013]
+ * 				4. deltat: time step
+ * 
+ * @author	Francesco Serafin, 2014
+ * Copyright GPL v. 3 (http://www.gnu.org/licenses/gpl.html)
+ * */
+
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BoussinesqEquation.
+ */
 public class BoussinesqEquation {
 	
+	/** The arrb. */
 	double[] arrb;
+	
+	/** The mat t. */
 	double[] matT;
+	
+	/** The sol. */
+	double[] sol;
+	
+	/** The arr r. */
 	SparseDoubleMatrix1D arrR;
+	
+	/** The deltat. */
 	int deltat = 1;
 	
+	
+	
+	/**
+	 * Instantiates a new boussinesq equation object.
+	 *
+	 * @param Np the number of polygons in the mesh
+	 * @param SIZE the number of non-zero in the Mij adjacency matrix
+	 */
 	BoussinesqEquation(int Np, int SIZE){
 		
 		System.out.println("Number of polygons:" + Np);
 		System.out.println("Number of elements of T:" + SIZE);
 		
 		arrb = new double[Np];
+		sol = new double[Np];
 		matT = new double[SIZE];
 		arrR = new SparseDoubleMatrix1D(Np);
 		
 	}
 
+	
+	
+	/**
+	 * Estimate T.
+	 *
+	 * @param grid1 the object grid1 that holds all the properties of the mesh
+	 */
 	public void estimateT(Grid grid1){
 		
 		double colSum = 0;
 		int index = 0;
 		
 		for (int i = 0; i < grid1.numberSidesPolygon.length; i++){
-			arrb[i] = (grid1.eta[i]-grid1.bottomElevation[i])*grid1.planArea[i]+deltat*grid1.planArea[i]*grid1.sourceSink[i];
+			arrb[i] = (grid1.eta[i]-grid1.bottomElevation[i])*grid1.planArea[i]
+					+deltat*grid1.planArea[i]*grid1.sourceSink[i];
 			for (int j = grid1.Mp[i]; j < grid1.Mp[i+1]; j++){
 				if (grid1.Ml[j] != -1){
-					matT[j] = -deltat*(1/grid1.euclideanDistance[(int) grid1.Ml[j]])*grid1.hydrConductivity[(int) grid1.Ml[j]]*grid1.lengthSides[(int) grid1.Ml[j]]*Math.max(grid1.eta[grid1.Mi[j]+1]-grid1.bottomElevation[grid1.Mi[j]+1], grid1.eta[i+1]-grid1.bottomElevation[i+1]);
+					matT[j] = -deltat*(1/grid1.euclideanDistance[(int) grid1.Ml[j]])
+							*grid1.hydrConductivity[(int) grid1.Ml[j]]
+									*grid1.lengthSides[(int) grid1.Ml[j]]
+											*Math.max(grid1.eta[grid1.Mi[j]]-grid1.bottomElevation[grid1.Mi[j]],
+													grid1.eta[i]-grid1.bottomElevation[i]);
 					colSum += -matT[j];
 				} else {index = j;}
 			}
@@ -39,6 +93,17 @@ public class BoussinesqEquation {
 		}
 	}
 	
+	
+	
+	/**
+	 * Estimate r.
+	 *
+	 * @param Np the np
+	 * @param Mp the mp
+	 * @param eta the eta
+	 * @param p the p
+	 * @param z the z
+	 */
 	public void estimateR(int Np, int[] Mp, double[] eta, double[] p, double[] z){
 		double sum = 0;
 
@@ -52,23 +117,58 @@ public class BoussinesqEquation {
 		
 	}
 	
+	
+	
+	/**
+	 * Estimate p.
+	 */
 	public void estimateP(){
 		//calculate P
 	}
 	
+	/**
+	 * Newton b eq.
+	 *
+	 * @param grid1 the grid1
+	 * @throws IterativeSolverDoubleNotConvergedException the iterative solver double not converged exception
+	 */
 	public void newtonBEq(Grid grid1) throws IterativeSolverDoubleNotConvergedException {
 		
 		estimateT(grid1);
-		estimateR(grid1.numberSidesPolygon.length, grid1.Mp, grid1.topElevation, grid1.planArea, grid1.bottomElevation);
+		estimateR(grid1.numberSidesPolygon.length,
+				grid1.Mp,
+				grid1.topElevation,
+				grid1.planArea,
+				grid1.bottomElevation);
 		//estimate P
 		//while with R
-		RCConjugateGradient cg = new RCConjugateGradient(grid1.numberSidesPolygon.length,grid1.Mp,grid1.Mi,grid1.Ml);
+		RCConjugateGradient cg = new RCConjugateGradient(grid1.numberSidesPolygon.length,
+														grid1.Mp,
+														grid1.Mi,matT);
 		cg.solverCG(arrR);
-		
-		estimateR(grid1.numberSidesPolygon.length, grid1.Mp, cg.matSol.toArray(), grid1.planArea, grid1.bottomElevation);
+		for (int i = 0; i < grid1.eta.length; i++){
+			sol[i] = grid1.eta[i] - cg.matSol.get(i);
+			System.out.println(grid1.eta[i]);
+			System.out.println(cg.matSol.get(i));
+			System.out.println(sol[i]);
+		}
+
+		estimateR(grid1.numberSidesPolygon.length,
+				grid1.Mp,
+				sol,
+				grid1.planArea,
+				grid1.bottomElevation);
 		
 	}
 	
+	
+	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws IterativeSolverDoubleNotConvergedException the iterative solver double not converged exception
+	 */
 	public static void main(String[] args) throws IterativeSolverDoubleNotConvergedException {
 		
 		Grid grid1 = new Grid();
@@ -76,6 +176,8 @@ public class BoussinesqEquation {
 		beq.newtonBEq(grid1);
 		
 		
+		
+		System.exit(1);
 
 	}
 
