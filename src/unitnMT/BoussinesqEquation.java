@@ -190,24 +190,24 @@ public class BoussinesqEquation {
 		//System.out.println(grid1.eta.length);
 		
 		System.arraycopy(grid1.eta, 0, solOld, 0, grid1.eta.length);
-
-		estimateT(grid1,solOld);
-		estimateR(grid1.numberSidesPolygon.length,
-					grid1.Mp,
-					grid1.Mi,
-					grid1.topElevation,
-					grid1.planArea,
-					grid1.bottomElevation);
-		estimateJr(grid1.numberSidesPolygon.length,
-					grid1.Mp,
-					grid1.Mi,
-					grid1.topElevation,
-					solOld,
-					grid1.planArea,
-					grid1.bottomElevation);
 		
 		for (int t = 0; t < simTime; t += deltat){
 
+			estimateT(grid1,solOld);
+			estimateR(grid1.numberSidesPolygon.length,
+						grid1.Mp,
+						grid1.Mi,
+						grid1.topElevation, // values ​​of the first attempt
+						grid1.planArea,
+						grid1.bottomElevation);
+			estimateJr(grid1.numberSidesPolygon.length,
+						grid1.Mp,
+						grid1.Mi,
+						grid1.topElevation, // new
+						solOld,				// old
+						grid1.planArea,
+						grid1.bottomElevation);
+			
 			int indexProva = 0;
 			do {
 				System.out.println("Index prova " + indexProva);
@@ -220,7 +220,7 @@ public class BoussinesqEquation {
 					//System.out.println(cg.matSol.get(i));
 					//System.out.println(solNew[i]);
 				}
-
+				
 				estimateR(grid1.numberSidesPolygon.length,
 							grid1.Mp,
 							grid1.Mi,
