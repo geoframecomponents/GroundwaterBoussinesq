@@ -39,7 +39,8 @@ public class BoussinesqEquation {
 	double[] matJr;
 	
 	/** The sol. */
-	double[] sol;
+	double[] solOld;
+	double[] solNew;
 	
 	/** The arr r. */
 	SparseDoubleMatrix1D arrR;
@@ -66,7 +67,8 @@ public class BoussinesqEquation {
 		System.out.println("Number of elements of T:" + SIZE);
 		
 		arrb = new double[Np];
-		sol = new double[Np];
+		solOld = new double[Np];
+		solNew = new double[Np];
 		matT = new double[SIZE];
 		matJr = new double[SIZE];
 		arrR = new SparseDoubleMatrix1D(Np);
@@ -134,6 +136,7 @@ public class BoussinesqEquation {
 	 * @param z the z
 	 */
 	public void estimateR(int Np, int[] Mp, int[] Mi, double[] eta, double[] p, double[] z){
+		
 		double sum = 0;
 
 		for (int i = 0; i < Np; i++){
@@ -151,7 +154,7 @@ public class BoussinesqEquation {
 	/**
 	 * Estimate p.
 	 */
-	public void estimateJr(int Np, int[] Mp, int[] Mi, double[] eta, double[] p, double[] z){
+	public void estimateJr(int Np, int[] Mp, int[] Mi, double[] eta1, double[] eta2, double[] p, double[] z){
 	/*	for (int i = 0; i < Np; i++){
 			for (int j = Mp[i]; j < Mp[i+1]; j++){
 				if (j == i){
@@ -173,19 +176,20 @@ public class BoussinesqEquation {
 	 */
 	public void newtonBEq(Grid grid1) throws IterativeSolverDoubleNotConvergedException {
 		
-		System.arraycopy(grid1.eta, 0, sol, 0, grid1.eta.length);
+		System.arraycopy(grid1.eta, 0, solOld, 0, grid1.eta.length);
 		
 		for (int t = 0; t < simTime; t += deltat){
-			estimateT(grid1,sol);
+			estimateT(grid1,solOld);
 			estimateR(grid1.numberSidesPolygon.length,
 					grid1.Mp,
 					grid1.Mi,
-					grid1.topElevation,
+					solOld,
 					grid1.planArea,
 					grid1.bottomElevation);
 			estimateJr(grid1.numberSidesPolygon.length,
 					grid1.Mp,
 					grid1.Mi,
+					solOld,
 					grid1.topElevation,
 					grid1.planArea,
 					grid1.bottomElevation);
@@ -197,26 +201,31 @@ public class BoussinesqEquation {
 						grid1.Mi,matT);
 				cg.solverCG(arrR);
 				for (int i = 0; i < grid1.eta.length; i++){
-					sol[i] = grid1.eta[i] - cg.matSol.get(i);
+					solNew[i] = solOld[i] - cg.matSol.get(i);
 					System.out.println(cg.matSol.get(i));
-					System.out.println(sol[i]);
+					System.out.println(solNew[i]);
 				}
-
 
 				estimateR(grid1.numberSidesPolygon.length,
 						grid1.Mp,
 						grid1.Mi,
-						sol,
+						solNew,
 						grid1.planArea,
 						grid1.bottomElevation);
 				estimateJr(grid1.numberSidesPolygon.length,
 						grid1.Mp,
 						grid1.Mi,
-						sol,
+						solOld,
+						solNew,
 						grid1.planArea,
 						grid1.bottomElevation);
 				indexProva++;
-			} while (arrR.getMaxLocation()[0] > tol | indexProva < 9);
+				
+				System.arraycopy(solNew, 0, solOld, 0, solOld.length);
+				
+			} while (arrR.getMaxLocation()[0] > tol | indexProva < 4);
+			
+			System.out.println("Exit code");
 			
 		}
 	}
