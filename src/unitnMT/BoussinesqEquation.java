@@ -46,6 +46,9 @@ public class BoussinesqEquation {
 	/** The deltat. */
 	int deltat = 1;
 	
+	/** legth of the simulation */
+	int simTime = 2;
+	
 	
 	
 	/**
@@ -90,7 +93,7 @@ public class BoussinesqEquation {
 	 * 			- lengthSides: length of every edge of the polygon
 	 * 			- Mp, Mi, Ml: row compressed form of adjacency matrix
 	 */
-	public void estimateT(Grid grid1){
+	public void estimateT(Grid grid1, double[] eta){
 		
 		/* variable to add T terms outside the diagonal, that will be
 			stored in the diagonal position*/
@@ -99,15 +102,15 @@ public class BoussinesqEquation {
 		int index = 0;
 		
 		for (int i = 0; i < grid1.numberSidesPolygon.length; i++){
-			arrb[i] = (grid1.eta[i]-grid1.bottomElevation[i])*grid1.planArea[i]
+			arrb[i] = (eta[i]-grid1.bottomElevation[i])*grid1.planArea[i]
 					+deltat*grid1.planArea[i]*grid1.sourceSink[i];
 			for (int j = grid1.Mp[i]; j < grid1.Mp[i+1]; j++){
 				if (grid1.Ml[j] != -1){
 					matT[j] = -deltat*(1/grid1.euclideanDistance[(int) grid1.Ml[j]])
 							*grid1.hydrConductivity[(int) grid1.Ml[j]]
 									*grid1.lengthSides[(int) grid1.Ml[j]]
-											*Math.max(grid1.eta[grid1.Mi[j]]-grid1.bottomElevation[grid1.Mi[j]],
-													grid1.eta[i]-grid1.bottomElevation[i]);
+											*Math.max(eta[grid1.Mi[j]]-grid1.bottomElevation[grid1.Mi[j]],
+													eta[i]-grid1.bottomElevation[i]);
 					colSum += -matT[j];
 				} else {index = j;}
 			}
@@ -167,38 +170,51 @@ public class BoussinesqEquation {
 	 */
 	public void newtonBEq(Grid grid1) throws IterativeSolverDoubleNotConvergedException {
 		
-		estimateT(grid1);
-		estimateR(grid1.numberSidesPolygon.length,
-				grid1.Mp,
-				grid1.Mi,
-				grid1.topElevation,
-				grid1.planArea,
-				grid1.bottomElevation);
-		estimateJr(grid1.numberSidesPolygon.length,
-				grid1.Mp,
-				grid1.Mi,
-				grid1.topElevation,
-				grid1.planArea,
-				grid1.bottomElevation);
-		//while with R tollerance
-		RCConjugateGradient cg = new RCConjugateGradient(grid1.numberSidesPolygon.length,
-														grid1.Mp,
-														grid1.Mi,matJr);
-		cg.solverCG(arrR);
-		for (int i = 0; i < grid1.eta.length; i++){
-			sol[i] = grid1.eta[i] - cg.matSol.get(i);
-			System.out.println(cg.matSol.get(i));
-			System.out.println(sol[i]);
-		}
+		System.arraycopy(grid1.eta, 0, sol, 0, grid1.eta.length);
 		
+		System.out.println(sol[6]);
+		
+		for (int t = 0; t < simTime; t += deltat){
+			estimateT(grid1,sol);
+			estimateR(grid1.numberSidesPolygon.length,
+					grid1.Mp,
+					grid1.Mi,
+					grid1.topElevation,
+					grid1.planArea,
+					grid1.bottomElevation);
+			estimateJr(grid1.numberSidesPolygon.length,
+					grid1.Mp,
+					grid1.Mi,
+					grid1.topElevation,
+					grid1.planArea,
+					grid1.bottomElevation);
+			while (){
+				RCConjugateGradient cg = new RCConjugateGradient(grid1.numberSidesPolygon.length,
+						grid1.Mp,
+						grid1.Mi,matJr);
+				cg.solverCG(arrR);
+				for (int i = 0; i < grid1.eta.length; i++){
+					sol[i] = grid1.eta[i] - cg.matSol.get(i);
+					System.out.println(cg.matSol.get(i));
+					System.out.println(sol[i]);
+				}
 
-		estimateR(grid1.numberSidesPolygon.length,
-				grid1.Mp,
-				grid1.Mi,
-				sol,
-				grid1.planArea,
-				grid1.bottomElevation);
-		
+
+				estimateR(grid1.numberSidesPolygon.length,
+						grid1.Mp,
+						grid1.Mi,
+						sol,
+						grid1.planArea,
+						grid1.bottomElevation);
+				estimateJr(grid1.numberSidesPolygon.length,
+						grid1.Mp,
+						grid1.Mi,
+						sol,
+						grid1.planArea,
+						grid1.bottomElevation);
+			}
+			
+		}
 	}
 	
 	
