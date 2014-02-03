@@ -1,19 +1,20 @@
 package unitnMT;
 
 /**
- * BoussinesqEquation
+ * Mass-Conservative groundwater equation integration
  * 
  * @desc	This class contains 4 methods:
  * 				1. estimateT: code to define T, from [Cordano Rigon 2013]
  * 				2. estimateR: code to define R, from [Cordano Rigon 2013]
- * 				3. estimateP: code to define P, from [Cordano Rigon 2013]
+ * 				3. estimateJr: code to define Jr, from [Cordano Rigon 2013]
  * 				4. newtonBEq: method that call the solver
  * 
  * 			The constructor method instantiates the object of BEq:
  * 				1. arrb: b from [Cordano Rigon 2013]
  * 				2. matT: T from [Cordano Rigon 2013]
- * 				3. arrR: R from [cordano Rigon 2013]
- * 				4. deltat: time step
+ * 				3. matJr: Jr from [Cordano Rigon 2013]
+ * 				4. arrR: R from [cordano Rigon 2013]
+ * 				5. deltat: time step
  * 
  * @author	Francesco Serafin, 2014
  * Copyright GPL v. 3 (http://www.gnu.org/licenses/gpl.html)
@@ -34,6 +35,8 @@ public class BoussinesqEquation {
 	/** The mat t. */
 	double[] matT;
 	
+	double[] matJr;
+	
 	/** The sol. */
 	double[] sol;
 	
@@ -48,8 +51,8 @@ public class BoussinesqEquation {
 	/**
 	 * Instantiates a new boussinesq equation object.
 	 *
-	 * @param Np the number of polygons in the mesh
-	 * @param SIZE the number of non-zero in the Mij adjacency matrix
+	 * @param Np: the number of polygons in the mesh
+	 * @param SIZE: the number of non-zero in the Mij adjacency matrix
 	 */
 	BoussinesqEquation(int Np, int SIZE){
 		
@@ -59,6 +62,7 @@ public class BoussinesqEquation {
 		arrb = new double[Np];
 		sol = new double[Np];
 		matT = new double[SIZE];
+		matJr = new double[SIZE];
 		arrR = new SparseDoubleMatrix1D(Np);
 		
 	}
@@ -67,8 +71,15 @@ public class BoussinesqEquation {
 	
 	/**
 	 * Estimate T.
+	 * 
+	 * @desc This class estimates the value of T, from [Cordano Rigon 2013]
+	 * 		 equations (18), (20) e (21). Because the for-loop is going,
+	 * 		 it's possible to fill the b array from equation (19).
 	 *
-	 * @param grid1 the object grid1 that holds all the properties of the mesh
+	 * @param grid1: the object grid1 holds all the properties of the mesh.
+	 * 		  In this class are useful these variable:
+	 * 			- numberSidesPolygon: to cycling 1..Np number of polygons
+	 * 			- eta: water-table elevation (piezometric head)
 	 */
 	public void estimateT(Grid grid1){
 		
@@ -104,12 +115,12 @@ public class BoussinesqEquation {
 	 * @param p the p
 	 * @param z the z
 	 */
-	public void estimateR(int Np, int[] Mp, double[] eta, double[] p, double[] z){
+	public void estimateR(int Np, int[] Mp, int[] Mi, double[] eta, double[] p, double[] z){
 		double sum = 0;
 
 		for (int i = 0; i < Np; i++){
 			for (int j = Mp[i]; j < Mp[i+1]; j++){
-				sum += matT[j]*eta[i];
+				sum += matT[Mi[j]]*eta[Mi[j]];
 			}
 			arrR.set(i,p[i]*(eta[i]-z[i])+sum-arrb[i]);
 			sum = 0;
@@ -122,8 +133,18 @@ public class BoussinesqEquation {
 	/**
 	 * Estimate p.
 	 */
-	public void estimateP(){
-		//calculate P
+	public void estimateJr(int Np, int[] Mp, int[] Mi, double[] eta, double[] p, double[] z){
+	/*	for (int i = 0; i < Np; i++){
+			for (int j = Mp[i]; j < Mp[i+1]; j++){
+				if (j == i){
+					
+					matJr[j] = matT[j] + p[j]*(eta[j] - z[j]);
+					
+				} else {
+					matJr[j] = matT[j];
+				}
+			}
+		}*/
 	}
 	
 	/**
@@ -137,24 +158,31 @@ public class BoussinesqEquation {
 		estimateT(grid1);
 		estimateR(grid1.numberSidesPolygon.length,
 				grid1.Mp,
+				grid1.Mi,
 				grid1.topElevation,
 				grid1.planArea,
 				grid1.bottomElevation);
-		//estimate P
-		//while with R
+		estimateJr(grid1.numberSidesPolygon.length,
+				grid1.Mp,
+				grid1.Mi,
+				grid1.topElevation,
+				grid1.planArea,
+				grid1.bottomElevation);
+		//while with R tollerance
 		RCConjugateGradient cg = new RCConjugateGradient(grid1.numberSidesPolygon.length,
 														grid1.Mp,
-														grid1.Mi,matT);
+														grid1.Mi,matJr);
 		cg.solverCG(arrR);
 		for (int i = 0; i < grid1.eta.length; i++){
 			sol[i] = grid1.eta[i] - cg.matSol.get(i);
-			System.out.println(grid1.eta[i]);
 			System.out.println(cg.matSol.get(i));
 			System.out.println(sol[i]);
 		}
+		
 
 		estimateR(grid1.numberSidesPolygon.length,
 				grid1.Mp,
+				grid1.Mi,
 				sol,
 				grid1.planArea,
 				grid1.bottomElevation);
