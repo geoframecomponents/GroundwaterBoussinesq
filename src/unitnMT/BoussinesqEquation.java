@@ -30,6 +30,8 @@ import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
  */
 public class BoussinesqEquation {
 	
+	int[] indexDiag;
+	
 	/** The arrb. */
 	double[] arrb;
 	
@@ -66,6 +68,8 @@ public class BoussinesqEquation {
 		
 		System.out.println("Number of polygons:" + Np);
 		System.out.println("Number of elements of T:" + SIZE);
+		
+		indexDiag = new int[Np];
 		
 		arrb = new double[Np];
 		solOld = new double[Np];
@@ -106,7 +110,7 @@ public class BoussinesqEquation {
 			stored in the diagonal position*/
 		double colSum = 0;
 		/* to identify the diagonal entry in row-compressed form */
-		int index = 0;
+		//int index = 0;
 		
 		for (int i = 0; i < grid1.numberSidesPolygon.length; i++){
 			arrb[i] = (eta[i]-grid1.bottomElevation[i])*grid1.planArea[i]
@@ -119,9 +123,9 @@ public class BoussinesqEquation {
 											*Math.max(eta[grid1.Mi[j]]-grid1.bottomElevation[grid1.Mi[j]],
 													eta[i]-grid1.bottomElevation[i]);
 					colSum += -matT[j];
-				} else {index = j;}
+				} else {indexDiag[i] = j;}
 			}
-			matT[index] = colSum;
+			matT[indexDiag[i]] = colSum;
 			colSum = 0;
 		}
 	}
@@ -129,13 +133,18 @@ public class BoussinesqEquation {
 	
 	
 	/**
-	 * Estimate r.
+	 * Estimate R.
+	 * 
+	 * @desc This class estimates the value of R, from [Cordano Rigon 2013]
+	 * 		 equation (A3).
 	 *
-	 * @param Np the np
-	 * @param Mp the mp
-	 * @param eta the eta
-	 * @param p the p
-	 * @param z the z
+	 * @param Np: number of polygons in the mesh
+	 * @param Mp: array of row pointers in Row-Compressed Form
+	 * @param Mi: array of column indices of entries in row j
+	 * @param eta: may holds the value of the first attempt or the old values
+	 * 			   if the method is called into the Newton-while-loop
+	 * @param p: planimetric area of each polygon
+	 * @param z: bedrock elevation
 	 */
 	public void estimateR(int Np, int[] Mp, int[] Mi, double[] eta, double[] p, double[] z){
 		
@@ -158,24 +167,24 @@ public class BoussinesqEquation {
 	 * Estimate p.
 	 */
 	public void estimateJr(int Np, int[] Mp, int[] Mi, double[] etaOld, double[] etaNew, double[] p, double[] z){
-/*		
-		int index = 0;
 		
 		for (int i = 0; i < Np; i++){
 			for (int j = Mp[i]; j < Mp[i+1]; j++){
-				if (i == index){
+				if (j == indexDiag[i]){
 					
-					matJr[j] = matT[j] + p[i];
+					if (Math.abs(etaOld[i]-etaNew[i]) < tol){
+						matJr[j] = matT[j] + p[i];
+					} else {
+						matJr[j] = matT[j] + 0.5*p[i];
+					}
 					
 				} else {
 					
 					matJr[j] = matT[j];
 					
 				}
-				index++;
 			}
-			index = 0;
-		}*/
+		}
 	}
 	
 	/**
@@ -186,9 +195,7 @@ public class BoussinesqEquation {
 	 */
 	public void newtonBEq(Grid grid1) throws IterativeSolverDoubleNotConvergedException {
 		
-		//System.out.println(solOld.length);
-		//System.out.println(grid1.eta.length);
-		
+		// the values of first attempt are the 
 		System.arraycopy(grid1.eta, 0, solOld, 0, grid1.eta.length);
 		
 		for (int t = 0; t < simTime; t += deltat){
@@ -213,7 +220,7 @@ public class BoussinesqEquation {
 				System.out.println("Index prova " + indexProva);
 				RCConjugateGradient cg = new RCConjugateGradient(grid1.numberSidesPolygon.length,
 																	grid1.Mp,
-																	grid1.Mi,matT);
+																	grid1.Mi,matJr);
 				cg.solverCG(arrR);
 				for (int i = 0; i < grid1.eta.length; i++){
 					solNew[i] = solOld[i] - cg.matSol.get(i);
@@ -254,6 +261,8 @@ public class BoussinesqEquation {
 	
 	/**
 	 * The main method.
+	 *
+	 * @desc main method calls the different classes
 	 *
 	 * @param args the arguments
 	 * @throws IterativeSolverDoubleNotConvergedException the iterative solver double not converged exception
