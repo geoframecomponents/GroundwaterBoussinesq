@@ -80,10 +80,22 @@ public class BoussinesqEquation {
 	 * 		  In this class are useful these variable:
 	 * 			- numberSidesPolygon: to cycling 1..Np number of polygons
 	 * 			- eta: water-table elevation (piezometric head)
+	 * 			- bottomElevation: bedrock elevation
+	 * 			- planArea: area of each cell
+	 * 			- sourceSink: source term
+	 * 			- euclideanDistance: euclidean distance between each center
+	 * 				of every polygon (it's in array form)
+	 * 			- hydrConductivity: saturated hydraulic conductivity as pro-
+	 * 				perties of every edge
+	 * 			- lengthSides: length of every edge of the polygon
+	 * 			- Mp, Mi, Ml: row compressed form of adjacency matrix
 	 */
 	public void estimateT(Grid grid1){
 		
+		/* variable to add T terms outside the diagonal, that will be
+			stored in the diagonal position*/
 		double colSum = 0;
+		/* to identify the diagonal entry in row-compressed form */
 		int index = 0;
 		
 		for (int i = 0; i < grid1.numberSidesPolygon.length; i++){
