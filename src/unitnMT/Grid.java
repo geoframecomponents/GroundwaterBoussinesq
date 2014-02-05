@@ -15,8 +15,8 @@ public class Grid {
 	/** The plan area. */
 	double[] planArea = {6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6};
 	
-	/** The source sink. */
-	double[] sourceSink = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/** The source.  per unit area of the polygon*/
+	double[] source = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	
 	/** The eta. */
 	double[] eta = {12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12};
@@ -29,6 +29,9 @@ public class Grid {
 	/** The bottom elevation. */
 	double[] bottomElevation = {10,10,10,10,10,10,10,10,10,10,
 			10,10,10,10,10,10};
+	
+	double[] porosity = {0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,
+			0.10,0.10,0.10,0.10,0.10,0.10};
 	
 	
 	//SIDES PROPERTIES
@@ -104,7 +107,7 @@ public class Grid {
 		
 		System.out.println("numberSidesPolygon array length: "+ gridTest.numberSidesPolygon.length);
 		System.out.println("planArea array length: "+ gridTest.planArea.length);
-		System.out.println("sourceSink array length: "+ gridTest.sourceSink.length);
+		System.out.println("sourceSink array length: "+ gridTest.source.length);
 		System.out.println("eta array length: "+ gridTest.eta.length);
 		System.out.println("topElevation array length: "+ gridTest.topElevation.length);
 		System.out.println("bottomElevation array length: "+ gridTest.bottomElevation.length);

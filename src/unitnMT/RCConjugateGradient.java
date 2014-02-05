@@ -29,9 +29,8 @@ public class RCConjugateGradient {
 	 * @param Mi the mi
 	 * @param Ml the ml
 	 */
-	RCConjugateGradient (int SIZE, int[] Mp, int[] Mi, double[] Ml) {
+	RCConjugateGradient (int SIZE) {
 		
-		matrix_A = new SparseRCDoubleMatrix2D(SIZE,SIZE,Mp,Mi,Ml);
 		matrix_x = new SparseDoubleMatrix1D(SIZE);
 		
 	}
@@ -42,7 +41,7 @@ public class RCConjugateGradient {
 	 * @param matrix_b the matrix_b
 	 * @throws IterativeSolverDoubleNotConvergedException the iterative solver double not converged exception
 	 */
-	public void solverCG(SparseDoubleMatrix1D matrix_b) throws IterativeSolverDoubleNotConvergedException {
+	public void solverCG(SparseDoubleMatrix1D matrix_b,SparseRCDoubleMatrix2D matrix_A) throws IterativeSolverDoubleNotConvergedException {
 		
 		DoubleCG conjugateGradient = new DoubleCG(matrix_x);
 		matSol = conjugateGradient.solve(matrix_A,matrix_b,matrix_x);
