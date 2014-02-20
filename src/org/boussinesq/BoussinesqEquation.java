@@ -1,4 +1,4 @@
-package unitnMT;
+package org.boussinesq;
 
 /**
  * Mass-Conservative groundwater equation integration
@@ -20,6 +20,10 @@ package unitnMT;
  * Copyright GPL v. 3 (http://www.gnu.org/licenses/gpl.html)
  * */
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import cern.colt.Arrays;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
@@ -31,24 +35,19 @@ import cern.colt.matrix.tdouble.impl.SparseRCDoubleMatrix2D;
 public class BoussinesqEquation {
 
 	/** The sol. */
-	double[] solOld;
-	double[] solNew;
-	double[][] sol;
+	// double[][] sol;
 
 	/** The deltat. */
 	int deltat = 3600;
 
 	/** legth of the simulation */
-	int simTime = 3600*24;
+	int simTime = 3600 * 24;
 
-	double tol = 10 ^ (-1);
+	// double tol = 10 ^ (-1);
 
 	double tolerance = 0;
 
-	BoussinesqEquation(int Np, int SIZE) {
-
-		solOld = new double[Np];
-		solNew = new double[Np];
+	BoussinesqEquation() {
 
 		tolerance = computeMachineEpsilonDouble();
 
@@ -245,7 +244,7 @@ public class BoussinesqEquation {
 			arrayT[index] = rowSum;
 			rowSum = 0;
 		}
-		
+
 		return arrayT;
 	}
 
@@ -286,7 +285,18 @@ public class BoussinesqEquation {
 				sum += Tdrichelet[j] * etaDrichelet[mesh.Mi[j]];
 			}
 
-			arrB[i] = volume + deltat * mesh.planArea[i] * mesh.source[i] - sum;
+			
+			// delta t deve essere minore di 1/c
+			arrB[i] = volume
+					+ deltat
+					* mesh.planArea[i]
+					* mesh.source[i]
+					- sum
+					- deltat
+					* mesh.planArea[i]
+					* mesh.c[i]
+					*Math.pow(volume/ mesh.planArea[i],mesh.m[i]);
+
 		}
 
 		return arrB;
@@ -325,7 +335,8 @@ public class BoussinesqEquation {
 	 */
 	public double[] computeR(double[] arrT, double[] arrb,
 			double[] zetaBedrock, double[] porosity, int Np, int[] Mp,
-			int[] Mi, double[] eta, double[] planimetricArea,double[] etaDrichelet, double NOVALUE) {
+			int[] Mi, double[] eta, double[] planimetricArea,
+			double[] etaDrichelet, double NOVALUE) {
 
 		// variable where allocate the matrix-vector multiplication
 		double sum = 0;
@@ -334,20 +345,20 @@ public class BoussinesqEquation {
 		double[] arrR = new double[Np];
 
 		for (int i = 0; i < Np; i++) {
-			if (isNoValue(etaDrichelet[i],NOVALUE)){
-			for (int j = Mp[i]; j < Mp[i + 1]; j++) {
-				sum += arrT[j] * eta[Mi[j]];
-			}
+			if (isNoValue(etaDrichelet[i], NOVALUE)) {
+				for (int j = Mp[i]; j < Mp[i + 1]; j++) {
+					sum += arrT[j] * eta[Mi[j]];
+				}
 
-			double wetArea = computeWetArea(eta[i], zetaBedrock[i],
-					porosity[i], planimetricArea[i]);
-			double waterVolume = computeWaterVolume(eta[i], zetaBedrock[i],
-					wetArea);
-			// equation (A3)
-			arrR[i] = waterVolume + sum - arrb[i];
+				double wetArea = computeWetArea(eta[i], zetaBedrock[i],
+						porosity[i], planimetricArea[i]);
+				double waterVolume = computeWaterVolume(eta[i], zetaBedrock[i],
+						wetArea);
+				// equation (A3)
+				arrR[i] = waterVolume + sum - arrb[i];
 
-			sum = 0;
-			}else{
+				sum = 0;
+			} else {
 				arrR[i] = 0;
 			}
 		}
@@ -383,7 +394,8 @@ public class BoussinesqEquation {
 	 * @return the Jacobian array of water volume stored in Row Compressed Form
 	 */
 	public double[] computeJr(int[] indexDiag, double[] arrT, double[] eta,
-			double[] zetaBedrock, double[] porosity, double[] planimetricArea,double[] etaDrichelet,double NOVALUE) {
+			double[] zetaBedrock, double[] porosity, double[] planimetricArea,
+			double[] etaDrichelet, double NOVALUE) {
 
 		// declaration of the array that holds the Jacobian of water volume
 		// stored
@@ -394,17 +406,16 @@ public class BoussinesqEquation {
 		// cicle only in the cells, because it's necessary to inspect only
 		// diagonal entries
 		for (int i = 0; i < indexDiag.length; i++) {
-			if (isNoValue(etaDrichelet[i],NOVALUE)){
+			if (isNoValue(etaDrichelet[i], NOVALUE)) {
 				arrJr[indexDiag[i]] = arrT[indexDiag[i]]
 						+ computeWetArea(eta[i], zetaBedrock[i], porosity[i],
 								planimetricArea[i]);
 
-			}else {
+			} else {
 				arrJr[indexDiag[i]] = arrT[indexDiag[i]];
 			}
 
 			// equation (A6)
-			
 
 		}
 
@@ -452,7 +463,8 @@ public class BoussinesqEquation {
 			} else {// is not drichelet
 				for (int j = mesh.Mp[i]; j < mesh.Mp[i + 1]; j++) {
 
-					if (!isNoValue(mesh.etaDrichelet[mesh.Mi[j]], mesh.NOVALUE)) {// is drichelet
+					if (!isNoValue(mesh.etaDrichelet[mesh.Mi[j]], mesh.NOVALUE)) {// is
+																					// drichelet
 						arrayT[j] = T[j];
 					} else {
 						arrayT[j] = 0.0;
@@ -525,6 +537,12 @@ public class BoussinesqEquation {
 			return false;
 		}
 	}
+	
+	public void writeEta(double[] outResult){
+		
+
+		
+	}
 
 	public double[] newtonIteration(double[] arrb, double[] matT,
 			int[] indexDiag, Grid grid1, double[] eta)
@@ -538,14 +556,16 @@ public class BoussinesqEquation {
 		do {
 
 			double[] jr = computeJr(indexDiag, matT, eta,
-					grid1.bottomElevation, grid1.porosity, grid1.planArea,grid1.etaDrichelet,grid1.NOVALUE);
+					grid1.bottomElevation, grid1.porosity, grid1.planArea,
+					grid1.etaDrichelet, grid1.NOVALUE);
 			matrixJr = new SparseRCDoubleMatrix2D(
 					grid1.numberSidesPolygon.length,
 					grid1.numberSidesPolygon.length, grid1.Mp, grid1.Mi, jr);
 
 			double[] r = computeR(matT, arrb, grid1.bottomElevation,
 					grid1.porosity, grid1.numberSidesPolygon.length, grid1.Mp,
-					grid1.Mi, eta, grid1.planArea,grid1.etaDrichelet,grid1.NOVALUE);
+					grid1.Mi, eta, grid1.planArea, grid1.etaDrichelet,
+					grid1.NOVALUE);
 
 			matrixr = new SparseDoubleMatrix1D(r);
 
@@ -562,7 +582,7 @@ public class BoussinesqEquation {
 			}
 			maxResidual = Math.max(Math.abs(cg.matSol.getMaxLocation()[0]),
 					Math.abs(cg.matSol.getMinLocation()[0]));
-			//System.out.println(maxResidual);
+			// System.out.println(maxResidual);
 
 			/*
 			 * for (int i = 1; i < grid1.numberSidesPolygon.length; i++) { if
@@ -572,18 +592,19 @@ public class BoussinesqEquation {
 			 * }
 			 */
 
-		} while (maxResidual > tolerance*100);// arrR.getMaxLocation()[0] > tol |
+		} while (maxResidual > tolerance * 100);// arrR.getMaxLocation()[0] >
+												// tol |
 		return eta;
 
 	}
 
 	public void runBEq(Grid grid1)
-			throws IterativeSolverDoubleNotConvergedException {
+			throws IterativeSolverDoubleNotConvergedException, IOException {
 		// the values of first attempt are the
-		
+
 		double[] eta = new double[grid1.numberSidesPolygon.length];
-		for(int i=0; i<eta.length;i++){
-			if(isNoValue(grid1.etaDrichelet[i],grid1.NOVALUE)){
+		for (int i = 0; i < eta.length; i++) {
+			if (isNoValue(grid1.etaDrichelet[i], grid1.NOVALUE)) {
 				eta[i] = grid1.eta[i];
 			} else {
 				eta[i] = grid1.etaDrichelet[i];
@@ -591,39 +612,56 @@ public class BoussinesqEquation {
 		}
 
 		int[] indexDiag = computeIndexDiag(grid1);
+		FileWriter Rstatfile = new FileWriter(grid1.outputPath);
+        PrintWriter errestat = new PrintWriter(Rstatfile);
 
 		for (int t = 0; t < simTime; t += deltat) {
 
-			long start=System.nanoTime();
-			
+			// long start=System.nanoTime();
+
 			double[] matT = computeT(grid1, eta);
 			double[] matTDrichelet = computeTDrichelet(grid1, matT);
 			double[] matTNoDrichelet = computeTNoDrichelet(grid1, matT);
 
-			double[] arrb = computeB(grid1, eta, matTDrichelet,grid1.etaDrichelet);
-			
-			long end = System.nanoTime();
-			System.out.println("End time: " + (end-start));
+			double[] arrb = computeB(grid1, eta, matTDrichelet,
+					grid1.etaDrichelet);
+
+			// long end = System.nanoTime();
+			// System.out.println("End time: " + (end-start));
 
 			eta = newtonIteration(arrb, matTNoDrichelet, indexDiag, grid1, eta);
-			System.out.println(Arrays.toString(eta));
-			System.out.println(t/3600);
 			//System.out.println(Arrays.toString(eta));
+			
+
+			System.out.println(t / 3600);
+			// System.out.println(Arrays.toString(eta));
 		}
+		for( int j = 0; j < eta.length; j++ ) {
+            
+            errestat.println(eta[j]);
+
+        }
+         
+         
+        errestat.println();
+        System.out.println();
+        Rstatfile.close();
+		
+			
+			
 		System.out.println("Exit code");
 	}
 
 	public static void main(String[] args)
-			throws IterativeSolverDoubleNotConvergedException {
+			throws IterativeSolverDoubleNotConvergedException, IOException {
 
-		long start=System.nanoTime();
+		// long start=System.nanoTime();
 		Grid grid1 = new Grid("Song");
-		BoussinesqEquation beq = new BoussinesqEquation(
-				grid1.numberSidesPolygon.length, grid1.Ml.length);
+		BoussinesqEquation beq = new BoussinesqEquation();
 		beq.runBEq(grid1);
-		long end=System.nanoTime();
-		System.out.println("End time: " + (end-start));
-		
+		// long end=System.nanoTime();
+		// System.out.println("End time: " + (end-start));
+
 		System.exit(1);
 
 	}

@@ -1,4 +1,4 @@
-package unitnMT;
+package org.boussinesq;
 
 import cern.colt.Arrays;
 
@@ -7,6 +7,8 @@ import cern.colt.Arrays;
  * The Class Grid.
  */
 public class Grid {
+	
+	String outputPath;
 	
 	//POLYGONS PROPERTIES
 	
@@ -38,6 +40,12 @@ public class Grid {
 			10,10,10,10,10,10};
 	
 	double[] porosity = {0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,
+			0.10,0.10,0.10,0.10,0.10,0.10};
+	
+	double[] c = {0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,
+			0.10,0.10,0.10,0.10,0.10,0.10};
+	
+	double[] m = {0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,
 			0.10,0.10,0.10,0.10,0.10,0.10};
 	
 	
@@ -168,7 +176,9 @@ public class Grid {
 					13,36,-1, 15,-1,39, 16,39,-1,40, 17,40,-1};
 		}else if (configuration.equals("Song")){
 			
-			int dim = 100000;
+			
+			this.outputPath = "/home/francesco/desktop/prova.txt";
+			int dim = 1000;
 			//POLYGONS PROPERTIES
 			this.numberSidesPolygon= new int[dim];
 			this.planArea= new double[dim];
@@ -178,6 +188,8 @@ public class Grid {
 			this.topElevation = new double[dim];
 			this.bottomElevation = new double[dim];
 			this.porosity = new double[dim];
+			this.c = new double[dim];
+			this.m = new double[dim];
 			this.lengthSides = new double[dim + 1];
 			this.euclideanDistance = new double[dim + 1];
 			this.hydrConductivity = new double[dim+1];
@@ -195,10 +207,14 @@ public class Grid {
 				this.lengthSides[i]= 1;
 				this.euclideanDistance[i] = 1;
 				this.hydrConductivity[i] = 0.01;
+				this.c[i] = 0;
+				this.m[i] = 1;
 				
 			}
 			
 			
+			this.c[dim-1] = 1;
+			this.m[dim-1] = 1;
 			this.etaDrichelet[0] = 1;
 			this.lengthSides[dim]= 1;
 			this.euclideanDistance[dim] = 1;
@@ -212,7 +228,7 @@ public class Grid {
 			this.Mp[0] = 0;
 			this.Mp[1] = 2;
 			
-;			System.out.println("Son qui");
+;			//System.out.println("Son qui");
 			
 			for (int i= 2; i<(dim);i++){
 				this.Mp[i] = this.Mp[i-1]+3;

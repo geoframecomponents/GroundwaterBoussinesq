@@ -1,4 +1,4 @@
-package unitnMT;
+package org.boussinesq;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.algo.solver.DoubleCG;

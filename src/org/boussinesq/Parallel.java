@@ -1,4 +1,4 @@
-package unitnMT;
+package org.boussinesq;
 
 import java.util.Collection;
 import java.util.LinkedList;
