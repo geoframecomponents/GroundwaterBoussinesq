@@ -1,7 +1,5 @@
 package org.boussinesq;
 
-import cern.colt.Arrays;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class Grid.
@@ -304,7 +302,7 @@ public class Grid {
 	public static void main (String[] args){
 		
 		
-		Grid gridTest = new Grid("Song");
+		//Grid gridTest = new Grid("Song");
 		/*Grid gridTest = new Grid();
 		
 		System.out.println("");
