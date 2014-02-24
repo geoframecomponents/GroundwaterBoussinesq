@@ -676,7 +676,7 @@ public class BoussinesqEquation {
 				mesh.numberSidesPolygon.length);
 
 		int[] indexDiag = computeIndexDiag(mesh);
-		FileWriter Rstatfile = new FileWriter(mesh.outputPath);
+		FileWriter Rstatfile = new FileWriter(mesh.outputPathBeq);
 		PrintWriter errestat = new PrintWriter(Rstatfile);
 
 		for (int t = 0; t < simTime; t += deltat) {
@@ -709,11 +709,33 @@ public class BoussinesqEquation {
 
 	public static void main(String[] args)
 			throws IterativeSolverDoubleNotConvergedException, IOException {
-
+		String simulationType = "Song";
 		// long start=System.nanoTime();
-		Grid grid1 = new Grid("Song");
+		Grid grid1 = new Grid(simulationType);
 		BoussinesqEquation beq = new BoussinesqEquation();
 		beq.computeBEq(grid1);
+		
+		if (simulationType == "Song"){
+			double[] songSol = new double[grid1.numberSidesPolygon.length];
+			Song s = new Song(grid1.numberSidesPolygon.length, beq.simTime,
+					grid1.hydrConductivity[0]);
+			
+			songSol = s.beqSong(grid1);
+			
+			FileWriter Rstatfile = new FileWriter(grid1.outputPathSong);
+			PrintWriter errestat = new PrintWriter(Rstatfile);
+			
+			for (int j = 0; j < songSol.length; j++) {
+
+				errestat.println(songSol[j]);
+
+			}
+
+			errestat.println();
+			System.out.println();
+			Rstatfile.close();
+			
+		}
 		// long end=System.nanoTime();
 		// System.out.println("End time: " + (end-start));
 

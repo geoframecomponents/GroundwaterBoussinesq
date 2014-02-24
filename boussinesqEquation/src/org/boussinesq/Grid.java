@@ -6,7 +6,8 @@ package org.boussinesq;
  */
 public class Grid {
 	
-	String outputPath;
+	String outputPathBeq;
+	String outputPathSong;
 	
 	//POLYGONS PROPERTIES
 	
@@ -175,7 +176,8 @@ public class Grid {
 		}else if (configuration.equals("Song")){
 			
 			
-			this.outputPath = "/home/francesco/desktop/prova.txt";
+			this.outputPathBeq = "/home/francesco/desktop/beq.txt";
+			this.outputPathSong = "/home/francesco/desktop/song.txt";
 			int dim = 1000;
 			//POLYGONS PROPERTIES
 			this.numberSidesPolygon= new int[dim];
