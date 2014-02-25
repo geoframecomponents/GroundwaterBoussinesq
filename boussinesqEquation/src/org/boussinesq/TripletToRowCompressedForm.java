@@ -9,6 +9,10 @@ import java.util.Collections;
  */
 public class TripletToRowCompressedForm {
 
+	
+	static int[] Mp;
+	static int[] Mj;
+	static double[] Ml;
 	/**
 	 * Compute Mp.
 	 * 
@@ -20,12 +24,12 @@ public class TripletToRowCompressedForm {
 	 *            the np
 	 * @return the int[]
 	 */
-	public static int[] computeMp(int[] pMi, int[] pMj, double[] pMl, int Np) {
+	public static void computeMp(int[] pMi, int[] pMj, double[] pMl, int Np) {
 
-		int[] Mp = new int[Np + 1];
+		Mp = new int[Np + 1];
 		int[] Mi = new int[pMi.length];
-		int[] Mj = new int[pMj.length];
-		double[] Ml = new double[pMl.length];
+		Mj = new int[pMj.length];
+		Ml = new double[pMl.length];
 
 		int index = 0;
 		int min = 0;
@@ -41,7 +45,7 @@ public class TripletToRowCompressedForm {
 
 			for (int j = 0; j < pMi.length; j++) {
 
-				if (pMi[j] == i) {
+				if (pMi[j] == (i+1)) {
 
 					alMi.add(pMi[j]);
 					alMl.add(pMl[j]);
@@ -62,8 +66,8 @@ public class TripletToRowCompressedForm {
 				while (alMi.size() > 0) {
 
 					min = alMj.indexOf(Collections.min(alMj));
-					Mi[index] = alMi.get(min);
-					Mj[index] = alMj.get(min);
+					Mi[index] = alMi.get(min)-1;
+					Mj[index] = alMj.get(min)-1;
 					Ml[index] = alMl.get(min);
 
 					index++;
@@ -87,7 +91,7 @@ public class TripletToRowCompressedForm {
 		System.out.println(Arrays.toString(Mj));
 		System.out.println(Arrays.toString(Ml));
 		
-		return Mp;
+		//return Mp;
 
 	}
 
@@ -101,27 +105,17 @@ public class TripletToRowCompressedForm {
 	 */
 	public static void main(String[] args) {
 
-		int[] Mi = new int[] { 0, 0, 1, 1, 1, 2, 2, 0, 4, 3, 1, 5, 4, 3, 4, 2,
-				4, 5, 6, 5, 3, 5, 6, 8, 6, 4, 6, 7, 7, 9, 8, 5, 8, 9, 9, 10, 6,
-				9, 10, 10, 11, 11, 7, 10, 11, 12, 9, 11, 12, 13, 12, 10, 11,
-				13, 14, 15, 13, 14, 14, 15, 15, 14 };
+		int[] Mi = new int[] {2, 1, 4, 1, 3, 2, 5, 2, 5, 4, 6, 4, 7, 5, 7, 6, 8, 7, 1, 2, 3, 4, 5, 6, 7,8};
 
-		int[] Mj = new int[] { 0, 1, 0, 1, 2, 1, 2, 4, 0, 3, 5, 1, 3, 4, 4, 6,
-				5, 4, 2, 5, 8, 6, 5, 3, 6, 9, 7, 7, 6, 4, 8, 10, 9, 9, 8, 5,
-				11, 10, 9, 10, 6, 11, 12, 11, 10, 7, 13, 12, 11, 9, 12, 14, 15,
-				13, 10, 11, 14, 13, 14, 15, 14, 15 };
+		int[] Mj = new int[] {1, 2, 1, 4, 2, 3, 2, 5, 4, 5, 4, 6, 5, 7, 6, 7, 7, 8, 1, 2, 3, 4, 5, 6, 7,8};
 
-		double[] Ml = new double[] { -1, 23, 23, -1, 24, 24, -1, 5, 5, -1, 6,
-				6, 27, 27, -1, 7, 28, 28, 7, -1, 9, 29, 29, 9, -1, 10, 30, -1,
-				30, 10, -1, 11, 33, -1, 33, 11, 12, 34, 34, -1, 12, -1, 13, 35,
-				35, 13, 15, 36, 36, 15, -1, 16, 17, -1, 16, 17, 39, 39, -1, -1,
-				40, 40 };
+		double[] Ml = new double[] {1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, -1, -1, -1, -1, -1, -1, -1,-1};
 
 		// number of polygons in the mesh
-		int Np = 16;
+		int Np = 8;
 
 		// compute Mp from a triplet form
-		int[] Mp = computeMp(Mi, Mj, Ml, Np);
+		computeMp(Mi, Mj, Ml, Np);
 		System.out.println(Arrays.toString(Mp));
 	}
 }

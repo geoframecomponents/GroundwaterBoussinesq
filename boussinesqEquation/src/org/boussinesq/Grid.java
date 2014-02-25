@@ -176,8 +176,8 @@ public class Grid {
 		}else if (configuration.equals("Song")){
 			
 			
-			this.outputPathBeq = "/home/francesco/desktop/beq.txt";
-			this.outputPathSong = "/home/francesco/desktop/song.txt";
+			this.outputPathBeq = "/home/francesco/desktop/beq15d.txt";
+			this.outputPathSong = "/home/francesco/desktop/song15d.txt";
 			int dim = 1000;
 			//POLYGONS PROPERTIES
 			this.numberSidesPolygon= new int[dim];
@@ -258,10 +258,10 @@ public class Grid {
 			int ind =2;
 			
 			for (int i = 1; i < dim; i++) {
-				/*
-				 * nested for-loop to analyze diagonal entries, which are identified
-				 * by a negative number
-				 */
+				
+				 /** nested for-loop to analyze diagonal entries, which are identified
+				 * by a negative number*/
+				 
 				
 				for (int j = this.Mp[i]; j < this.Mp[i + 1]; j++) {
 
