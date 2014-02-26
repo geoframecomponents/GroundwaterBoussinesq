@@ -1,4 +1,4 @@
-package org.boussinesq;
+package org.boussinesq.song;
 
 //import java.util.Arrays;
 
