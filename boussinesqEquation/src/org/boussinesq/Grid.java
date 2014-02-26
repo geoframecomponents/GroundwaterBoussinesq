@@ -176,8 +176,8 @@ public class Grid {
 		}else if (configuration.equals("Song")){
 			
 			
-			this.outputPathBeq = "/home/francesco/desktop/beq15d.txt";
-			this.outputPathSong = "/home/francesco/desktop/song15d.txt";
+			this.outputPathBeq = "/home/francesco/desktop/tesiTest/beq15d.txt";
+			this.outputPathSong = "/home/francesco/desktop/tesiTest/song15d.txt";
 			int dim = 1000;
 			//POLYGONS PROPERTIES
 			this.numberSidesPolygon= new int[dim];

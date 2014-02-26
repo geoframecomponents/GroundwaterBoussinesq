@@ -36,7 +36,7 @@ public class BoussinesqEquation {
 	int deltat = 3600;
 
 	/** legth of the simulation */
-	int simTime = 3600 * 24 * 10;
+	int simTime = 3600 * 24;
 
 	double tolerance = 0;
 
