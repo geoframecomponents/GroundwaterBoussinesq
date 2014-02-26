@@ -4,66 +4,7 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseRCDoubleMatrix2D;
 
-public class SetDirichletBC {
-
-	/**
-	 * Compute wet area.
-	 * 
-	 * @desc this method computes the wet area of the cell; if the piezometric
-	 *       head is less than the bedrock elevation, the wet area is null,
-	 *       otherwise is equal to the porosity for planimetric area of the
-	 *       cell.
-	 * 
-	 * @param eta
-	 *            the piezometric head
-	 * @param zetaBedrock
-	 *            the bedrock elevation
-	 * @param porosity
-	 *            the porosity
-	 * @param planimetricArea
-	 *            the planimetric area of the cell
-	 * 
-	 * @return the wet area of the cell
-	 */
-	public double computeWetArea(double eta, double zetaBedrock,
-			double porosity, double planimetricArea) {
-
-		// the wet area is the variable that the method returns
-		double wetArea = 0;
-
-		if (eta > zetaBedrock) {
-			wetArea = porosity * planimetricArea;
-		} else {
-			wetArea = 0;
-		}
-
-		return wetArea;
-	}
-
-	/**
-	 * Compute water volume.
-	 * 
-	 * @desc this method computes the volume of stored water in the cell like
-	 *       multiplication between the wet area and the thickness of the water
-	 *       table
-	 * 
-	 * @param eta
-	 *            the piezometric head
-	 * @param zetaBedrock
-	 *            the bedrock elevation
-	 * @param planimetricArea
-	 *            the planimetric area of the cell
-	 * 
-	 * @return the volume of the stored water in the cell
-	 */
-	public double computeWaterVolume(double eta, double zetaBedrock,
-			double wetArea) {
-
-		double volume = wetArea * (eta - zetaBedrock);
-
-		return volume;
-
-	}
+public class SetNoDirichletBC {
 
 	/**
 	 * Compute T.
@@ -99,7 +40,7 @@ public class SetDirichletBC {
 		double[] arrayT = new double[Mesh.Ml.length];
 
 		/* for-loop to analyze the mesh cell by cell */
-		for (int i = 0; i < Mesh.numberSidesPolygon.length; i++) {
+		for (int i = 0; i < Mesh.Np; i++) {
 			/*
 			 * nested for-loop to analyze shared edges between the i-th cell and
 			 * the Mi[j]-th cell
@@ -158,29 +99,21 @@ public class SetDirichletBC {
 	 * 
 	 * @return the array b
 	 */
-	public double[] computeB(double[] eta, double[] Tdrichelet,
-			double[] etaDrichelet) {
+	public double[] computeB(double[] eta) {
 
 		// declaration of the array that holds the known terms of the linear
 		// system
-		double[] arrB = new double[Mesh.numberSidesPolygon.length];
+		double[] arrB = new double[Mesh.Np];
 
-		for (int i = 0; i < Mesh.numberSidesPolygon.length; i++) {
-			// compute the wet area
-			double wetArea = computeWetArea(eta[i], Mesh.bottomElevation[i],
-					Mesh.porosity[i], Mesh.planArea[i]);
+		for (int i = 0; i < Mesh.Np; i++) {
 			// compute the water volume stored in the cell
-			double volume = computeWaterVolume(eta[i], Mesh.bottomElevation[i],
-					wetArea);
-			// equation (19)
-			double sum = 0;
-			for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
-				sum += Tdrichelet[j] * etaDrichelet[Mesh.Mi[j]];
-			}
+			double volume = PolygonGeometricalWetProperties.computeWaterVolume(eta[i], Mesh.bottomElevation[i],
+					Mesh.porosity[i], Mesh.planArea[i]);
 
 			// delta t deve essere minore di 1/c
-			arrB[i] = volume + BoussinesqEquation.deltat * Mesh.planArea[i] * Mesh.source[i] - sum
-					- BoussinesqEquation.deltat * Mesh.planArea[i] * Mesh.c[i]
+			arrB[i] = volume + BoussinesqEquation.deltat * Mesh.planArea[i]
+					* Mesh.source[i] - BoussinesqEquation.deltat
+					* Mesh.planArea[i] * Mesh.c[i]
 					* Math.pow(volume / Mesh.planArea[i], Mesh.m[i]);
 
 		}
@@ -227,30 +160,21 @@ public class SetDirichletBC {
 		double sum = 0;
 		// declaration of the array that holds the residual function for every
 		// cell
-		double[] arrR = new double[Mesh.numberSidesPolygon.length];
+		double[] arrR = new double[Mesh.Np];
 
-		for (int i = 0; i < Mesh.numberSidesPolygon.length; i++) {
-			if (isNoValue(Mesh.etaDrichelet[i], Mesh.NOVALUE)) {
+		for (int i = 0; i < Mesh.Np; i++) {
 
-				// non Dirichlet cells
-				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
-					sum += arrT[j] * eta[Mesh.Mi[j]];
-				}
-
-				double wetArea = computeWetArea(eta[i],
-						Mesh.bottomElevation[i], Mesh.porosity[i],
-						Mesh.planArea[i]);
-				double waterVolume = computeWaterVolume(eta[i],
-						Mesh.bottomElevation[i], wetArea);
-				// equation (A3)
-				arrR[i] = waterVolume + sum - arrb[i];
-
-				sum = 0;
-			} else {
-
-				// Dirichlet cells
-				arrR[i] = 0;
+			for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
+				sum += arrT[j] * eta[Mesh.Mi[j]];
 			}
+
+			double waterVolume = PolygonGeometricalWetProperties.computeWaterVolume(eta[i],
+					Mesh.bottomElevation[i], Mesh.porosity[i], Mesh.planArea[i]);
+			// equation (A3)
+			arrR[i] = waterVolume + sum - arrb[i];
+
+			sum = 0;
+
 		}
 
 		return arrR;
@@ -300,159 +224,14 @@ public class SetDirichletBC {
 		// diagonal entries
 		for (int i = 0; i < indexDiag.length; i++) {
 
-			if (isNoValue(Mesh.etaDrichelet[i], Mesh.NOVALUE)) {
-				// non Dirichlet cells
-				// equation (A6)
-				arrJr[indexDiag[i]] = arrT[indexDiag[i]]
-						+ computeWetArea(eta[i], Mesh.bottomElevation[i],
-								Mesh.porosity[i], Mesh.planArea[i]);
+			// equation (A6)
+			arrJr[indexDiag[i]] = arrT[indexDiag[i]]
+					+ PolygonGeometricalWetProperties.computeWetArea(eta[i], Mesh.bottomElevation[i],
+							Mesh.porosity[i], Mesh.planArea[i]);
 
-			} else {
-				// Dirichlet cells
-				arrJr[indexDiag[i]] = arrT[indexDiag[i]];
-			}
 		}
 
 		return arrJr;
-	}
-
-	/**
-	 * Compute T for Dirichlet cells.
-	 * 
-	 * @desc according the head-based Boundary Conditions (Dirichlet) at the
-	 *       equation (30) of [Cordano & Rigon, 2012], the matrix T in row
-	 *       compressed form for a Dirichlet cell is computed only if the cell
-	 *       that I'm observing or the adjacency cell are a Dirichlet cell.
-	 *       Other T is imposed equal to zero.
-	 * 
-	 * @param mesh
-	 *            the object mesh is passed so every field of the mesh class is
-	 *            available
-	 * @param T
-	 *            the array of T in Row Compressed Form
-	 * 
-	 * @return the array of T in RC-F for Dirichlet cells
-	 */
-	public double[] computeTDirichlet(double[] T) {
-
-		/*
-		 * the matrix T is an array because this code uses the Row Compressed
-		 * Form to stored sparse matrix
-		 */
-		double[] arrayT = new double[Mesh.Ml.length];
-
-		/* for-loop to analyze the mesh cell by cell */
-		for (int i = 0; i < Mesh.numberSidesPolygon.length; i++) {
-
-			if (!isNoValue(Mesh.etaDrichelet[i], Mesh.NOVALUE)) {
-
-				// Dirichlet cells
-				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
-					arrayT[j] = T[j];
-				}
-			} else {
-
-				// non Dirichlet cells
-				/*
-				 * nested for-loop to analyze shared edges between the i-th cell
-				 * and the Mi[j]-th cell
-				 */
-				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
-
-					if (!isNoValue(Mesh.etaDrichelet[Mesh.Mi[j]], Mesh.NOVALUE)) {
-
-						// adjacent Dirichlet cell
-						arrayT[j] = T[j];
-					} else {
-
-						// adjacent non Dirichlet cell
-						arrayT[j] = 0.0;
-					}
-				}
-
-			}
-
-		}
-
-		return arrayT;
-	}
-
-	/**
-	 * Compute T for non Dirichlet cells.
-	 * 
-	 * @desc according the head-based Boundary Conditions (Dirichlet) at the
-	 *       equation (29) of [Cordano & Rigon, 2012], the matrix T in row
-	 *       compressed form for a non Dirichlet cell is computed only if
-	 *       neither the cell that I'm observing nor the adjacency cell are a
-	 *       Dirichlet cell. Other T is imposed equal to zero.
-	 * 
-	 * @param mesh
-	 *            the object mesh is passed so every field of the mesh class is
-	 *            available
-	 * @param T
-	 *            the array of T in Row Compressed Form
-	 * 
-	 * @return the array of T in RC-F for non Dirichlet cells
-	 */
-	public double[] computeTNoDirichlet(double[] T) {
-
-		/*
-		 * the matrix T is an array because this code uses the Row Compressed
-		 * Form to stored sparse matrix
-		 */
-		double[] arrayT = new double[Mesh.Ml.length];
-
-		/* for-loop to analyze the mesh cell by cell */
-		for (int i = 0; i < Mesh.numberSidesPolygon.length; i++) {
-
-			if (isNoValue(Mesh.etaDrichelet[i], Mesh.NOVALUE)) {
-
-				// non Dirichlet cells
-				/*
-				 * nested for-loop to analyze shared edges between the i-th cell
-				 * and the Mi[j]-th cell
-				 */
-				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
-
-					if (isNoValue(Mesh.etaDrichelet[Mesh.Mi[j]], Mesh.NOVALUE)) {
-
-						// adjacent non Dirichlet cells
-						arrayT[j] = T[j];
-					} else {
-
-						// adjacent Dirichlet cells
-						arrayT[j] = 0.0;
-					}
-				}
-
-			}
-
-		}
-
-		return arrayT;
-	}
-
-	/**
-	 * Checks if is no value.
-	 * 
-	 * @desc this method evaluates if the entry value is a NaN or not. If is
-	 *       NaN, the cell I'm observing is a non Dirichlet cell, otherwise is a
-	 *       Dirichlet cell
-	 * 
-	 * @param x
-	 *            the eta of the cell that I'm analyzing
-	 * @param noValue
-	 *            the no value
-	 * 
-	 * @return boolean true if the cell isn't a Dirichlet cell, false otherwise
-	 */
-	public boolean isNoValue(double x, double noValue) {
-
-		if (x <= noValue) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	/**
@@ -493,9 +272,8 @@ public class SetDirichletBC {
 			double[] jr = computeJr(indexDiag, arrT, eta);
 
 			// convert array in sparse matrix for DoubleCG class
-			matrixJr = new SparseRCDoubleMatrix2D(
-					Mesh.numberSidesPolygon.length,
-					Mesh.numberSidesPolygon.length, Mesh.Mp, Mesh.Mi, jr);
+			matrixJr = new SparseRCDoubleMatrix2D(Mesh.Np, Mesh.Np, Mesh.Mp,
+					Mesh.Mi, jr);
 
 			// compute the residual function
 			double[] r = computeR(arrT, arrb, eta);

@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.boussinesq.song.Song;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
@@ -40,81 +41,8 @@ public class BoussinesqEquation {
 	/** legth of the simulation */
 	static int simTime = 3600 * 24;
 
-	static double tolerance = 0;
-
-	BoussinesqEquation() {
-
-		tolerance = computeMachineEpsilonDouble();
-
-	}
-
-	/**
-	 * Calculate machine epsilon double.
-	 * 
-	 * @desc this method compute the tolerance of the machine. For more info go
-	 *       to
-	 *       https://en.wikipedia.org/wiki/Machine_epsilon#Approximation_using_Java
-	 *       . In c/c++ section there's write that:
-	 * 
-	 *       In such languages as C or C++ when you do something like while( 1.0
-	 *       + eps > 1.0 ) the expression is calculated not with 64 bits
-	 *       (double) but with the processor precision (80 bits or more depends
-	 *       on the processor and compile options). Below program calculates
-	 *       exactly on 32 bits (float) and 64 bits (double)
-	 * 
-	 * 
-	 * @return the tolerance of the machine
-	 */
-	private static double computeMachineEpsilonDouble() {
-
-		// machine tolerance
-		double machEps = 1.0d;
-
-		do
-			machEps /= 2.0d;
-		while ((double) (1.0 + (machEps / 2.0)) != 1.0);
-
-		return machEps;
-	}
-
-	/**
-	 * Compute index of diagonal.
-	 * 
-	 * @desc this method computes the indices of the diagonal of the adjacency
-	 *       matrix; this matrix and all the sparse matrices are stored in Row
-	 *       Compressed Form. More information at the web site
-	 *       https://en.wikipedia.org/wiki/Sparse_matrix
-	 * 
-	 * @param mesh
-	 *            the object mesh is passed so every field of the mesh class is
-	 *            available
-	 * 
-	 * @return the array that holds the indices of the diagonal entries of the
-	 *         sparse adjacency matrix in Row Compressed Form
-	 */
-	public int[] computeIndexDiag() {
-
-		// declaration of the array that holds the indices of diagonal entries
-		int[] indexDiag = new int[Mesh.Np];
-
-		/* for-loop to analyze the matrix cell by cell */
-		for (int i = 0; i < Mesh.Np; i++) {
-			/*
-			 * nested for-loop to analyze diagonal entries, which are identified
-			 * by a negative number
-			 */
-			for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
-
-				if (Mesh.Mi[j] == i) {
-					indexDiag[i] = j;
-				}
-
-			}
-		}
-
-		return indexDiag;
-	}
-
+	static double tolerance;
+	
 	/**
 	 * Compute the Boussinesq Equation.
 	 * 
@@ -138,8 +66,11 @@ public class BoussinesqEquation {
 		double[] eta = new double[Mesh.Np];
 		// new conjugate gradient object
 		RCConjugateGradient cg = new RCConjugateGradient(Mesh.Np);
-
-		int[] indexDiag = computeIndexDiag();
+		RCIndexDiagonalElement rcIndexDiagonalElement = new RCIndexDiagonalElement();
+		
+		int[] indexDiag = rcIndexDiagonalElement.computeIndexDiag();
+		
+		tolerance = MachineEpsilon.computeMachineEpsilonDouble();
 
 		if (boundaryConditions.equals("Dirichlet")) {
 
