@@ -39,11 +39,21 @@ public class Song {
 
 		}
 
+		double sum = 0;
+
+		for (int i = 0; i < a.length; i++) {
+
+			sum += a[i];
+
+		}
+		
+		System.out.println("Somma a: " + sum);
+		
 		return a;
 
 	}
 
-	public double[] computeX(double[] porosity) {
+	public double[] computeXI(double[] porosity) {
 
 		double[] xi = new double[x.length];
 
@@ -77,7 +87,7 @@ public class Song {
 		double xi0 = 0;
 		double sum = 0;
 
-		for (int i = 0; i < ax.length; i++) {
+		for (int i = 1; i < ax.length; i++) {
 
 			sum += ax[i];
 
@@ -88,7 +98,7 @@ public class Song {
 		// System.out.println(xi0);
 
 		solutionDimensionless = SongDimensionless.beqSongDimensionless(
-				computeX(porosity), xi0, computeA(ax, xi0));
+				computeXI(porosity), xi0, computeA(ax, xi0));
 
 		for (int i = 0; i < solutionDimensionless.length; i++) {
 

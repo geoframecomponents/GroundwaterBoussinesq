@@ -12,19 +12,19 @@ public class Song {
 	static int h1;
 	int nmax;
 
-	Song(int dim, int time, double ks) {
+	public Song(int time, int Np, double ks) {
 
-		x = new double[dim];
+		x = new double[Np];
 		t = time;
 		alpha = 0;
 		h1 = 1;
 		nmax = 10;
 		hydraulicConductivity = ks;
-		
-		for (int i = 0; i<x.length;i++){
-			
+
+		for (int i = 0; i < x.length; i++) {
+
 			x[i] = i;
-			
+
 		}
 
 	}
@@ -38,56 +38,73 @@ public class Song {
 			a[i] = ax[i] * Math.pow(xi0, 2);
 
 		}
-		
+
+		double sum = 0;
+
+		for (int i = 0; i < a.length; i++) {
+
+			sum += a[i];
+
+		}
+
+		System.out.println("Somma a: " + sum);
+
 		return a;
 
 	}
 
-	public double[] computeX(Grid mesh) {
+	public double[] computeXI(double[] porosity) {
 
 		double[] xi = new double[x.length];
+		System.out.println("Lunghezza vettore porosità: " + porosity.length);
+		System.out.println("Lunghezza vettore xi: " + xi.length);
 
 		for (int i = 0; i < xi.length; i++) {
 
 			xi[i] = x[i]
-					* Math.pow(2 * mesh.porosity[i] * (alpha + 1) / (h1
-							* hydraulicConductivity * Math.pow(t, alpha + 1)),
-							0.5);
+					* Math.pow(
+							2
+									* porosity[i]
+									* (alpha + 1)
+									/ (h1 * hydraulicConductivity * Math.pow(t,
+											alpha + 1)), 0.5);
 
 		}
-		
-		//System.out.println(Arrays.toString(xi));
+
+		// System.out.println(Arrays.toString(xi));
 		return xi;
 	}
 
-	public double[] beqSong(Grid mesh) {
+	public double[] beqSong(double[] porosity) {
 
 		double[] ax = new double[nmax];
 		double[] solutionDimensionless = new double[x.length];
 		double[] solution = new double[x.length];
 
-		ax = SongCoefficient.CoefficientSongSolution(nmax, alpha / (alpha + 1));
+		ax = SongCoefficient.CoefficientSongSolution(nmax,
+				(alpha / (alpha + 1)));
 
-		//System.out.println("Ax" + Arrays.toString(ax));
-		
+		// System.out.println("Ax" + Arrays.toString(ax));
+
 		double xi0 = 0;
 		double sum = 0;
 
-		for (int i = 0; i < ax.length; i++) {
+		for (int i = 1; i < ax.length; i++) {
 
 			sum += ax[i];
-			
 
 		}
 
 		xi0 = Math.pow(sum, -0.5);
-		
-		//System.out.println(xi0);
-		
+
+		// System.out.println(xi0);
+
 		solutionDimensionless = SongDimensionless.beqSongDimensionless(
-				computeX(mesh), xi0, computeA(ax, xi0));
+				computeXI(porosity), xi0, computeA(ax, xi0));
 
 		for (int i = 0; i < solutionDimensionless.length; i++) {
+
+			// System.out.println(solutionDimensionless[i]);
 
 			solution[i] = h1 * Math.pow(t, alpha) * solutionDimensionless[i];
 
@@ -98,12 +115,21 @@ public class Song {
 	}
 
 	public static void main(String[] args) {
+
 		int time = 3600 * 24;
-		Grid mesh = new Grid("Song");
-		Song s = new Song(mesh.numberSidesPolygon.length, time,
-				0.01);
-		System.out.println(Arrays.toString(s.beqSong(mesh)));
-		
+		int dim = 5;
+
+		double[] porosity = new double[dim];
+
+		for (int i = 0; i < dim; i++) {
+
+			porosity[i] = 0.4;
+
+		}
+
+		Song s = new Song(time, dim, 0.01);
+		System.out.println(Arrays.toString(s.beqSong(porosity)));
+
 		System.exit(1);
 
 	}

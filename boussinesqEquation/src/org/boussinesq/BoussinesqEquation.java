@@ -717,10 +717,10 @@ public class BoussinesqEquation {
 		
 		if (simulationType == "Song"){
 			double[] songSol = new double[grid1.numberSidesPolygon.length];
-			Song s = new Song(grid1.numberSidesPolygon.length, beq.simTime,
+			Song s = new Song(beq.simTime, grid1.numberSidesPolygon.length,
 					grid1.hydrConductivity[0]);
 			
-			songSol = s.beqSong(grid1);
+			songSol = s.beqSong(grid1.porosity);
 			
 			FileWriter Rstatfile = new FileWriter(grid1.outputPathSong);
 			PrintWriter errestat = new PrintWriter(Rstatfile);

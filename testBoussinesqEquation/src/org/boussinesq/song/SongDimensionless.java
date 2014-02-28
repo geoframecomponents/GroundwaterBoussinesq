@@ -24,7 +24,7 @@ public class SongDimensionless {
 			for (int j = 0; j < xi.length; j++) {
 
 				solution[j] = solution[j] + a[i]
-						* Math.pow(Math.max(0, 1 - xi[j] / xi0), i + 1);
+						* Math.pow(Math.max(0, 1 - xi[j] / xi0), i);
 
 			}
 
@@ -38,7 +38,6 @@ public class SongDimensionless {
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 
