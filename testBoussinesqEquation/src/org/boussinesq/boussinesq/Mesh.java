@@ -28,7 +28,7 @@ public class Mesh {
 	static double[] eta = {12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12};
 	
 	/** The eta. */
-	static double[] etaDrichelet = {12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12};
+	static double[] etaDirichlet = {12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12};
 	
 	static double NOVALUE = -999;
 	
@@ -117,7 +117,7 @@ public class Mesh {
 			Mesh.eta = new double[]{12,12,12,12,12,14,12,12,23,12,12,12,12,12,12,12};
 			
 			/** The eta. */
-			Mesh.etaDrichelet = new double[]{13,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,
+			Mesh.etaDirichlet = new double[]{13,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,-999,
 					-999,-999,-999,-999};
 			
 			Mesh.NOVALUE = -999;
@@ -188,7 +188,7 @@ public class Mesh {
 			Mesh.planArea= new double[dim];
 			Mesh.source = new double[dim];
 			Mesh.eta = new double[dim];
-			Mesh.etaDrichelet = new double[dim];
+			Mesh.etaDirichlet = new double[dim];
 			Mesh.topElevation = new double[dim];
 			Mesh.bottomElevation = new double[dim];
 			Mesh.porosity = new double[dim];
@@ -207,7 +207,7 @@ public class Mesh {
 				Mesh.planArea[i] = 1;
 				Mesh.source[i] = 0;
 				Mesh.eta[i] = 0;
-				Mesh.etaDrichelet[i] = -999;
+				Mesh.etaDirichlet[i] = -999;
 				Mesh.bottomElevation[i] = 0;
 				Mesh.porosity[i] = 0.4;
 				Mesh.lengthSides[i]= 1;
@@ -221,7 +221,7 @@ public class Mesh {
 			
 			Mesh.c[dim-1] = 1;
 			Mesh.m[dim-1] = 1;
-			Mesh.etaDrichelet[0] = 1;
+			Mesh.etaDirichlet[0] = 1;
 			Mesh.lengthSides[dim]= 1;
 			Mesh.euclideanDistance[dim] = 1;
 			Mesh.hydrConductivity[dim] = 0.01;

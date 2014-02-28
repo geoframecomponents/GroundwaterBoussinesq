@@ -1,78 +1,12 @@
 package org.boussinesq.boussinesq;
 
+import org.boussinesq.RowCompressedForm.RCConjugateGradient;
+
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseRCDoubleMatrix2D;
 
 public class SetDirichletBC {
-
-	/**
-	 * Compute T.
-	 * 
-	 * @desc this method computes the elements of the matrix T in Row Compressed
-	 *       Form according to the equations (20) e (21) of [Cordano & Rigon,
-	 *       2012]
-	 * 
-	 * @param mesh
-	 *            the object mesh is passed so every field of the mesh class is
-	 *            available
-	 * @param eta
-	 *            the piezometric head
-	 * 
-	 * @return the matrix T like array in Row Compressed Form
-	 */
-	public double[] computeT(double[] eta) {
-
-		/*
-		 * variable to which sum the terms of matrix T (T is an array because is
-		 * in RC-F) that are outside the diagonal; after investigation of the
-		 * row of the matrix the value is stored in the diagonal of matrix T
-		 */
-		double rowSum = 0;
-
-		/* to identify the diagonal entry of matrix T in row-compressed form */
-		int index = 0;
-
-		/*
-		 * the matrix T is an array because this code uses the Row Compressed
-		 * Form to stored sparse matrix
-		 */
-		double[] arrayT = new double[Mesh.Ml.length];
-
-		/* for-loop to analyze the mesh cell by cell */
-		for (int i = 0; i < Mesh.numberSidesPolygon.length; i++) {
-			/*
-			 * nested for-loop to analyze shared edges between the i-th cell and
-			 * the Mi[j]-th cell
-			 */
-			for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
-
-				if (Mesh.Mi[j] != i) {
-					// equation (21)
-					arrayT[j] = -BoussinesqEquation.deltat
-							* (1 / Mesh.euclideanDistance[(int) Mesh.Ml[j]])
-							* Mesh.hydrConductivity[(int) Mesh.Ml[j]]
-							* Mesh.lengthSides[(int) Mesh.Ml[j]]
-							* Math.max(
-									Math.max(0, eta[Mesh.Mi[j]]
-											- Mesh.bottomElevation[Mesh.Mi[j]]),
-									Math.max(0, eta[i]
-											- Mesh.bottomElevation[i]));
-
-					rowSum += -arrayT[j];
-
-				} else {
-					index = j;
-				}
-
-			}
-			// equation (20)
-			arrayT[index] = rowSum;
-			rowSum = 0;
-		}
-
-		return arrayT;
-	}
 
 	/**
 	 * Compute B.
@@ -94,13 +28,13 @@ public class SetDirichletBC {
 	 *            the the piezometric head
 	 * @param Tdrichelet
 	 *            the matrix T computes for the Dirichlet cells
-	 * @param etaDrichelet
+	 * @param etaDirichlet
 	 *            the array of known eta in the Dirichlet cells
 	 * 
 	 * @return the array b
 	 */
-	public double[] computeB(double[] eta, double[] Tdrichelet,
-			double[] etaDrichelet) {
+	public double[] computeB(double[] eta, double[] Tdirichlet,
+			double[] etaDirichlet) {
 
 		// declaration of the array that holds the known terms of the linear
 		// system
@@ -114,7 +48,7 @@ public class SetDirichletBC {
 			// equation (19)
 			double sum = 0;
 			for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
-				sum += Tdrichelet[j] * etaDrichelet[Mesh.Mi[j]];
+				sum += Tdirichlet[j] * etaDirichlet[Mesh.Mi[j]];
 			}
 
 			// delta t deve essere minore di 1/c
@@ -170,7 +104,7 @@ public class SetDirichletBC {
 		double[] arrR = new double[Mesh.numberSidesPolygon.length];
 
 		for (int i = 0; i < Mesh.numberSidesPolygon.length; i++) {
-			if (isNoValue(Mesh.etaDrichelet[i], Mesh.NOVALUE)) {
+			if (isNoValue(Mesh.etaDirichlet[i], Mesh.NOVALUE)) {
 
 				// non Dirichlet cells
 				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
@@ -238,7 +172,7 @@ public class SetDirichletBC {
 		// diagonal entries
 		for (int i = 0; i < indexDiag.length; i++) {
 
-			if (isNoValue(Mesh.etaDrichelet[i], Mesh.NOVALUE)) {
+			if (isNoValue(Mesh.etaDirichlet[i], Mesh.NOVALUE)) {
 				// non Dirichlet cells
 				// equation (A6)
 				arrJr[indexDiag[i]] = arrT[indexDiag[i]]
@@ -283,7 +217,7 @@ public class SetDirichletBC {
 		/* for-loop to analyze the mesh cell by cell */
 		for (int i = 0; i < Mesh.numberSidesPolygon.length; i++) {
 
-			if (!isNoValue(Mesh.etaDrichelet[i], Mesh.NOVALUE)) {
+			if (!isNoValue(Mesh.etaDirichlet[i], Mesh.NOVALUE)) {
 
 				// Dirichlet cells
 				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
@@ -298,7 +232,7 @@ public class SetDirichletBC {
 				 */
 				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
 
-					if (!isNoValue(Mesh.etaDrichelet[Mesh.Mi[j]], Mesh.NOVALUE)) {
+					if (!isNoValue(Mesh.etaDirichlet[Mesh.Mi[j]], Mesh.NOVALUE)) {
 
 						// adjacent Dirichlet cell
 						arrayT[j] = T[j];
@@ -344,7 +278,7 @@ public class SetDirichletBC {
 		/* for-loop to analyze the mesh cell by cell */
 		for (int i = 0; i < Mesh.numberSidesPolygon.length; i++) {
 
-			if (isNoValue(Mesh.etaDrichelet[i], Mesh.NOVALUE)) {
+			if (isNoValue(Mesh.etaDirichlet[i], Mesh.NOVALUE)) {
 
 				// non Dirichlet cells
 				/*
@@ -353,7 +287,7 @@ public class SetDirichletBC {
 				 */
 				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
 
-					if (isNoValue(Mesh.etaDrichelet[Mesh.Mi[j]], Mesh.NOVALUE)) {
+					if (isNoValue(Mesh.etaDirichlet[Mesh.Mi[j]], Mesh.NOVALUE)) {
 
 						// adjacent non Dirichlet cells
 						arrayT[j] = T[j];

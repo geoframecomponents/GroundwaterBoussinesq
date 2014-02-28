@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.boussinesq.RowCompressedForm.*;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.boussinesq.song.Song;
 
@@ -68,7 +69,7 @@ public class BoussinesqEquation {
 		RCConjugateGradient cg = new RCConjugateGradient(Mesh.Np);
 		RCIndexDiagonalElement rcIndexDiagonalElement = new RCIndexDiagonalElement();
 		
-		int[] indexDiag = rcIndexDiagonalElement.computeIndexDiag();
+		int[] indexDiag = rcIndexDiagonalElement.computeIndexDiag(Mesh.Np, Mesh.Mp, Mesh.Mi);
 		
 		tolerance = MachineEpsilon.computeMachineEpsilonDouble();
 
@@ -85,7 +86,7 @@ public class BoussinesqEquation {
 
 				// initialize eta array
 				for (int i = 0; i < eta.length; i++) {
-					if (dirichletBC.isNoValue(Mesh.etaDrichelet[i],
+					if (dirichletBC.isNoValue(Mesh.etaDirichlet[i],
 							Mesh.NOVALUE)) {
 
 						// not Dirichlet cells
@@ -93,17 +94,17 @@ public class BoussinesqEquation {
 					} else {
 
 						// Dirichlet cells
-						eta[i] = Mesh.etaDrichelet[i];
+						eta[i] = Mesh.etaDirichlet[i];
 					}
 				}
 
-				double[] matT = dirichletBC.computeT(eta);
+				double[] matT = ComputeT.computeT(eta);
 				double[] matTDrichelet = dirichletBC.computeTDirichlet(matT);
 				double[] matTNoDrichelet = dirichletBC
 						.computeTNoDirichlet(matT);
 
 				double[] arrb = dirichletBC.computeB(eta, matTDrichelet,
-						Mesh.etaDrichelet);
+						Mesh.etaDirichlet);
 
 				eta = dirichletBC.newtonIteration(arrb, matTNoDrichelet,
 						indexDiag, eta, cg);
@@ -135,7 +136,7 @@ public class BoussinesqEquation {
 
 			for (int t = 0; t < simTime; t += deltat) {
 
-				double[] matT = noDirichletBC.computeT(eta);
+				double[] matT = ComputeT.computeT(eta);
 
 				double[] arrb = noDirichletBC.computeB(eta);
 
