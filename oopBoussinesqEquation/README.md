@@ -9,6 +9,6 @@ More info on the paper [A mass-conservative method for the integration of the tw
 ------------------------------------------------------------------------------------------
 
 
-In this code is implemented the *Barenblatt power series solution of Boussinesq equation* like self-similar analytical solution of the Boussinesq equation of groundwater flow in a semi-infinite porous medium.
+In this code is implemented the *Barenblatt power series solution of Boussinesq equation* like analytical solution of the Boussinesq equation of groundwater flow in a semi-infinite porous medium.
 
 More info on the papaer [Note on Barenblatt power series solution to Boussinesq equation](http://www.amm.shu.edu.cn/EN/abstract/abstract4755.shtml#)
