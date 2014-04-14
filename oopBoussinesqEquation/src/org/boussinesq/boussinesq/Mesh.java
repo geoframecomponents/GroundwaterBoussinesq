@@ -3,6 +3,8 @@ package org.boussinesq.boussinesq;
 import java.io.FileNotFoundException;
 
 import org.francescoS.usefulClasses.*;
+
+import cern.colt.Arrays;
 // TODO: Auto-generated Javadoc
 /**
  * The Class Grid.
@@ -46,7 +48,7 @@ public class Mesh {
 	/** The eta. */
 	public static double[] etaDirichlet;
 
-	public static double NOVALUE = -999;
+	public static double NOVALUE = -9999;
 
 	/** The bottom elevation. */
 	public static double[] bedRockElevation;
@@ -191,7 +193,6 @@ public class Mesh {
 
 		} else {
 			
-			FileRead reader = new FileRead();
 			outputPathBeqDirichlet = "/home/francesco/desktop/tesiTest/provaDirichlet.txt";
 			outputPathBeqNoDirichlet= "/home/francesco/desktop/tesiTest/provaNoDirichlet.txt";
 			
@@ -203,58 +204,72 @@ public class Mesh {
 			inputPorosity = "/home/francesco/desktop/tesiTest/giuseppeTest/vPorosity";
 			inputC = "/home/francesco/desktop/tesiTest/giuseppeTest/vC";
 			inputm = "/home/francesco/desktop/tesiTest/giuseppeTest/vM";
-//			inputLengthSides = "/home/francesco/desktop/tesiTest/giuseppeTest/";
-//			inputEuclideanDistance = "/home/francesco/desktop/tesiTest/giuseppeTest/";
-//			inputHydrConductivity = "/home/francesco/desktop/tesiTest/giuseppeTest/";
+			inputLengthSides = "/home/francesco/desktop/tesiTest/giuseppeTest/vLengthSides";
+			inputEuclideanDistance = "/home/francesco/desktop/tesiTest/giuseppeTest/vEuclideanDistance";
+			inputHydrConductivity = "/home/francesco/desktop/tesiTest/giuseppeTest/vHydrConductivity";
 			inputMp = "/home/francesco/desktop/tesiTest/giuseppeTest/Mp";
 			inputMi = "/home/francesco/desktop/tesiTest/giuseppeTest/Mj";
 			inputMl = "/home/francesco/desktop/tesiTest/giuseppeTest/Ml";
 			// POLYGONS PROPERTIES
 
+			FileRead readEta = new FileRead();
+			/** The eta. */
+			Mesh.eta = readEta.readDoubleArray(inputEta);
+			
+			FileRead readPlanArea = new FileRead();
 			/** The plan area. */
-			Mesh.planArea = reader.readDoubleArray(inputPlanArea);
+			Mesh.planArea = readPlanArea.readDoubleArray(inputPlanArea);
 
 			Mesh.Np = planArea.length;
 
+			FileRead readSource = new FileRead();
 			/** The source. per unit area of the polygon */
-			Mesh.source = reader.readDoubleArray(inputSource);
+			Mesh.source = readSource.readDoubleArray(inputSource);
 
+			FileRead readED = new FileRead();
 			/** The eta. */
-			Mesh.eta = reader.readDoubleArray(inputEta);
+			Mesh.etaDirichlet = readED.readDoubleArray(inputEtaDirichlet);
 
-			/** The eta. */
-			Mesh.etaDirichlet = reader.readDoubleArray(inputEtaDirichlet);
-
+			FileRead readBRE = new FileRead();
 			/** The bottom elevation. */
-			Mesh.bedRockElevation = reader.readDoubleArray(inputBedRockElevation);
+			Mesh.bedRockElevation = readBRE.readDoubleArray(inputBedRockElevation);
 
-			Mesh.porosity = reader.readDoubleArray(inputPorosity);
+			FileRead readPor = new FileRead();
+			Mesh.porosity = readPor.readDoubleArray(inputPorosity);
 
-			Mesh.c = reader.readDoubleArray(inputC);
+			FileRead readC = new FileRead();
+			Mesh.c = readC.readDoubleArray(inputC);
 
-			Mesh.m = reader.readDoubleArray(inputm);
+			FileRead readM = new FileRead();
+			Mesh.m = readM.readDoubleArray(inputm);
 
 			// SIDES PROPERTIES
 
-//			/** The length sides. */
-//			Mesh.lengthSides;
-//
-//			/** The euclidean distance. */
-//			Mesh.euclideanDistance;
-//
-//			/** The hydr conductivity. */
-//			Mesh.hydrConductivity;
+			FileRead readLS = new FileRead();
+			/** The length sides. */
+			Mesh.lengthSides = readLS.readDoubleArray(inputLengthSides);
+
+			FileRead readEucD = new FileRead();
+			/** The euclidean distance. */
+			Mesh.euclideanDistance = readEucD.readDoubleArray(inputEuclideanDistance);
+
+			FileRead readHydrC = new FileRead();
+			/** The hydr conductivity. */
+			Mesh.hydrConductivity = readHydrC.readDoubleArray(inputHydrConductivity);
 
 			// ADJACENCY MATRIX PROPERTIES
 
+			FileRead readMp = new FileRead();
 			/** The Mp. */
-			Mesh.Mp = reader.readIntArray(inputMp);
+			Mesh.Mp = readMp.readIntArray(inputMp);
 
+			FileRead readMi = new FileRead();
 			/** The Mi. */
-			Mesh.Mi = reader.readIntArray(inputMi);
+			Mesh.Mi = readMi.readIntArray(inputMi);
 
+			FileRead readMl = new FileRead();
 			/** The Ml. */
-			Mesh.Ml = reader.readDoubleArray(inputMl);
+			Mesh.Ml = readMl.readDoubleArray(inputMl);
 			
 		}
 
@@ -265,48 +280,28 @@ public class Mesh {
 	 * 
 	 * @param args
 	 *            the arguments
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 
-		// Grid gridTest = new Grid("Song");
-		/*
-		 * Grid gridTest = new Grid();
-		 * 
-		 * System.out.println("");
-		 * System.out.println("Array POLYGONS properties length");
-		 * System.out.println("");
-		 * 
-		 * System.out.println("numberSidesPolygon array length: "+
-		 * gridTest.numberSidesPolygon.length);
-		 * System.out.println("planArea array length: "+
-		 * gridTest.planArea.length);
-		 * System.out.println("sourceSink array length: "+
-		 * gridTest.source.length); System.out.println("eta array length: "+
-		 * gridTest.eta.length);
-		 * System.out.println("topElevation array length: "+
-		 * gridTest.topElevation.length);
-		 * System.out.println("bottomElevation array length: "+
-		 * gridTest.bottomElevation.length);
-		 * 
-		 * System.out.println("");
-		 * System.out.println("Array SIDES properties length");
-		 * System.out.println("");
-		 * 
-		 * System.out.println("lengthSides array length: "+
-		 * gridTest.lengthSides.length);
-		 * System.out.println("euclideanDistance array length: "+
-		 * gridTest.euclideanDistance.length);
-		 * System.out.println("hydrConductivity array length: "+
-		 * gridTest.hydrConductivity.length);
-		 * 
-		 * System.out.println("");
-		 * System.out.println("ADJACENCY MATRICES properties length");
-		 * System.out.println("");
-		 * 
-		 * System.out.println("Mp array length: "+ gridTest.Mp.length);
-		 * System.out.println("Mi array length: "+ gridTest.Mi.length);
-		 * System.out.println("Ml array length: "+ gridTest.Ml.length);
-		 */
+		@SuppressWarnings("unused")
+		Mesh gridTest = new Mesh("NoSong");
+		
+		System.out.println("\nEta initial condition");
+		System.out.println(Arrays.toString(Mesh.eta));
+		
+		System.out.println("\nPlanar Area");
+		System.out.println(Arrays.toString(Mesh.planArea));
+		
+		System.out.println("\nSource Term");
+		System.out.println(Arrays.toString(Mesh.source));
+		
+		System.out.println("\nPorosity");
+		System.out.println(Arrays.toString(Mesh.porosity));
+
+
+		System.exit(0);
+
 
 	}
 

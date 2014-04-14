@@ -25,8 +25,10 @@ public class BoussinesqEquation implements TimeSimulation {
 			
 			if (Mesh.etaDirichlet[i] != Mesh.NOVALUE){
 				
+				System.out.println(Mesh.etaDirichlet[i]);
+				
 				beq.boundaryConditions = "Dirichlet";
-				// stop for loop
+				break;
 			}
 			
 		}
@@ -45,10 +47,10 @@ public class BoussinesqEquation implements TimeSimulation {
 	public static void main(String[] args)
 			throws IterativeSolverDoubleNotConvergedException, IOException {
 		
-		String simulationType = "Song";
+		String simulationType = "NoSong";
 		// long start=System.nanoTime();
 		@SuppressWarnings("unused")
-		Mesh mesh = new Mesh("Song");
+		Mesh mesh = new Mesh(simulationType);
 		
 		BoussinesqEquation beq = new BoussinesqEquation();
 
@@ -60,6 +62,8 @@ public class BoussinesqEquation implements TimeSimulation {
 			cBEqD.computeBEq();
 
 		} else {
+			
+			System.out.println("I'm here");
 
 			ComputeBEq cBEq = new ComputeBEq();
 			cBEq.computeBEq();

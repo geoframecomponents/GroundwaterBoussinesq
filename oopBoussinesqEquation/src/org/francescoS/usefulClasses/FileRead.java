@@ -123,8 +123,8 @@ public class FileRead {
 
 		col = col / row;
 
-		System.out.println("NUmber of rows: " + row);
-		System.out.println("Number of columns: " + col);
+//		System.out.println("NUmber of rows: " + row);
+//		System.out.println("Number of columns: " + col);
 		inputFile.close();
 
 	}
@@ -157,8 +157,8 @@ public class FileRead {
 
 		col = col / row;
 
-		System.out.println("NUmber of rows of integers: " + row);
-		System.out.println("Number of columns of integers: " + col);
+//		System.out.println("NUmber of rows of integers: " + row);
+//		System.out.println("Number of columns of integers: " + col);
 		inputFile.close();
 
 	}
