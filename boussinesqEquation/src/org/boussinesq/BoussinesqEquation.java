@@ -33,10 +33,10 @@ import cern.colt.matrix.tdouble.impl.SparseRCDoubleMatrix2D;
 public class BoussinesqEquation {
 
 	/** The deltat. */
-	int deltat = 3600;
+	int deltat = 360;
 
 	/** legth of the simulation */
-	int simTime = 3600 * 24;
+	int simTime = 3600 * 24 * 5;
 
 	double tolerance = 0;
 
@@ -691,7 +691,7 @@ public class BoussinesqEquation {
 			eta = newtonIteration(arrb, matTNoDrichelet, indexDiag, mesh, eta,
 					cg);
 
-			System.out.println("Simulation time: " + t / 3600);
+			System.out.println("Simulation time: " + (double) t / 3600);
 
 		}
 		for (int j = 0; j < eta.length; j++) {

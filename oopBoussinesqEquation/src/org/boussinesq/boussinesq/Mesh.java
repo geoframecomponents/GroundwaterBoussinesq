@@ -1,5 +1,8 @@
 package org.boussinesq.boussinesq;
 
+import java.io.FileNotFoundException;
+
+import org.francescoS.usefulClasses.*;
 // TODO: Auto-generated Javadoc
 /**
  * The Class Grid.
@@ -8,6 +11,21 @@ public class Mesh {
 
 	public static String outputPathBeqDirichlet;
 	public static String outputPathBeqNoDirichlet;
+	
+	public String inputPlanArea;
+	public String inputSource;
+	public String inputEta;
+	public String inputEtaDirichlet;
+	public String inputBedRockElevation;
+	public String inputPorosity;
+	public String inputC;
+	public String inputm;
+	public String inputLengthSides;
+	public String inputEuclideanDistance;
+	public String inputHydrConductivity;
+	public String inputMp;
+	public String inputMi;
+	public String inputMl;
 
 	// POLYGONS PROPERTIES
 
@@ -61,93 +79,15 @@ public class Mesh {
 	/** The Ml. */
 	public static double[] Ml;
 
-	Mesh(String configuration) {
+	Mesh(String configuration) throws FileNotFoundException {
 
-		if (configuration.equals("test0")) {
+		if (configuration.equals("Song")) {
+			Mesh.outputPathBeqDirichlet = "Dirichlet_20d_ts3600_ks001.txt";
+			Mesh.outputPathBeqNoDirichlet = "NoDirchlet_20d_ts3600_ks001.txt";
+
+			int dim = 150;
 			// POLYGONS PROPERTIES
-
-			/** The number sides polygon. */
-			/*
-			 * Mesh.numberSidesPolygon = new int[]{4,4,4,4,4,4,4,4,
-			 * 4,4,4,4,4,4,4,4};
-			 *//** The plan area. */
-			/*
-			 * Mesh.planArea = new double[]{6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6};
-			 *//** The source. per unit area of the polygon */
-			/*
-			 * Mesh.source = new double[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-			 *//** The eta. */
-			/*
-			 * Mesh.eta = new
-			 * double[]{12,12,12,12,12,14,12,12,23,12,12,12,12,12,12,12};
-			 *//** The eta. */
-			/*
-			 * Mesh.etaDirichlet = new
-			 * double[]{13,-999,-999,-999,-999,-999,-999,
-			 * -999,-999,-999,-999,-999, -999,-999,-999,-999};
-			 * 
-			 * Mesh.NOVALUE = -999;
-			 *//** The top elevation. */
-			/*
-			 * Mesh.topElevation = new
-			 * double[]{16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16};
-			 *//** The bottom elevation. */
-			/*
-			 * Mesh.bottomElevation = new
-			 * double[]{10,10,10,10,10,10,10,10,10,10, 10,10,10,10,10,10};
-			 * 
-			 * Mesh.porosity = new
-			 * double[]{0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,0.10,
-			 * 0.10,0.10,0.10,0.10,0.10,0.10};
-			 * 
-			 * 
-			 * //SIDES PROPERTIES
-			 *//** The length sides. */
-			/*
-			 * Mesh.lengthSides = new
-			 * double[]{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-			 * 3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3};
-			 *//** The euclidean distance. */
-			/*
-			 * Mesh.euclideanDistance = new double[]{1.5,1.5,1.5, 1.5,3,3,3,1.5,
-			 * 3,3,3,3,3, 1.5,3,3,3,1.5, 1.5,1.5,1.5, 1,2,2,1, 1,2,2,2,2,1,
-			 * 1,2,2,2,2,1, 1,2,2,1};
-			 *//** The hydr conductivity. */
-			/*
-			 * Mesh.hydrConductivity = new
-			 * double[]{10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),
-			 * 10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),
-			 * 10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),
-			 * 10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),
-			 * 10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),10^(-5),
-			 * 10^(-5),10^(-5),10^(-5),10^(-5),10^(-5)};
-			 * 
-			 * 
-			 * //ADJACENCY MATRIX PROPERTIES
-			 *//** The Mp. */
-			/*
-			 * Mesh.Mp = new
-			 * int[]{0,3,7,10,13,18,23,28,31,34,39,44,49,52,55,59,62};
-			 *//** The Mi. */
-			/*
-			 * Mesh.Mi = new int[]{0,1,4, 0,1,2,5, 1,2,6, 3,4,8, 0,3,4,5,9,
-			 * 1,4,5,6,10, 2,5,6,7,11, 6,7,12, 3,8,9, 4,8,9,10,13, 5,9,10,11,14,
-			 * 6,10,11,12,15, 7,11,12, 9,13,14, 10,13,14,15, 11,14,15};
-			 *//** The Ml. */
-			/*
-			 * Mesh.Ml =new double[]{-1,23,5, 23,-1,24,6, 24,-1,7, -1,27,9,
-			 * 5,27,-1,28,10, 6,28,-1,29,11, 7,29,-1,30,12, 30,-1,13, 9,-1,33,
-			 * 10,33,-1,34,15, 11,34,-1,35,16, 12,35,-1,36,17, 13,36,-1,
-			 * 15,-1,39, 16,39,-1,40, 17,40,-1};
-			 */
-		} else {
-
-			Mesh.outputPathBeqDirichlet = "/home/francesco/desktop/tesiTest/OOPbeqDirichlet_1d_static.txt";
-			Mesh.outputPathBeqNoDirichlet = "/home/francesco/desktop/tesiTest/beqNoDirchlet5d_static.txt";
-
-			int dim = 1000;
-			// POLYGONS PROPERTIES
-			Mesh.numberSidesPolygon = new int[dim];
+			//Mesh.numberSidesPolygon = new int[dim];
 			Mesh.planArea = new double[dim];
 			Mesh.source = new double[dim];
 			Mesh.eta = new double[dim];
@@ -174,7 +114,7 @@ public class Mesh {
 				Mesh.porosity[i] = 0.4;
 				Mesh.lengthSides[i] = 1;
 				Mesh.euclideanDistance[i] = 1;
-				Mesh.hydrConductivity[i] = 0.01;
+				Mesh.hydrConductivity[i] = 0.001;
 				Mesh.c[i] = 0;
 				Mesh.m[i] = 1;
 
@@ -185,7 +125,7 @@ public class Mesh {
 			Mesh.etaDirichlet[0] = 1;
 			Mesh.lengthSides[dim] = 1;
 			Mesh.euclideanDistance[dim] = 1;
-			Mesh.hydrConductivity[dim] = 0.01;
+			Mesh.hydrConductivity[dim] = 0.001;
 
 			// ADJACENCY MATRIX PROPERTIES
 
@@ -249,6 +189,73 @@ public class Mesh {
 			// System.out.println(Arrays.toString(this.Mi));
 			// System.out.println(Arrays.toString(this.Ml));
 
+		} else {
+			
+			FileRead reader = new FileRead();
+			outputPathBeqDirichlet = "/home/francesco/desktop/tesiTest/provaDirichlet.txt";
+			outputPathBeqNoDirichlet= "/home/francesco/desktop/tesiTest/provaNoDirichlet.txt";
+			
+			inputPlanArea = "/home/francesco/desktop/tesiTest/giuseppeTest/vPlanarArea";
+			inputSource = "/home/francesco/desktop/tesiTest/giuseppeTest/vSource";
+			inputEta = "/home/francesco/desktop/tesiTest/giuseppeTest/vEtaInitialCondV";
+			inputEtaDirichlet = "/home/francesco/desktop/tesiTest/giuseppeTest/vEtaDrichelet";
+			inputBedRockElevation = "/home/francesco/desktop/tesiTest/giuseppeTest/vBedrock";
+			inputPorosity = "/home/francesco/desktop/tesiTest/giuseppeTest/vPorosity";
+			inputC = "/home/francesco/desktop/tesiTest/giuseppeTest/vC";
+			inputm = "/home/francesco/desktop/tesiTest/giuseppeTest/vM";
+//			inputLengthSides = "/home/francesco/desktop/tesiTest/giuseppeTest/";
+//			inputEuclideanDistance = "/home/francesco/desktop/tesiTest/giuseppeTest/";
+//			inputHydrConductivity = "/home/francesco/desktop/tesiTest/giuseppeTest/";
+			inputMp = "/home/francesco/desktop/tesiTest/giuseppeTest/Mp";
+			inputMi = "/home/francesco/desktop/tesiTest/giuseppeTest/Mj";
+			inputMl = "/home/francesco/desktop/tesiTest/giuseppeTest/Ml";
+			// POLYGONS PROPERTIES
+
+			/** The plan area. */
+			Mesh.planArea = reader.readDoubleArray(inputPlanArea);
+
+			Mesh.Np = planArea.length;
+
+			/** The source. per unit area of the polygon */
+			Mesh.source = reader.readDoubleArray(inputSource);
+
+			/** The eta. */
+			Mesh.eta = reader.readDoubleArray(inputEta);
+
+			/** The eta. */
+			Mesh.etaDirichlet = reader.readDoubleArray(inputEtaDirichlet);
+
+			/** The bottom elevation. */
+			Mesh.bedRockElevation = reader.readDoubleArray(inputBedRockElevation);
+
+			Mesh.porosity = reader.readDoubleArray(inputPorosity);
+
+			Mesh.c = reader.readDoubleArray(inputC);
+
+			Mesh.m = reader.readDoubleArray(inputm);
+
+			// SIDES PROPERTIES
+
+//			/** The length sides. */
+//			Mesh.lengthSides;
+//
+//			/** The euclidean distance. */
+//			Mesh.euclideanDistance;
+//
+//			/** The hydr conductivity. */
+//			Mesh.hydrConductivity;
+
+			// ADJACENCY MATRIX PROPERTIES
+
+			/** The Mp. */
+			Mesh.Mp = reader.readIntArray(inputMp);
+
+			/** The Mi. */
+			Mesh.Mi = reader.readIntArray(inputMi);
+
+			/** The Ml. */
+			Mesh.Ml = reader.readDoubleArray(inputMl);
+			
 		}
 
 	}

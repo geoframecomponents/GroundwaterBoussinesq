@@ -75,7 +75,7 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 			eta = newton.newtonIteration(arrb, matTNoDirichlet, indexDiag, eta,
 					cg, tolerance);
 
-			System.out.println("Simulation time: " + t / 3600);
+			System.out.println("Simulation time: " + (double) t / 3600);
 
 		}
 		for (int j = 0; j < eta.length; j++) {

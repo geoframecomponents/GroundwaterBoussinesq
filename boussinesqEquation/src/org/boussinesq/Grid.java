@@ -145,9 +145,9 @@ public class Grid {
 			 */
 		} else if (configuration.equals("Song")) {
 
-			this.outputPathBeq = "/home/francesco/desktop/tesiTest/beq_1d.txt";
-			this.outputPathSong = "/home/francesco/desktop/tesiTest/song_1d.txt";
-			int dim = 1000;
+			this.outputPathBeq = "Dirichlet_5d_ts360_ks1.txt";
+			this.outputPathSong = "song_5d_ks1.txt";
+			int dim = 550;
 			// POLYGONS PROPERTIES
 			this.numberSidesPolygon = new int[dim];
 			this.planArea = new double[dim];
@@ -175,7 +175,7 @@ public class Grid {
 				this.porosity[i] = 0.4;
 				this.lengthSides[i] = 1;
 				this.euclideanDistance[i] = 1;
-				this.hydrConductivity[i] = 0.01;
+				this.hydrConductivity[i] = 0.1;
 				this.c[i] = 0;
 				this.m[i] = 1;
 
@@ -186,7 +186,7 @@ public class Grid {
 			this.etaDrichelet[0] = 1;
 			this.lengthSides[dim] = 1;
 			this.euclideanDistance[dim] = 1;
-			this.hydrConductivity[dim] = 0.01;
+			this.hydrConductivity[dim] = 0.1;
 
 			// ADJACENCY MATRIX PROPERTIES
 

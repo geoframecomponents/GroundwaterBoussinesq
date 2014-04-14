@@ -112,7 +112,8 @@ public class Song {
 		}
 
 		String outputPathSong;
-		outputPathSong = "/home/francesco/desktop/tesiTest/00Psong_1d_static.txt";
+		outputPathSong = "/home/francesco/song_5d_ks1.txt";
+//		outputPathSong = "song_20d_ks001.txt";
 		
 		FileWriter Rstatfile = new FileWriter(outputPathSong);
 		PrintWriter errestat = new PrintWriter(Rstatfile);
@@ -131,8 +132,8 @@ public class Song {
 
 	public static void main(String[] args) throws IOException {
 
-		int time = 3600 * 24;
-		int dim = 5;
+		int time = 3600 * 24 * 5;
+		int dim = 1000;
 
 		double[] porosity = new double[dim];
 
@@ -142,7 +143,7 @@ public class Song {
 
 		}
 
-		Song s = new Song(time, dim, 0.01);
+		Song s = new Song(time, dim, 0.1);
 		s.beqSong(porosity);
 
 		System.exit(1);
