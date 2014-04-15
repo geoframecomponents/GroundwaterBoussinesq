@@ -107,7 +107,7 @@ public class Mesh {
 			Mesh.Np = planArea.length;
 
 			for (int i = 0; i < dim; i++) {
-				Mesh.numberSidesPolygon[i] = 2;
+//				Mesh.numberSidesPolygon[i] = 2;
 				Mesh.planArea[i] = 1;
 				Mesh.source[i] = 0;
 				Mesh.eta[i] = 0;
@@ -193,6 +193,16 @@ public class Mesh {
 
 		} else {
 			
+			
+//			/** The Mp. */
+//			int[] trMi;
+//
+//			/** The Mi. */
+//			int[] trMj;
+//
+//			/** The Ml. */
+//			double[] trMl;
+			
 			outputPathBeqDirichlet = "/home/francesco/desktop/tesiTest/provaDirichlet.txt";
 			outputPathBeqNoDirichlet= "/home/francesco/desktop/tesiTest/provaNoDirichlet.txt";
 			
@@ -263,13 +273,15 @@ public class Mesh {
 			/** The Mp. */
 			Mesh.Mp = readMp.readIntArray(inputMp);
 
-			FileRead readMi = new FileRead();
+			FileRead readMj = new FileRead();
 			/** The Mi. */
-			Mesh.Mi = readMi.readIntArray(inputMi);
+			Mesh.Mi = readMj.readIntArray(inputMi);
 
 			FileRead readMl = new FileRead();
 			/** The Ml. */
 			Mesh.Ml = readMl.readDoubleArray(inputMl);
+			
+//			TripletToRowCompressedForm.computeMp(trMi, trMj, trMl, Mesh.Np);
 			
 		}
 
@@ -293,12 +305,23 @@ public class Mesh {
 		System.out.println("\nPlanar Area");
 		System.out.println(Arrays.toString(Mesh.planArea));
 		
+		System.out.println("\nNumber of Polygons");
+		System.out.println(Mesh.Np);
+		
 		System.out.println("\nSource Term");
 		System.out.println(Arrays.toString(Mesh.source));
 		
 		System.out.println("\nPorosity");
 		System.out.println(Arrays.toString(Mesh.porosity));
 
+		System.out.println("\nMi");
+		System.out.println(Arrays.toString(Mesh.Mi));
+		
+		System.out.println("\nMl");
+		System.out.println(Arrays.toString(Mesh.Ml));
+		
+		System.out.println("\nMp");
+		System.out.println(Arrays.toString(Mesh.Mp));
 
 		System.exit(0);
 

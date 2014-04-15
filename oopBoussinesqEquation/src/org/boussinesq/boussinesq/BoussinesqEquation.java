@@ -1,6 +1,7 @@
 package org.boussinesq.boussinesq;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeBEq;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
@@ -52,6 +53,9 @@ public class BoussinesqEquation implements TimeSimulation {
 		@SuppressWarnings("unused")
 		Mesh mesh = new Mesh(simulationType);
 		
+		System.out.println("\nMl");
+		System.out.println(Arrays.toString(Mesh.Ml));
+		
 		BoussinesqEquation beq = new BoussinesqEquation();
 
 		beq.defineBoundaryConditionsType(beq);
@@ -62,8 +66,6 @@ public class BoussinesqEquation implements TimeSimulation {
 			cBEqD.computeBEq();
 
 		} else {
-			
-			System.out.println("I'm here");
 
 			ComputeBEq cBEq = new ComputeBEq();
 			cBEq.computeBEq();
