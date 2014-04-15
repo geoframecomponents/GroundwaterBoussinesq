@@ -9,7 +9,7 @@ import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.TimeSimulation;
-import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeB;
+//import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeB;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
