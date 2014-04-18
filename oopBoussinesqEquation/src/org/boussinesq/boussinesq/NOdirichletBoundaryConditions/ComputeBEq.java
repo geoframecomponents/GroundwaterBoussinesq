@@ -9,7 +9,6 @@ import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.TimeSimulation;
-//import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeB;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
@@ -21,9 +20,23 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 	double[] matT;
 	double[] arrb;
+	double[] volume;
+	
+	double volumeOld = 0;
+	double volumeNew = 0;
 
 	public ComputeBEq() {
 		super();
+	}
+	
+	public double computeVolume(int index,double eta){
+		
+		double volume;
+		
+		volume = (eta-Mesh.bedRockElevation[index])*Mesh.porosity[index]*Mesh.planArea[index];
+		
+		return volume;
+		
 	}
 
 	public void computeBEqArrays(ComputeB cB) {
@@ -53,7 +66,15 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 		// allocate the memory for eta array
 		eta = new double[Mesh.Np];
+		volume = new double[Mesh.Np];
 
+		for (int i = 0; i < Mesh.Np; i++){
+			
+			volume[i] = computeVolume(i,Mesh.eta[i]);
+			volumeOld = volumeOld + volume[i];
+			
+		}
+		
 		// initialize eta array
 		System.arraycopy(Mesh.eta, 0, eta, 0, Mesh.eta.length);
 
@@ -70,6 +91,10 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 		for (int j = 0; j < eta.length; j++) {
 
 			errestat.println(eta[j]);
+			
+			
+			volume[j] = computeVolume(j,eta[j]);
+			volumeNew = volumeNew + volume[j];
 
 		}
 
