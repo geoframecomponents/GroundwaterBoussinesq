@@ -25,9 +25,27 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 	double volumeOld = 0;
 	double volumeNew = 0;
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public ComputeBEq() {
 		super();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Compute volume.
@@ -46,6 +64,15 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 		
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public void computeBEqArrays(ComputeB cB) {
 
 		matT = computeT(eta);
@@ -53,23 +80,34 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public void computeBEq() throws IOException,
 			IterativeSolverDoubleNotConvergedException {
 
 		ComputeB cB = new ComputeB();
 		Solver newton = new Solver();
-
 		RCConjugateGradient cg = new RCConjugateGradient(Mesh.Np);
 		RCIndexDiagonalElement rcIndexDiagonalElement = new RCIndexDiagonalElement();
+		MachineEpsilon cMEd = new MachineEpsilon();		
+		
+		FileWriter Rstatfile = new FileWriter(Mesh.outputPathBeqNoDirichlet);
+		PrintWriter errestat = new PrintWriter(Rstatfile);		
+		
+		
 
 		int[] indexDiag = rcIndexDiagonalElement.computeIndexDiag(Mesh.Np,
 				Mesh.Mp, Mesh.Mi);
 
-		MachineEpsilon cMEd = new MachineEpsilon();
 		double tolerance = cMEd.computeMachineEpsilonDouble();
 
-		FileWriter Rstatfile = new FileWriter(Mesh.outputPathBeqNoDirichlet);
-		PrintWriter errestat = new PrintWriter(Rstatfile);
 
 		// allocate the memory for eta array
 		eta = new double[Mesh.Np];
