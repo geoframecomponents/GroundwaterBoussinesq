@@ -10,6 +10,7 @@ import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
+import org.francescoS.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
@@ -120,6 +121,8 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 			
 		}
 		
+		TextIO.putln("Initial volume: " + volumeOld);
+		
 		// initialize eta array
 		System.arraycopy(Mesh.eta, 0, eta, 0, Mesh.eta.length);
 
@@ -132,14 +135,23 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 			System.out.println("Simulation time: " + t / 3600);
 
+			for (int j = 0; j < eta.length; j++) {
+				
+				volume[j] = computeVolume(j,eta[j]);
+				volumeNew = volumeNew + volume[j];
+
+			}
+			
+			TextIO.putln("Volume " + volumeNew + "at time step " + t/3600);
+			
+			volumeNew = 0;
+			
 		}
+		
+		
 		for (int j = 0; j < eta.length; j++) {
 
 			errestat.println(eta[j]);
-			
-			
-			volume[j] = computeVolume(j,eta[j]);
-			volumeNew = volumeNew + volume[j];
 
 		}
 

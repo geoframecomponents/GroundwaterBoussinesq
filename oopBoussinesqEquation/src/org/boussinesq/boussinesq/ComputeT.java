@@ -49,9 +49,9 @@ public class ComputeT implements TimeSimulation {
 				if (Mesh.Mi[j] != i) {
 					// equation (21)
 					arrayT[j] = -TIMESTEP
-							* (1 / Mesh.euclideanDistance[(int) Mesh.Ml[j]])
-							* Mesh.hydrConductivity[(int) Mesh.Ml[j]]
-							* Mesh.lengthSides[(int) Mesh.Ml[j]]
+							* (1 / Mesh.euclideanDistance[(int) Mesh.Ml[j]-1])
+							* Mesh.hydrConductivity[(int) Mesh.Ml[j]-1]
+							* Mesh.lengthSides[(int) Mesh.Ml[j]-1]
 							* Math.max(
 									Math.max(0, eta[Mesh.Mi[j]]
 											- Mesh.bedRockElevation[Mesh.Mi[j]]),
