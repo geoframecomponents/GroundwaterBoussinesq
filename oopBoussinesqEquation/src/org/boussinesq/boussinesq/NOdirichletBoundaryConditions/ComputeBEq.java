@@ -8,6 +8,7 @@ import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.Mesh;
+import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.francescoS.usefulClasses.TextIO;
@@ -47,7 +48,6 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 	
 	
 	
-	
 	/**
 	 * Compute volume.
 	 *
@@ -59,7 +59,10 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 		
 		double volume;
 		
-		volume = (eta-Mesh.bedRockElevation[index])*Mesh.porosity[index]*Mesh.planArea[index];
+		volume = PolygonGeometricalWetProperties.computeWaterVolume(eta, Mesh.bedRockElevation[index], Mesh.porosity[index], Mesh.planArea[index]);
+				
+		volume = volume	- TIMESTEP * Mesh.planArea[index] * Mesh.source[index]
+						+ TIMESTEP * Mesh.planArea[index] * Mesh.c[index] * Math.pow(volume/Mesh.planArea[index], Mesh.m[index]);
 		
 		return volume;
 		
@@ -116,7 +119,7 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 		for (int i = 0; i < Mesh.Np; i++){
 			
-			volume[i] = computeVolume(i,Mesh.eta[i]);
+			volume[i] = PolygonGeometricalWetProperties.computeWaterVolume(Mesh.eta[i], Mesh.bedRockElevation[i], Mesh.porosity[i], Mesh.planArea[i]);
 			volumeOld = volumeOld + volume[i];
 			
 		}
@@ -133,8 +136,6 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 			eta = newton.newtonIteration(arrb, matT, indexDiag, eta, cg,
 					tolerance);
 
-			System.out.println("Simulation time: " + t / 3600);
-
 			for (int j = 0; j < eta.length; j++) {
 				
 				volume[j] = computeVolume(j,eta[j]);
@@ -142,7 +143,7 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 			}
 			
-			TextIO.putln("Volume " + volumeNew + "at time step " + t/3600);
+			TextIO.putln("Volume " + volumeNew + "at time step " + (double) t/3600);
 			
 			volumeNew = 0;
 			

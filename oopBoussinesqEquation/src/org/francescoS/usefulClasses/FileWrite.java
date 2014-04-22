@@ -30,6 +30,15 @@ public class FileWrite {
 	/** The Rstatfile. */
 	static FileWriter Rstatfile;
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Open txt file.
 	 *
@@ -40,6 +49,8 @@ public class FileWrite {
 	public static void openTxtFile(String path, boolean overwrite)
 			throws IOException {
 
+		
+		
 		try {
 
 			File file = new File(path);
@@ -73,6 +84,8 @@ public class FileWrite {
 
 			}
 
+			
+			
 		} catch (IOException e) {
 
 			File file = new File(path);
@@ -84,8 +97,19 @@ public class FileWrite {
 
 		}
 
+		
+		
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Write double1 column.
 	 *
@@ -95,10 +119,21 @@ public class FileWrite {
 	public static void writeDouble1Column(double[] data) throws IOException {
 
 		for (int j = 0; j < data.length; j++) {
-
 			errestat.println(data[j]);
-
 		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void closeTxtFile() throws IOException{
 
 		errestat.println();
 		System.out.println();
