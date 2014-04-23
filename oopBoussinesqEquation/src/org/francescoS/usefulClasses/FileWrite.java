@@ -25,10 +25,10 @@ import java.io.PrintWriter;
 public class FileWrite {
 
 	/** The errestat. */
-	static PrintWriter errestat;
+	static PrintWriter writeData;
 	
 	/** The Rstatfile. */
-	static FileWriter Rstatfile;
+	static FileWriter outputFile;
 
 	
 	
@@ -46,34 +46,37 @@ public class FileWrite {
 	 * @param overwrite the overwrite
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public static void openTxtFile(String path, boolean overwrite)
+	public static void openTxtFile(String name, File dirPath, boolean overwrite)
 			throws IOException {
 
+
+//		File file = dirPath + new File(name);
+//		String path = dirPath.getPath() + name;
 		
 		
 		try {
 
-			File file = new File(path);
+			File file = new File(dirPath, name);
 
 			if (overwrite) {
 
 				file.createNewFile();
 				
-				System.out.println("Overwrite option selected");
-				System.out.println("File name is " + file.getName());
+//				System.out.println("Overwrite option selected");
+//				System.out.println("File name is " + file.getName());
 
-				Rstatfile = new FileWriter(file, false); // overwrites file
-				errestat = new PrintWriter(Rstatfile);
+				outputFile = new FileWriter(file, false); // overwrites file
+				writeData = new PrintWriter(outputFile);
 
 			} else if (!file.exists()) {
 				
 				file.createNewFile();
 
-				System.out.println("Overwrite option not selected");
-				System.out.println("File name is " + file.getName());
+//				System.out.println("Overwrite option not selected");
+//				System.out.println("File name is " + file.getName());
 
-				Rstatfile = new FileWriter(file, true); // no overwrites file
-				errestat = new PrintWriter(Rstatfile);
+				outputFile = new FileWriter(file, true); // no overwrites file
+				writeData = new PrintWriter(outputFile);
 
 			} else {
 
@@ -88,7 +91,7 @@ public class FileWrite {
 			
 		} catch (IOException e) {
 
-			File file = new File(path);
+			File file = new File(dirPath, name);
 
 			System.err.println("Path\n" + file.getAbsolutePath());
 			// Catch exception if any
@@ -116,11 +119,81 @@ public class FileWrite {
 	 * @param data the data
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public static void writeDouble1Column(double[] data) throws IOException {
+	public static void writeOneDoubleColumn(double[] data) throws IOException {
 
 		for (int j = 0; j < data.length; j++) {
-			errestat.println(data[j]);
+			writeData.println(data[j]);
 		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void writeFourDoubleColumn(double[] data1, double[] data2, double[] data3, double[] data4){
+		
+		for (int j = 0; j < data1.length; j++){
+			
+			writeData.print(data1[j] + "\t");
+			writeData.print(data2[j] + "\t");
+			writeData.print(data3[j] + "\t");
+			writeData.println(data4[j]);
+			
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void writeStringDoubleString(String description, double value, String unitMeasure){
+		
+		writeData.println(description + ": " + value + unitMeasure);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void writeStringIntString(String description, int value, String unitMeasure){
+		
+		writeData.println(description + ": " + value + unitMeasure);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void writeFourStringColumn(String string1, String string2, String string3, String string4){
+		
+		writeData.print(string1 + "\t");
+		writeData.print(string2 + "\t");
+		writeData.print(string3 + "\t");
+		writeData.println(string4);
 		
 	}
 	
@@ -135,9 +208,32 @@ public class FileWrite {
 	
 	public static void closeTxtFile() throws IOException{
 
-		errestat.println();
+		writeData.println();
 		System.out.println();
-		Rstatfile.close();
+		outputFile.close();
 
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static File makeDirectory(String dirName){
+		
+		String defaultPath = new File(dirName).getAbsolutePath(); 
+		
+		File newPath = new File(defaultPath);
+		newPath.mkdir();
+		
+		TextIO.putln("Directory of output files: " + newPath);
+		
+		return newPath;
+
+		
 	}
 }

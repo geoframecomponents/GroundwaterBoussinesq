@@ -1,24 +1,30 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
-import java.io.FileWriter;
+//import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+//import java.io.PrintWriter;
+
+import java.text.DecimalFormat;
 
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
+import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
+import org.francescoS.usefulClasses.FileWrite;
 import org.francescoS.usefulClasses.TextIO;
 
+//import cern.colt.Arrays;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
 public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 	// allocate the memory for eta array
 	double[] eta;
+	double[] aquiferThickness;
 
 	double[] matT;
 	double[] arrb;
@@ -38,6 +44,57 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 	
 	public ComputeBEq() {
 		super();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public DecimalFormat computePattern(){
+		
+		int[] c = new int[String.valueOf(SIMULATIONTIME).length()];
+		
+		StringBuilder builder = new StringBuilder(c.length);
+		
+		for (int i:c){
+			
+			builder.append(c[i]);
+			
+		}
+		
+		String pattern = builder.toString();
+		
+		return new DecimalFormat(pattern);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void writeSolution(int time) throws IOException{
+		
+		FileWrite.writeStringIntString("Iteration number", (int) time/TIMESTEP + 1, " [ ]");
+		FileWrite.writeStringDoubleString("Timestep", TIMESTEP, " [s]");
+		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME, " [s]");
+		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME/60, " [min]");
+		FileWrite.writeStringDoubleString("Initial volume", volumeOld, "[ m^3]");
+		FileWrite.writeStringDoubleString("Total volume", volumeNew, " [m^3]");
+		FileWrite.writeFourStringColumn("PiezHead","AquifThick","WaterVolume","Source");
+		FileWrite.writeFourStringColumn("[m]", "[m]", "[m^3]", "[m^3/s]");
+		FileWrite.writeFourDoubleColumn(eta,aquiferThickness,volume,Mesh.source);
+		FileWrite.closeTxtFile();
+		
 	}
 	
 	
@@ -100,13 +157,13 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 		Solver newton = new Solver();
 		RCConjugateGradient cg = new RCConjugateGradient(Mesh.Np);
 		RCIndexDiagonalElement rcIndexDiagonalElement = new RCIndexDiagonalElement();
-		MachineEpsilon cMEd = new MachineEpsilon();		
-		
-		FileWriter Rstatfile = new FileWriter(Mesh.outputPathBeqNoDirichlet);
-		PrintWriter errestat = new PrintWriter(Rstatfile);		
+		MachineEpsilon cMEd = new MachineEpsilon();	
 		
 		
-
+		
+		String fileName = null;
+		DecimalFormat myformatter = computePattern();
+		
 		int[] indexDiag = rcIndexDiagonalElement.computeIndexDiag(Mesh.Np,
 				Mesh.Mp, Mesh.Mi);
 
@@ -114,6 +171,7 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 
 		// allocate the memory for eta array
+		aquiferThickness = new double[Mesh.Np];
 		eta = new double[Mesh.Np];
 		volume = new double[Mesh.Np];
 
@@ -131,6 +189,9 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 		for (int t = 0; t < SIMULATIONTIME; t += TIMESTEP) {
 
+			fileName = myformatter.format(t);
+			FileWrite.openTxtFile(fileName.concat(".txt"), BoussinesqEquation.solutionPath, false);
+			
 			computeBEqArrays(cB);
 
 			eta = newton.newtonIteration(arrb, matT, indexDiag, eta, cg,
@@ -138,29 +199,21 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 			for (int j = 0; j < eta.length; j++) {
 				
+				aquiferThickness[j] = Math.max(0, eta[j]-Mesh.bedRockElevation[j]);
 				volume[j] = computeVolume(j,eta[j]);
 				volumeNew = volumeNew + volume[j];
 
 			}
 			
-			TextIO.putln("Volume " + volumeNew + "at time step " + (double) t/3600);
+			writeSolution(t);
+			
+			TextIO.putln("Time step " + (double) t/3600);
 			
 			volumeNew = 0;
 			
 		}
-		
-		
-		for (int j = 0; j < eta.length; j++) {
 
-			errestat.println(eta[j]);
-
-		}
-
-		errestat.println();
-		System.out.println();
-		Rstatfile.close();
-
-		System.out.println("Exit code");
+//		System.out.println("Exit code");
 
 	}
 

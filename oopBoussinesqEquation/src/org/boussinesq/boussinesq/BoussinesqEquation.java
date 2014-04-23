@@ -1,11 +1,18 @@
 package org.boussinesq.boussinesq;
 
+//import java.io.File;
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+//import java.util.Arrays;
+
+
+
 
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeBEq;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
 import org.boussinesq.song.Song;
+import org.francescoS.usefulClasses.FileWrite;
+import org.francescoS.usefulClasses.ReadFromScreen;
 import org.francescoS.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
@@ -17,6 +24,7 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
 public class BoussinesqEquation implements TimeSimulation {
 
 	String boundaryConditions;
+	public static File solutionPath;
 	
 	public void defineBoundaryConditionsType(BoussinesqEquation beq){
 		
@@ -53,8 +61,7 @@ public class BoussinesqEquation implements TimeSimulation {
 		@SuppressWarnings("unused")
 		Mesh mesh = new Mesh(simulationType);
 		
-		System.out.println("\nMl");
-		System.out.println(Arrays.toString(Mesh.Ml));
+		solutionPath = FileWrite.makeDirectory(ReadFromScreen.readText("Write the name of the solution folder\n(it's better without space)"));
 		
 		BoussinesqEquation beq = new BoussinesqEquation();
 
