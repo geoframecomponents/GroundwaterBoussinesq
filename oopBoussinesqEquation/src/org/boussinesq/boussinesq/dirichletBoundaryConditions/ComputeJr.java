@@ -1,7 +1,7 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
-import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
 
 public class ComputeJr extends IsNoValue {
 
@@ -49,13 +49,13 @@ public class ComputeJr extends IsNoValue {
 		// diagonal entries
 		for (int i = 0; i < indexDiag.length; i++) {
 
-			if (isNoValue(Mesh.etaDirichlet[i], Mesh.NOVALUE)) {
+			if (isNoValue(ComputationalDomain.etaDirichlet[i], ComputationalDomain.NOVALUE)) {
 				// non Dirichlet cells
 				// equation (A6)
 				arrJr[indexDiag[i]] = arrT[indexDiag[i]]
 						+ PolygonGeometricalWetProperties.computeWetArea(
-								eta[i], Mesh.bedRockElevation[i],
-								Mesh.porosity[i], Mesh.planArea[i]);
+								eta[i], ComputationalDomain.bedRockElevation[i],
+								ComputationalDomain.porosity[i], ComputationalDomain.planArea[i]);
 
 			} else {
 				// Dirichlet cells

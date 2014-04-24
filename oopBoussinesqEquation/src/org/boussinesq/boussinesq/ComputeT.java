@@ -1,7 +1,7 @@
 package org.boussinesq.boussinesq;
 
-import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.TimeSimulation;
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
 
 public class ComputeT implements TimeSimulation {
 
@@ -36,27 +36,27 @@ public class ComputeT implements TimeSimulation {
 		 * the matrix T is an array because this code uses the Row Compressed
 		 * Form to stored sparse matrix
 		 */
-		double[] arrayT = new double[Mesh.Ml.length];
+		double[] arrayT = new double[ComputationalDomain.Ml.length];
 
 		/* for-loop to analyze the mesh cell by cell */
-		for (int i = 0; i < Mesh.Np; i++) {
+		for (int i = 0; i < ComputationalDomain.Np; i++) {
 			/*
 			 * nested for-loop to analyze shared edges between the i-th cell and
 			 * the Mi[j]-th cell
 			 */
-			for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
+			for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
 
-				if (Mesh.Mi[j] != i) {
+				if (ComputationalDomain.Mi[j] != i) {
 					// equation (21)
 					arrayT[j] = -TIMESTEP
-							* (1 / Mesh.euclideanDistance[(int) Mesh.Ml[j]-1])
-							* Mesh.hydrConductivity[(int) Mesh.Ml[j]-1]
-							* Mesh.lengthSides[(int) Mesh.Ml[j]-1]
+							* (1 / ComputationalDomain.euclideanDistance[(int) ComputationalDomain.Ml[j]-1])
+							* ComputationalDomain.hydrConductivity[(int) ComputationalDomain.Ml[j]-1]
+							* ComputationalDomain.lengthSides[(int) ComputationalDomain.Ml[j]-1]
 							* Math.max(
-									Math.max(0, eta[Mesh.Mi[j]]
-											- Mesh.bedRockElevation[Mesh.Mi[j]]),
+									Math.max(0, eta[ComputationalDomain.Mi[j]]
+											- ComputationalDomain.bedRockElevation[ComputationalDomain.Mi[j]]),
 									Math.max(0, eta[i]
-											- Mesh.bedRockElevation[i]));
+											- ComputationalDomain.bedRockElevation[i]));
 
 					rowSum += -arrayT[j];
 

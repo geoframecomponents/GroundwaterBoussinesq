@@ -10,12 +10,13 @@ import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputeT;
-import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.francescoS.usefulClasses.FileWrite;
 import org.francescoS.usefulClasses.TextIO;
+
 
 //import cern.colt.Arrays;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
@@ -117,10 +118,10 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 		
 		double volume;
 		
-		volume = PolygonGeometricalWetProperties.computeWaterVolume(eta, Mesh.bedRockElevation[index], Mesh.porosity[index], Mesh.planArea[index]);
+		volume = PolygonGeometricalWetProperties.computeWaterVolume(eta, ComputationalDomain.bedRockElevation[index], ComputationalDomain.porosity[index], ComputationalDomain.planArea[index]);
 				
-		volume = volume	- TIMESTEP * Mesh.planArea[index] * Mesh.source[index]
-						+ TIMESTEP * Mesh.planArea[index] * Mesh.c[index] * Math.pow(volume/Mesh.planArea[index], Mesh.m[index]);
+		volume = volume	- TIMESTEP * ComputationalDomain.planArea[index] * ComputationalDomain.source[index]
+						+ TIMESTEP * ComputationalDomain.planArea[index] * ComputationalDomain.c[index] * Math.pow(volume/ComputationalDomain.planArea[index], ComputationalDomain.m[index]);
 		
 		return volume;
 		
@@ -156,7 +157,7 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 		ComputeB cB = new ComputeB();
 		Solver newton = new Solver();
-		RCConjugateGradient cg = new RCConjugateGradient(Mesh.Np);
+		RCConjugateGradient cg = new RCConjugateGradient(ComputationalDomain.Np);
 		RCIndexDiagonalElement rcIndexDiagonalElement = new RCIndexDiagonalElement();
 		MachineEpsilon cMEd = new MachineEpsilon();	
 		
@@ -165,21 +166,21 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 		String fileName = null;
 		DecimalFormat myformatter = computePattern();
 		
-		int[] indexDiag = rcIndexDiagonalElement.computeIndexDiag(Mesh.Np,
-				Mesh.Mp, Mesh.Mi);
+		int[] indexDiag = rcIndexDiagonalElement.computeIndexDiag(ComputationalDomain.Np,
+				ComputationalDomain.Mp, ComputationalDomain.Mi);
 
 		double tolerance = cMEd.computeMachineEpsilonDouble();
 
 
 		// allocate the memory for eta array
-		aquiferThickness = new double[Mesh.Np];
-		volumeSource = new double[Mesh.Np];
-		eta = new double[Mesh.Np];
-		volume = new double[Mesh.Np];
+		aquiferThickness = new double[ComputationalDomain.Np];
+		volumeSource = new double[ComputationalDomain.Np];
+		eta = new double[ComputationalDomain.Np];
+		volume = new double[ComputationalDomain.Np];
 
-		for (int i = 0; i < Mesh.Np; i++){
+		for (int i = 0; i < ComputationalDomain.Np; i++){
 			
-			volume[i] = PolygonGeometricalWetProperties.computeWaterVolume(Mesh.eta[i], Mesh.bedRockElevation[i], Mesh.porosity[i], Mesh.planArea[i]);
+			volume[i] = PolygonGeometricalWetProperties.computeWaterVolume(ComputationalDomain.eta[i], ComputationalDomain.bedRockElevation[i], ComputationalDomain.porosity[i], ComputationalDomain.planArea[i]);
 			volumeOld = volumeOld + volume[i];
 			
 		}
@@ -187,9 +188,11 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 		TextIO.putln("Initial volume: " + volumeOld);
 		
 		// initialize eta array
-		System.arraycopy(Mesh.eta, 0, eta, 0, Mesh.eta.length);
+		System.arraycopy(ComputationalDomain.eta, 0, eta, 0, ComputationalDomain.eta.length);
 
 		for (int t = 0; t < SIMULATIONTIME; t += TIMESTEP) {
+			
+			TextIO.putln("Time step " + (double) t/3600);
 
 			fileName = myformatter.format(t);
 			FileWrite.openTxtFile(fileName.concat(".txt"), BoussinesqEquation.solutionDir, false);
@@ -201,8 +204,8 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 			for (int j = 0; j < eta.length; j++) {
 				
-				volumeSource[j] = Mesh.source[j] * Mesh.planArea[j];
-				aquiferThickness[j] = Math.max(0, eta[j]-Mesh.bedRockElevation[j]);
+				volumeSource[j] = ComputationalDomain.source[j] * ComputationalDomain.planArea[j];
+				aquiferThickness[j] = Math.max(0, eta[j]-ComputationalDomain.bedRockElevation[j]);
 				volume[j] = computeVolume(j,eta[j]);
 				volumeNew = volumeNew + volume[j];
 
@@ -210,7 +213,13 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 			
 			writeSolution(t);
 			
-			TextIO.putln("Time step " + (double) t/3600);
+			if (Math.abs(volumeNew-volumeOld) > Math.pow(10, -6)){
+				
+				TextIO.putln("WARNING!!! The system is losing mass");
+				TextIO.putln("The difference between initial volume and compute volume is: " + Math.abs(volumeNew-volumeOld));
+				
+			}
+			
 			
 			volumeNew = 0;
 			

@@ -8,9 +8,9 @@ import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 //import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.ComputeT;
-import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.francescoS.usefulClasses.TextIO;
 
@@ -64,10 +64,10 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 		
 		double volume;
 		
-		volume = PolygonGeometricalWetProperties.computeWaterVolume(eta, Mesh.bedRockElevation[index], Mesh.porosity[index], Mesh.planArea[index]);
+		volume = PolygonGeometricalWetProperties.computeWaterVolume(eta, ComputationalDomain.bedRockElevation[index], ComputationalDomain.porosity[index], ComputationalDomain.planArea[index]);
 				
-		volume = volume	- TIMESTEP * Mesh.planArea[index] * Mesh.source[index]
-						+ TIMESTEP * Mesh.planArea[index] * Mesh.c[index] * Math.pow(volume/Mesh.planArea[index], Mesh.m[index]);
+		volume = volume	- TIMESTEP * ComputationalDomain.planArea[index] * ComputationalDomain.source[index]
+						+ TIMESTEP * ComputationalDomain.planArea[index] * ComputationalDomain.c[index] * Math.pow(volume/ComputationalDomain.planArea[index], ComputationalDomain.m[index]);
 		
 		return volume;
 		
@@ -112,30 +112,30 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 		ComputeB cB = new ComputeB();
 		Solver newton = new Solver();
 
-		RCConjugateGradient cg = new RCConjugateGradient(Mesh.Np);
+		RCConjugateGradient cg = new RCConjugateGradient(ComputationalDomain.Np);
 		RCIndexDiagonalElement rcIndexDiagonalElement = new RCIndexDiagonalElement();
 
-		int[] indexDiag = rcIndexDiagonalElement.computeIndexDiag(Mesh.Np,
-				Mesh.Mp, Mesh.Mi);
+		int[] indexDiag = rcIndexDiagonalElement.computeIndexDiag(ComputationalDomain.Np,
+				ComputationalDomain.Mp, ComputationalDomain.Mi);
 
 		MachineEpsilon cMEd = new MachineEpsilon();
 		double tolerance = cMEd.computeMachineEpsilonDouble();
 
 		// allocate the memory for eta array
-		eta = new double[Mesh.Np];
-		volume = new double[Mesh.Np];
+		eta = new double[ComputationalDomain.Np];
+		volume = new double[ComputationalDomain.Np];
 		
-		for (int i = 0; i < Mesh.Np; i++){
+		for (int i = 0; i < ComputationalDomain.Np; i++){
 			
-			volume[i] = PolygonGeometricalWetProperties.computeWaterVolume(Mesh.eta[i], Mesh.bedRockElevation[i], Mesh.porosity[i], Mesh.planArea[i]);
+			volume[i] = PolygonGeometricalWetProperties.computeWaterVolume(ComputationalDomain.eta[i], ComputationalDomain.bedRockElevation[i], ComputationalDomain.porosity[i], ComputationalDomain.planArea[i]);
 			volumeOld = volumeOld + volume[i];
 			
 		}
 
-		FileWriter Rstatfile = new FileWriter(Mesh.outputPathBeqDirichlet);
+		FileWriter Rstatfile = new FileWriter(ComputationalDomain.outputPathBeqDirichlet);
 		PrintWriter errestat = new PrintWriter(Rstatfile);
 
-		System.arraycopy(Mesh.eta, 0, eta, 0, Mesh.eta.length);
+		System.arraycopy(ComputationalDomain.eta, 0, eta, 0, ComputationalDomain.eta.length);
 
 		for (int t = 0; t < SIMULATIONTIME; t += TIMESTEP) {
 
