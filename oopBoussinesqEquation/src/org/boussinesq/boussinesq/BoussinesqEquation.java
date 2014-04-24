@@ -8,10 +8,12 @@ import java.io.IOException;
 
 
 
+
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeBEq;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
 import org.boussinesq.song.Song;
 import org.francescoS.usefulClasses.FileWrite;
+import org.francescoS.usefulClasses.GUIpathFileRead;
 import org.francescoS.usefulClasses.ReadFromScreen;
 import org.francescoS.usefulClasses.TextIO;
 
@@ -24,6 +26,7 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
 public class BoussinesqEquation implements TimeSimulation {
 
 	String boundaryConditions;
+	public static File solutionPath;
 	public static File solutionDir;
 	
 	public void defineBoundaryConditionsType(BoussinesqEquation beq){
@@ -56,12 +59,22 @@ public class BoussinesqEquation implements TimeSimulation {
 	public static void main(String[] args)
 			throws IterativeSolverDoubleNotConvergedException, IOException {
 		
+		String sep = System.getProperty("file.separator");
+		
+		System.out.println(sep);
+		
 		String simulationType = "NoSong";
 		// long start=System.nanoTime();
 		@SuppressWarnings("unused")
 		Mesh mesh = new Mesh(simulationType);
 		
-		solutionDir = FileWrite.makeDirectory(ReadFromScreen.readText("Write the name of the solution folder\n(it's better without space)"));
+//		solutionDir = FileWrite.makeDirectory(ReadFromScreen.readText("Write the name of the solution folder\n(it's better without space)"));
+		
+		GUIpathFileRead guiDir = new GUIpathFileRead();
+		
+		solutionPath = guiDir.saveDialog();
+		
+		solutionDir = new File(solutionPath, sep);
 		
 		BoussinesqEquation beq = new BoussinesqEquation();
 

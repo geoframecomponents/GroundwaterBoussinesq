@@ -3,6 +3,7 @@ package org.francescoS.usefulClasses;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class GUIpathFileRead extends JPanel {
@@ -37,6 +38,29 @@ public class GUIpathFileRead extends JPanel {
 			TextIO.putln("ERROR ENCOUNTERED!!!");	
 			System.exit(0);
 			
+		}
+		
+		return f;
+		
+	}
+	
+	
+	public File saveDialog(){
+		
+		File f;
+		
+		// parent component of the dialog
+		JFrame parentFrame = new JFrame();		
+		
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnVal = fileChooser.showOpenDialog(parentFrame);
+		
+		f = new File(fileChooser.getSelectedFile().getAbsolutePath());
+//		f = fileChooser.getCurrentDirectory();
+		
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+		   System.out.println("You chose to open this directory: " +
+		        fileChooser.getSelectedFile().getAbsolutePath());
 		}
 		
 		return f;
