@@ -1,5 +1,6 @@
 package org.boussinesq.boussinesq;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.francescoS.usefulClasses.*;
@@ -28,6 +29,8 @@ public class Mesh {
 	public String inputMp;
 	public String inputMi;
 	public String inputMl;
+	public String dataFolder;
+	public File dataPath;
 
 	// POLYGONS PROPERTIES
 
@@ -203,85 +206,89 @@ public class Mesh {
 //			/** The Ml. */
 //			double[] trMl;
 			
-			outputPathBeqDirichlet = "/home/francesco/desktop/tesiTest/provaDirichlet.txt";
-			outputPathBeqNoDirichlet= "/home/francesco/desktop/tesiTest/provaNoDirichlet.txt";
+//			outputPathBeqDirichlet = "/home/francesco/desktop/tesiTest/provaDirichlet.txt";
+//			outputPathBeqNoDirichlet= "/home/francesco/desktop/tesiTest/provaNoDirichlet.txt";
 			
-			inputPlanArea = "/home/francesco/desktop/tesiTest/giuseppeTest/vPlanarArea";
-			inputSource = "/home/francesco/desktop/tesiTest/giuseppeTest/vSource";
-			inputEta = "/home/francesco/desktop/tesiTest/giuseppeTest/vEtaInitialCondV";
-			inputEtaDirichlet = "/home/francesco/desktop/tesiTest/giuseppeTest/vEtaDrichelet";
-			inputBedRockElevation = "/home/francesco/desktop/tesiTest/giuseppeTest/vBedrock";
-			inputPorosity = "/home/francesco/desktop/tesiTest/giuseppeTest/vPorosity";
-			inputC = "/home/francesco/desktop/tesiTest/giuseppeTest/vC";
-			inputm = "/home/francesco/desktop/tesiTest/giuseppeTest/vM";
-			inputLengthSides = "/home/francesco/desktop/tesiTest/giuseppeTest/vLengthSides";
-			inputEuclideanDistance = "/home/francesco/desktop/tesiTest/giuseppeTest/vEuclideanDistance";
-			inputHydrConductivity = "/home/francesco/desktop/tesiTest/giuseppeTest/vHydrConductivity";
-			inputMp = "/home/francesco/desktop/tesiTest/giuseppeTest/Mp";
-			inputMi = "/home/francesco/desktop/tesiTest/giuseppeTest/Mj";
-			inputMl = "/home/francesco/desktop/tesiTest/giuseppeTest/Ml";
+//			dataFolder = ReadFromScreen.readText("Write the path of the data folder");
+//			
+//			File dataPath = new File(dataFolder);
+//			
+//			inputPlanArea = "vPlanarArea";
+//			inputSource = "vSource";
+//			inputEta = "vEtaInitialCondV";
+//			inputEtaDirichlet = "vEtaDrichelet";
+//			inputBedRockElevation = "vBedrock";
+//			inputPorosity = "vPorosity";
+//			inputC = "vC";
+//			inputm = "vM";
+//			inputLengthSides = "vLengthSides";
+//			inputEuclideanDistance = "vEuclideanDistance";
+//			inputHydrConductivity = "vHydrConductivity";
+//			inputMp = "Mp";
+//			inputMi = "Mj";
+//			inputMl = "Ml";
+			
+			GUIpathFileRead gui = new GUIpathFileRead();
 			// POLYGONS PROPERTIES
 
 			FileRead readEta = new FileRead();
 			/** The eta. */
-			Mesh.eta = readEta.readDoubleArray(inputEta);
+			Mesh.eta = readEta.readDoubleArray(gui.openDialog("HYDRAULIC HEAD array"));
 			
 			FileRead readPlanArea = new FileRead();
 			/** The plan area. */
-			Mesh.planArea = readPlanArea.readDoubleArray(inputPlanArea);
+			Mesh.planArea = readPlanArea.readDoubleArray(gui.openDialog("PLANIMETRIC POLYGONS AREA array"));
 
 			Mesh.Np = planArea.length;
 
 			FileRead readSource = new FileRead();
 			/** The source. per unit area of the polygon */
-			Mesh.source = readSource.readDoubleArray(inputSource);
+			Mesh.source = readSource.readDoubleArray(gui.openDialog("SOURCE array"));
 
 			FileRead readED = new FileRead();
 			/** The eta. */
-			Mesh.etaDirichlet = readED.readDoubleArray(inputEtaDirichlet);
+			Mesh.etaDirichlet = readED.readDoubleArray(gui.openDialog("HYDRAULIC HEAD DIRICHLET BC array"));
 
 			FileRead readBRE = new FileRead();
 			/** The bottom elevation. */
-			Mesh.bedRockElevation = readBRE.readDoubleArray(inputBedRockElevation);
+			Mesh.bedRockElevation = readBRE.readDoubleArray(gui.openDialog("BEDROCK ELEVATION array"));
 
 			FileRead readPor = new FileRead();
-			Mesh.porosity = readPor.readDoubleArray(inputPorosity);
+			Mesh.porosity = readPor.readDoubleArray(gui.openDialog("POROSITY array"));
 
 			FileRead readC = new FileRead();
-			Mesh.c = readC.readDoubleArray(inputC);
+			Mesh.c = readC.readDoubleArray(gui.openDialog("C array - coeff of flow rate"));
 
 			FileRead readM = new FileRead();
-			Mesh.m = readM.readDoubleArray(inputm);
+			Mesh.m = readM.readDoubleArray(gui.openDialog("M array - coeff of flow rate"));
 
 			// SIDES PROPERTIES
 
 			FileRead readLS = new FileRead();
 			/** The length sides. */
-			Mesh.lengthSides = readLS.readDoubleArray(inputLengthSides);
+			Mesh.lengthSides = readLS.readDoubleArray(gui.openDialog("LENGTH SIDES OF POLYGONS array"));
 
 			FileRead readEucD = new FileRead();
 			/** The euclidean distance. */
-			Mesh.euclideanDistance = readEucD.readDoubleArray(inputEuclideanDistance);
+			Mesh.euclideanDistance = readEucD.readDoubleArray(gui.openDialog("EUCLIDEAN DISTANCE array"));
 
 			FileRead readHydrC = new FileRead();
 			/** The hydr conductivity. */
-			Mesh.hydrConductivity = readHydrC.readDoubleArray(inputHydrConductivity);
+			Mesh.hydrConductivity = readHydrC.readDoubleArray(gui.openDialog("HYDRAULIC CONDUCTIVITY array"));
 
 			// ADJACENCY MATRIX PROPERTIES
 
 			FileRead readMp = new FileRead();
 			/** The Mp. */
-			Mesh.Mp = readMp.readIntArray(inputMp);
+			Mesh.Mp = readMp.readIntArray(gui.openDialog("Mp array"));
 
 			FileRead readMj = new FileRead();
 			/** The Mi. */
-			Mesh.Mi = readMj.readIntArray(inputMi);
+			Mesh.Mi = readMj.readIntArray(gui.openDialog("Mj array"));
 
 			FileRead readMl = new FileRead();
 			/** The Ml. */
-			Mesh.Ml = readMl.readDoubleArray(inputMl);
-			
-//			TripletToRowCompressedForm.computeMp(trMi, trMj, trMl, Mesh.Np);
+			Mesh.Ml = readMl.readDoubleArray(gui.openDialog("Ml array"));
 			
 		}
 

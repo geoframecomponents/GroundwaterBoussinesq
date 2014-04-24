@@ -25,6 +25,7 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 	// allocate the memory for eta array
 	double[] eta;
 	double[] aquiferThickness;
+	double[] volumeSource;
 
 	double[] matT;
 	double[] arrb;
@@ -92,7 +93,7 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 		FileWrite.writeStringDoubleString("Total volume", volumeNew, " [m^3]");
 		FileWrite.writeFourStringColumn("PiezHead","AquifThick","WaterVolume","Source");
 		FileWrite.writeFourStringColumn("[m]", "[m]", "[m^3]", "[m^3/s]");
-		FileWrite.writeFourDoubleColumn(eta,aquiferThickness,volume,Mesh.source);
+		FileWrite.writeFourDoubleColumn(eta,aquiferThickness,volume,volumeSource);
 		FileWrite.closeTxtFile();
 		
 	}
@@ -172,6 +173,7 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 		// allocate the memory for eta array
 		aquiferThickness = new double[Mesh.Np];
+		volumeSource = new double[Mesh.Np];
 		eta = new double[Mesh.Np];
 		volume = new double[Mesh.Np];
 
@@ -190,7 +192,7 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 		for (int t = 0; t < SIMULATIONTIME; t += TIMESTEP) {
 
 			fileName = myformatter.format(t);
-			FileWrite.openTxtFile(fileName.concat(".txt"), BoussinesqEquation.solutionPath, false);
+			FileWrite.openTxtFile(fileName.concat(".txt"), BoussinesqEquation.solutionDir, false);
 			
 			computeBEqArrays(cB);
 
@@ -199,6 +201,7 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 
 			for (int j = 0; j < eta.length; j++) {
 				
+				volumeSource[j] = Mesh.source[j] * Mesh.planArea[j];
 				aquiferThickness[j] = Math.max(0, eta[j]-Mesh.bedRockElevation[j]);
 				volume[j] = computeVolume(j,eta[j]);
 				volumeNew = volumeNew + volume[j];

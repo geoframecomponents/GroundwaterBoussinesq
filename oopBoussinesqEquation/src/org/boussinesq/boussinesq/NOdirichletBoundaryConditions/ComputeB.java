@@ -3,6 +3,7 @@ package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
+import org.francescoS.usefulClasses.TextIO;
 
 public class ComputeB implements TimeSimulation {
 
@@ -47,6 +48,12 @@ public class ComputeB implements TimeSimulation {
 					* Mesh.source[i] - TIMESTEP
 					* Mesh.planArea[i] * Mesh.c[i]
 					* Math.pow(volume / Mesh.planArea[i], Mesh.m[i]);
+			
+			if (arrB[i] < 0){
+				
+				TextIO.putln("WARNING!!!\nThe element " + i + " of the array of known terms is NEGATIVE");
+				
+			}
 
 		}
 

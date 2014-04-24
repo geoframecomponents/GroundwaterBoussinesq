@@ -71,6 +71,8 @@ public class Solver {
 			// compute the max residual
 			maxResidual = Math.max(Math.abs(cg.matSol.getMaxLocation()[0]),
 					Math.abs(cg.matSol.getMinLocation()[0]));
+			
+			System.out.println(maxResidual);
 
 		} while (maxResidual > tolerance * 100);
 

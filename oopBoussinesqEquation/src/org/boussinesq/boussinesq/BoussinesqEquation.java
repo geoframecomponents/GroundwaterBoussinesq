@@ -24,7 +24,7 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
 public class BoussinesqEquation implements TimeSimulation {
 
 	String boundaryConditions;
-	public static File solutionPath;
+	public static File solutionDir;
 	
 	public void defineBoundaryConditionsType(BoussinesqEquation beq){
 		
@@ -61,7 +61,7 @@ public class BoussinesqEquation implements TimeSimulation {
 		@SuppressWarnings("unused")
 		Mesh mesh = new Mesh(simulationType);
 		
-		solutionPath = FileWrite.makeDirectory(ReadFromScreen.readText("Write the name of the solution folder\n(it's better without space)"));
+		solutionDir = FileWrite.makeDirectory(ReadFromScreen.readText("Write the name of the solution folder\n(it's better without space)"));
 		
 		BoussinesqEquation beq = new BoussinesqEquation();
 
