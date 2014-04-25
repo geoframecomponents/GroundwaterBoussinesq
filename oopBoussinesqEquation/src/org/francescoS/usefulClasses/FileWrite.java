@@ -18,7 +18,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FileWrite.
  */
@@ -160,7 +159,7 @@ public class FileWrite {
 	
 	public static void writeStringDoubleString(String description, double value, String unitMeasure){
 		
-		writeData.println(description + ": " + value + unitMeasure);
+		writeData.println(description + ": " + value + " " + unitMeasure);
 		
 	}
 	
@@ -175,7 +174,7 @@ public class FileWrite {
 	
 	public static void writeStringIntString(String description, int value, String unitMeasure){
 		
-		writeData.println(description + ": " + value + unitMeasure);
+		writeData.println(description + ": " + value + " " + unitMeasure);
 		
 	}
 	

@@ -13,9 +13,11 @@ import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
+import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.francescoS.usefulClasses.FileWrite;
 import org.francescoS.usefulClasses.TextIO;
+
 
 
 //import cern.colt.Arrays;
@@ -34,6 +36,9 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 	
 	double volumeOld = 0;
 	double volumeNew = 0;
+	
+	static long timeCompute;
+	static long timeSolver;
 
 	
 	
@@ -92,6 +97,7 @@ public class ComputeBEq extends ComputeT implements TimeSimulation {
 		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME/60, " [min]");
 		FileWrite.writeStringDoubleString("Initial volume", volumeOld, "[ m^3]");
 		FileWrite.writeStringDoubleString("Total volume", volumeNew, " [m^3]");
+		FileWrite.writeStringDoubleString("Time convergence of CG", ComputeBEq.timeSolver/1000000000.0, "[s]");
 		FileWrite.writeFourStringColumn("PiezHead","AquifThick","WaterVolume","Source");
 		FileWrite.writeFourStringColumn("[m]", "[m]", "[m^3]", "[m^3/s]");
 		FileWrite.writeFourDoubleColumn(eta,aquiferThickness,volume,volumeSource);

@@ -1,8 +1,6 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
@@ -34,6 +32,9 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 	
 	double volumeOld = 0;
 	double volumeNew = 0;
+	
+	static long timeCompute;
+	static long timeSolver;
 
 	
 	
@@ -85,12 +86,13 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 	
 	public void writeSolution(int time) throws IOException{
 		
-		FileWrite.writeStringIntString("Iteration number", (int) time/TIMESTEP + 1, " [ ]");
-		FileWrite.writeStringDoubleString("Timestep", TIMESTEP, " [s]");
-		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME, " [s]");
-		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME/60, " [min]");
+		FileWrite.writeStringIntString("Iteration number", (int) time/TIMESTEP + 1, "[ ]");
+		FileWrite.writeStringDoubleString("Timestep", TIMESTEP, "[s]");
+		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME, "[s]");
+		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME/60, "[min]");
 		FileWrite.writeStringDoubleString("Initial volume", volumeOld, "[ m^3]");
-		FileWrite.writeStringDoubleString("Total volume", volumeNew, " [m^3]");
+		FileWrite.writeStringDoubleString("Total volume", volumeNew, "[m^3]");
+		FileWrite.writeStringDoubleString("Time convergence of CG", ComputeBEqDirichlet.timeSolver/1000000000.0, "[s]");
 		FileWrite.writeFourStringColumn("PiezHead","AquifThick","WaterVolume","Source");
 		FileWrite.writeFourStringColumn("[m]", "[m]", "[m^3]", "[m^3/s]");
 		FileWrite.writeFourDoubleColumn(eta,aquiferThickness,volume,volumeSource);

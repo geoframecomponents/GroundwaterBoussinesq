@@ -10,8 +10,6 @@ import cern.colt.matrix.tdouble.impl.SparseRCDoubleMatrix2D;
 public class Solver {
 	
 	long startCompute, endCompute, startSolver, endSolver;
-	long timeCompute;
-	long timeSolver;
 
 	/**
 	 * Newton iteration.
@@ -48,8 +46,8 @@ public class Solver {
 		ComputeJr cJr = new ComputeJr();
 		ComputeR cR = new ComputeR();
 		
-		timeCompute = 0;
-		timeSolver = 0;
+		ComputeBEqDirichlet.timeCompute = 0;
+		ComputeBEqDirichlet.timeSolver = 0;
 
 		do {
 
@@ -89,13 +87,13 @@ public class Solver {
 			
 //			System.out.println("Residual: " + maxResidual);
 			
-			timeCompute = timeCompute + (endCompute - startCompute);
-			timeSolver = timeSolver + (endSolver - startSolver);
+			ComputeBEqDirichlet.timeCompute = ComputeBEqDirichlet.timeCompute + (endCompute - startCompute);
+			ComputeBEqDirichlet.timeSolver = ComputeBEqDirichlet.timeSolver + (endSolver - startSolver);
 
 		} while (maxResidual > tolerance * 100);
 
-		System.out.println("Compute time: " + (timeCompute)/ 1000000000.0 + " [s]");
-		 System.out.println("Solver time: " + (timeSolver)/ 1000000000.0 + " [s]");
+//		System.out.println("Compute time: " + (ComputeBEqDirichlet.timeCompute)/ 1000000000.0 + " [s]");
+//		 System.out.println("Solver time: " + (ComputeBEqDirichlet.timeSolver)/ 1000000000.0 + " [s]");
 		
 		return eta;
 
