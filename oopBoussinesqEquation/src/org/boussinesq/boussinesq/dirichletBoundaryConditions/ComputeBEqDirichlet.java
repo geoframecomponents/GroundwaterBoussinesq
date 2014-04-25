@@ -116,7 +116,7 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 			
 			if (ComputationalDomain.etaDirichlet[index] != ComputationalDomain.NOVALUE){
 				
-				volume = volume + TIMESTEP * ComputationalDomain.planArea[index] * Math.max(0, ComputationalDomain.etaDirichlet[index]-ComputationalDomain.bedRockElevation[index]);
+				volume = volume + TIMESTEP * PolygonGeometricalWetProperties.computeWaterVolume(ComputationalDomain.etaDirichlet[index], ComputationalDomain.bedRockElevation[index], ComputationalDomain.porosity[index], ComputationalDomain.planArea[index]);
 				
 			}
 			
