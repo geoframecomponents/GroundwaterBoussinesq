@@ -254,6 +254,9 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 
 			}
 			
+			System.out.println(volumeDirichlet);
+			System.out.println(volumeNew);
+			
 			volumeNew = volumeNew - volumeDirichlet;
 			
 			writeSolution(t);
