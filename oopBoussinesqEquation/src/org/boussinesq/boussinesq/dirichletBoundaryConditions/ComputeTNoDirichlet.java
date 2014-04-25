@@ -1,6 +1,6 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
-import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
+import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
 public class ComputeTNoDirichlet extends IsNoValue {
 

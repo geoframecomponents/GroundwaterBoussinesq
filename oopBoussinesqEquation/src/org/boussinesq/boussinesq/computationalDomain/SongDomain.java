@@ -1,4 +1,4 @@
-package org.boussinesq.boussinesq.computationalDoman;
+package org.boussinesq.boussinesq.computationalDomain;
 
 public class SongDomain {
 	
@@ -126,7 +126,6 @@ public class SongDomain {
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 

@@ -10,8 +10,9 @@ import java.io.IOException;
 
 
 
+
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeBEq;
-import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
+import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
 import org.boussinesq.song.Song;
 import org.francescoS.usefulClasses.GUIpathFileRead;

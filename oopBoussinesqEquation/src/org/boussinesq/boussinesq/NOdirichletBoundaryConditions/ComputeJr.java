@@ -1,7 +1,7 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
-import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
+import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
 public class ComputeJr {
 

@@ -1,4 +1,4 @@
-package org.boussinesq.boussinesq.computationalDoman;
+package org.boussinesq.boussinesq.computationalDomain;
 
 import java.io.FileNotFoundException;
 

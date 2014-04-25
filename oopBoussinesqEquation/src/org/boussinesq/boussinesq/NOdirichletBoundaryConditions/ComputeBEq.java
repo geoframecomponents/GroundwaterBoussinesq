@@ -12,11 +12,12 @@ import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
-import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
+import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.francescoS.usefulClasses.FileWrite;
 import org.francescoS.usefulClasses.TextIO;
+
 
 
 

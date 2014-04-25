@@ -2,7 +2,7 @@ package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
-import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
+import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.francescoS.usefulClasses.TextIO;
 
 public class ComputeB implements TimeSimulation {
