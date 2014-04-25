@@ -6,6 +6,6 @@ public interface TimeSimulation {
 	int TIMESTEP = 3600;
 
 	/** legth of the simulation */
-	int SIMULATIONTIME = 3600 * 24 * 5;
+	int SIMULATIONTIME = 3600 * 24 * 3;
 
 }
