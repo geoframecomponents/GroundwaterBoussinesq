@@ -10,13 +10,12 @@ import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
-import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
+import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.francescoS.usefulClasses.FileWrite;
 import org.francescoS.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
-import cern.jet.random.tdouble.Zeta;
 
 public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 
@@ -110,21 +109,21 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 	
 	
 	
-	public double computeVolumeDirichlet(double volume){
-		
-		for (int index = 0; index < ComputationalDomain.Np; index++){
-			
-			if (ComputationalDomain.etaDirichlet[index] != ComputationalDomain.NOVALUE){
-				
-				volume = volume + TIMESTEP * PolygonGeometricalWetProperties.computeWaterVolume(ComputationalDomain.etaDirichlet[index], ComputationalDomain.bedRockElevation[index], ComputationalDomain.porosity[index], ComputationalDomain.planArea[index]);
-				
-			}
-			
-		}
-		
-		return volume;
-		
-	}
+//	public double computeVolumeDirichlet(double volume){
+//		
+//		for (int index = 0; index < ComputationalDomain.Np; index++){
+//			
+//			if (ComputationalDomain.etaDirichlet[index] != ComputationalDomain.NOVALUE){
+//				
+//				volume = volume + TIMESTEP * PolygonGeometricalWetProperties.computeWaterVolume(ComputationalDomain.etaDirichlet[index], ComputationalDomain.bedRockElevation[index], ComputationalDomain.porosity[index], ComputationalDomain.planArea[index]);
+//				
+//			}
+//			
+//		}
+//		
+//		return volume;
+//		
+//	}
 	
 	
 	
@@ -188,32 +187,32 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 	public void computeBEq() throws IOException,
 			IterativeSolverDoubleNotConvergedException {
 		
-		
-
-		EtaInitialization etaInit = new EtaInitialization();
-
-		ComputeTDirichlet cTDirichlet = new ComputeTDirichlet();
-		ComputeTNoDirichlet cTNoDirichlet = new ComputeTNoDirichlet();
-		ComputeB cB = new ComputeB();
+		ComputeB cB = new ComputeB();		
 		Solver newton = new Solver();
-
 		RCConjugateGradient cg = new RCConjugateGradient(ComputationalDomain.Np);
 		RCIndexDiagonalElement rcIndexDiagonalElement = new RCIndexDiagonalElement();
+		MachineEpsilon cMEd = new MachineEpsilon();
+
+		
+		
+		String fileName = null;
+		DecimalFormat myformatter = computePattern();
 
 		int[] indexDiag = rcIndexDiagonalElement.computeIndexDiag(ComputationalDomain.Np,
 				ComputationalDomain.Mp, ComputationalDomain.Mi);
-
-		MachineEpsilon cMEd = new MachineEpsilon();
+		
 		double tolerance = cMEd.computeMachineEpsilonDouble();
-
-		String fileName = null;
-		DecimalFormat myformatter = computePattern();
 		
 		// allocate the memory for eta array
 		aquiferThickness = new double[ComputationalDomain.Np];
 		volumeSource = new double[ComputationalDomain.Np];
 		eta = new double[ComputationalDomain.Np];
 		volume = new double[ComputationalDomain.Np];
+		
+		EtaInitialization etaInit = new EtaInitialization();
+
+		ComputeTDirichlet cTDirichlet = new ComputeTDirichlet();
+		ComputeTNoDirichlet cTNoDirichlet = new ComputeTNoDirichlet();
 		
 		for (int i = 0; i < ComputationalDomain.Np; i++){
 			
@@ -232,7 +231,7 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 			
 			TextIO.putln("Time step " + (double) t/3600);
 			
-			volumeDirichlet = computeVolumeDirichlet(volumeDirichlet);
+//			volumeDirichlet = computeVolumeDirichlet(volumeDirichlet);
 			
 			fileName = myformatter.format(t);
 			FileWrite.openTxtFile(fileName.concat(".txt"), BoussinesqEquation.solutionDir, false);
@@ -253,9 +252,6 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 				volumeNew = volumeNew + volume[j];
 
 			}
-			
-			System.out.println(volumeDirichlet);
-			System.out.println(volumeNew);
 			
 			volumeNew = volumeNew - volumeDirichlet;
 			

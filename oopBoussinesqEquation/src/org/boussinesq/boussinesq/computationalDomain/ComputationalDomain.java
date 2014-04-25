@@ -1,17 +1,13 @@
-package org.boussinesq.boussinesq.computationalDoman;
+package org.boussinesq.boussinesq.computationalDomain;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Grid.
  */
 public class ComputationalDomain {
 
-	public static String outputPathBeqDirichlet;
-	public static String outputPathBeqNoDirichlet;
-	
 	public String dataFolder;
 	public File dataPath;
 

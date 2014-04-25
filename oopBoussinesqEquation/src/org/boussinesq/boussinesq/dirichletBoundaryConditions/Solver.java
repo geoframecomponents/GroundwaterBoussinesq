@@ -1,7 +1,7 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
-import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
+import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;

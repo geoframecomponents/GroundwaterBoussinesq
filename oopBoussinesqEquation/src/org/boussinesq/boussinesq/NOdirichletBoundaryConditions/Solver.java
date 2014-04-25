@@ -4,7 +4,7 @@ import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 //import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeJr;
 //import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeR;
 
-import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
+import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
