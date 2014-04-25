@@ -3,7 +3,7 @@ package org.francescoS.usefulClasses;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
+//import java.util.Arrays;
 import java.util.Scanner;
 
 // TODO: Auto-generated Javadoc
@@ -35,7 +35,7 @@ public class FileRead {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public double[][] readDoubleMatrix(String filePath) throws IOException {
+	public double[][] readDoubleMatrix(File filePath) throws IOException {
 
 		readDoubleMatrixDimension(filePath);
 		loadDoubleMatrix(filePath);
@@ -53,7 +53,7 @@ public class FileRead {
 	 * @throws FileNotFoundException
 	 *             the file not found exception
 	 */
-	public double[] readDoubleArray(String filePath)
+	public double[] readDoubleArray(File filePath)
 			throws FileNotFoundException {
 
 		readDoubleMatrixDimension(filePath);
@@ -71,7 +71,7 @@ public class FileRead {
 
 	}
 	
-	public int[] readIntArray(String filePath) throws FileNotFoundException{
+	public int[] readIntArray(File filePath) throws FileNotFoundException{
 		
 		readIntMatrixDimension(filePath);
 		
@@ -95,11 +95,11 @@ public class FileRead {
 	 * @throws FileNotFoundException
 	 *             the file not found exception
 	 */
-	public void readDoubleMatrixDimension(String filePath)
+	public void readDoubleMatrixDimension(File filePath)
 			throws FileNotFoundException {
 
 		Scanner inputFile = null;
-		inputFile = new Scanner(new File(filePath));
+		inputFile = new Scanner(filePath);
 
 		// determine the number of rows/columns
 
@@ -129,11 +129,11 @@ public class FileRead {
 
 	}
 	
-	public void readIntMatrixDimension(String filePath)
+	public void readIntMatrixDimension(File filePath)
 			throws FileNotFoundException {
 
 		Scanner inputFile = null;
-		inputFile = new Scanner(new File(filePath));
+		inputFile = new Scanner(filePath);
 
 		// determine the number of rows/columns
 
@@ -171,7 +171,7 @@ public class FileRead {
 	 * @throws FileNotFoundException
 	 *             the file not found exception
 	 */
-	public void loadDoubleMatrix(String filePath) throws FileNotFoundException {
+	public void loadDoubleMatrix(File filePath) throws FileNotFoundException {
 
 		int r = 0;
 		int c = 0;
@@ -179,7 +179,7 @@ public class FileRead {
 
 		Scanner inFile = null;
 
-		inFile = new Scanner(new File(filePath));
+		inFile = new Scanner(filePath);
 
 		while (inFile.hasNextLine()) {
 
@@ -212,14 +212,14 @@ public class FileRead {
 	 * @throws FileNotFoundException
 	 *             the file not found exception
 	 */
-	public void readRowDoubleArray(String filePath) throws FileNotFoundException {
+	public void readRowDoubleArray(File filePath) throws FileNotFoundException {
 
 		int c = 0;
 		doubleArray = new double[col];
 
 		Scanner inFile = null;
 
-		inFile = new Scanner(new File(filePath));
+		inFile = new Scanner(filePath);
 
 		while (inFile.hasNextLine()) {
 
@@ -251,14 +251,14 @@ public class FileRead {
 	 * @throws FileNotFoundException
 	 *             the file not found exception
 	 */
-	public void readColumnDoubleArray(String filePath) throws FileNotFoundException {
+	public void readColumnDoubleArray(File filePath) throws FileNotFoundException {
 
 		int r = 0;
 		doubleArray = new double[row];
 
 		Scanner inFile = null;
 
-		inFile = new Scanner(new File(filePath));
+		inFile = new Scanner(filePath);
 
 		while (inFile.hasNextLine()) {
 
@@ -283,14 +283,14 @@ public class FileRead {
 
 	
 	
-	public void readRowIntArray(String filePath) throws FileNotFoundException {
+	public void readRowIntArray(File filePath) throws FileNotFoundException {
 
 		int c = 0;
 		intArray = new int[col];
 
 		Scanner inFile = null;
 
-		inFile = new Scanner(new File(filePath));
+		inFile = new Scanner(filePath);
 
 		while (inFile.hasNextLine()) {
 
@@ -322,14 +322,14 @@ public class FileRead {
 	 * @throws FileNotFoundException
 	 *             the file not found exception
 	 */
-	public void readColumnIntArray(String filePath) throws FileNotFoundException {
+	public void readColumnIntArray(File filePath) throws FileNotFoundException {
 
 		int r = 0;
 		intArray = new int[row];
 
 		Scanner inFile = null;
 
-		inFile = new Scanner(new File(filePath));
+		inFile = new Scanner(filePath);
 
 		while (inFile.hasNextLine()) {
 
@@ -363,13 +363,13 @@ public class FileRead {
 	public static void main(String[] args) throws IOException {
 
 		// double[][] matrix;
-		double[] array;
+//		double[] array;
 
-		String path = "/home/francesco/b.txt";
-		FileRead file = new FileRead();
+//		String path = "/home/francesco/b.txt";
+//		FileRead file = new FileRead();
 
 		// matrix = file.readDoubleMatrix(path);
-		array = file.readDoubleArray(path);
+//		array = file.readDoubleArray(path);
 
 		/*
 		 * for (int r = 0; r < matrix.length; r++) {
@@ -385,7 +385,6 @@ public class FileRead {
 		 * }
 		 */
 
-		System.out.println(Arrays.toString(array));
 
 		System.exit(0);
 

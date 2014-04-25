@@ -1,11 +1,20 @@
 package org.boussinesq.boussinesq;
 
+//import java.io.File;
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+//import java.util.Arrays;
+
+
+
+
+
 
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeBEq;
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
 import org.boussinesq.song.Song;
+import org.francescoS.usefulClasses.GUIpathFileRead;
 import org.francescoS.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
@@ -17,16 +26,18 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
 public class BoussinesqEquation implements TimeSimulation {
 
 	String boundaryConditions;
+	public static File solutionPath;
+	public static File solutionDir;
 	
 	public void defineBoundaryConditionsType(BoussinesqEquation beq){
 		
 		beq.boundaryConditions = "NoDirichlet";
 		
-		for (int i = 0; i < Mesh.etaDirichlet.length; i++){
+		for (int i = 0; i < ComputationalDomain.etaDirichlet.length; i++){
 			
-			if (Mesh.etaDirichlet[i] != Mesh.NOVALUE){
+			if (ComputationalDomain.etaDirichlet[i] != ComputationalDomain.NOVALUE){
 				
-				System.out.println(Mesh.etaDirichlet[i]);
+				System.out.println(ComputationalDomain.etaDirichlet[i]);
 				
 				beq.boundaryConditions = "Dirichlet";
 				break;
@@ -48,15 +59,29 @@ public class BoussinesqEquation implements TimeSimulation {
 	public static void main(String[] args)
 			throws IterativeSolverDoubleNotConvergedException, IOException {
 		
-		String simulationType = "NoSong";
+		String sep = System.getProperty("file.separator");
+				
+		String simulationType = "Song";
 		// long start=System.nanoTime();
-		@SuppressWarnings("unused")
-		Mesh mesh = new Mesh(simulationType);
 		
-		System.out.println("\nMl");
-		System.out.println(Arrays.toString(Mesh.Ml));
+//		solutionDir = FileWrite.makeDirectory(ReadFromScreen.readText("Write the name of the solution folder\n(it's better without space)"));
+		
+		GUIpathFileRead guiDir = new GUIpathFileRead();
+		
+		solutionPath = guiDir.saveDialog();
+		
+		solutionDir = new File(solutionPath, sep);
 		
 		BoussinesqEquation beq = new BoussinesqEquation();
+		
+		if (simulationType.equals("Song")){
+			
+			ComputationalDomain.callSongDomain();
+			
+		} else {
+			
+			ComputationalDomain.callCatchmentDomain();
+		}
 
 		beq.defineBoundaryConditionsType(beq);
 		
@@ -74,16 +99,18 @@ public class BoussinesqEquation implements TimeSimulation {
 
 		if (simulationType.equals("Song")) {
 
-			Song s = new Song(SIMULATIONTIME, Mesh.Np, Mesh.hydrConductivity[0]);
+			Song s = new Song(SIMULATIONTIME, ComputationalDomain.Np, ComputationalDomain.hydrConductivity[0]);
 
-			s.beqSong(Mesh.porosity);
+			s.beqSong(ComputationalDomain.porosity);
 
 			// long end=System.nanoTime();
 			// System.out.println("End time: " + (end-start));
 
-			System.exit(1);
+			
 		}
 
+		System.exit(1);
+		
 	}
 
 }

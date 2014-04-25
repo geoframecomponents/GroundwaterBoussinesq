@@ -1,9 +1,10 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
-import org.boussinesq.boussinesq.Mesh;
 //import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeJr;
 //import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeR;
+
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
@@ -52,8 +53,8 @@ public class Solver {
 			double[] jr = cJr.computeJr(indexDiag, arrT, eta);
 
 			// convert array in sparse matrix for DoubleCG class
-			matrixJr = new SparseRCDoubleMatrix2D(Mesh.Np, Mesh.Np, Mesh.Mp,
-					Mesh.Mi, jr);
+			matrixJr = new SparseRCDoubleMatrix2D(ComputationalDomain.Np, ComputationalDomain.Np, ComputationalDomain.Mp,
+					ComputationalDomain.Mi, jr);
 
 			// compute the residual function
 			double[] r = cR.computeR(arrT, arrb, eta);
@@ -64,13 +65,15 @@ public class Solver {
 			cg.solverCG(matrixr, matrixJr);
 
 			// compute the new eta for every cell
-			for (int i = 0; i < Mesh.Np; i++) {
+			for (int i = 0; i < ComputationalDomain.Np; i++) {
 				eta[i] = eta[i] - cg.matSol.get(i);
 			}
 
 			// compute the max residual
 			maxResidual = Math.max(Math.abs(cg.matSol.getMaxLocation()[0]),
 					Math.abs(cg.matSol.getMinLocation()[0]));
+			
+			System.out.println(maxResidual);
 
 		} while (maxResidual > tolerance * 100);
 

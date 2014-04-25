@@ -1,6 +1,6 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
-import org.boussinesq.boussinesq.Mesh;
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
 
 public class ComputeTDirichlet extends IsNoValue {
 
@@ -27,15 +27,15 @@ public class ComputeTDirichlet extends IsNoValue {
 		 * the matrix T is an array because this code uses the Row Compressed
 		 * Form to stored sparse matrix
 		 */
-		double[] arrayT = new double[Mesh.Ml.length];
+		double[] arrayT = new double[ComputationalDomain.Ml.length];
 
 		/* for-loop to analyze the mesh cell by cell */
-		for (int i = 0; i < Mesh.Np; i++) {
+		for (int i = 0; i < ComputationalDomain.Np; i++) {
 
-			if (!isNoValue(Mesh.etaDirichlet[i], Mesh.NOVALUE)) {
+			if (!isNoValue(ComputationalDomain.etaDirichlet[i], ComputationalDomain.NOVALUE)) {
 
 				// Dirichlet cells
-				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
+				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
 					arrayT[j] = T[j];
 				}
 			} else {
@@ -45,9 +45,9 @@ public class ComputeTDirichlet extends IsNoValue {
 				 * nested for-loop to analyze shared edges between the i-th cell
 				 * and the Mi[j]-th cell
 				 */
-				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
+				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
 
-					if (!isNoValue(Mesh.etaDirichlet[Mesh.Mi[j]], Mesh.NOVALUE)) {
+					if (!isNoValue(ComputationalDomain.etaDirichlet[ComputationalDomain.Mi[j]], ComputationalDomain.NOVALUE)) {
 
 						// adjacent Dirichlet cell
 						arrayT[j] = T[j];

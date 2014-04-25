@@ -1,7 +1,7 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
-import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
 
 public class ComputeJr {
 
@@ -51,8 +51,8 @@ public class ComputeJr {
 
 			// equation (A6)
 			arrJr[indexDiag[i]] = arrT[indexDiag[i]]
-					+ PolygonGeometricalWetProperties.computeWetArea(eta[i], Mesh.bedRockElevation[i],
-							Mesh.porosity[i], Mesh.planArea[i]);
+					+ PolygonGeometricalWetProperties.computeWetArea(eta[i], ComputationalDomain.bedRockElevation[i],
+							ComputationalDomain.porosity[i], ComputationalDomain.planArea[i]);
 
 		}
 

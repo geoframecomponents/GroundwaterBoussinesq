@@ -1,8 +1,9 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
-import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
+import org.francescoS.usefulClasses.TextIO;
 
 public class ComputeB implements TimeSimulation {
 
@@ -35,18 +36,24 @@ public class ComputeB implements TimeSimulation {
 
 		// declaration of the array that holds the known terms of the linear
 		// system
-		double[] arrB = new double[Mesh.Np];
+		double[] arrB = new double[ComputationalDomain.Np];
 
-		for (int i = 0; i < Mesh.Np; i++) {
+		for (int i = 0; i < ComputationalDomain.Np; i++) {
 			// compute the water volume stored in the cell
-			double volume = PolygonGeometricalWetProperties.computeWaterVolume(eta[i], Mesh.bedRockElevation[i],
-					Mesh.porosity[i], Mesh.planArea[i]);
+			double volume = PolygonGeometricalWetProperties.computeWaterVolume(eta[i], ComputationalDomain.bedRockElevation[i],
+					ComputationalDomain.porosity[i], ComputationalDomain.planArea[i]);
 
 			// delta t deve essere minore di 1/c
-			arrB[i] = volume + TIMESTEP * Mesh.planArea[i]
-					* Mesh.source[i] - TIMESTEP
-					* Mesh.planArea[i] * Mesh.c[i]
-					* Math.pow(volume / Mesh.planArea[i], Mesh.m[i]);
+			arrB[i] = volume + TIMESTEP * ComputationalDomain.planArea[i]
+					* ComputationalDomain.source[i] - TIMESTEP
+					* ComputationalDomain.planArea[i] * ComputationalDomain.c[i]
+					* Math.pow(volume / ComputationalDomain.planArea[i], ComputationalDomain.m[i]);
+			
+			if (arrB[i] < 0){
+				
+				TextIO.putln("WARNING!!!\nThe element " + i + " of the array of known terms is NEGATIVE");
+				
+			}
 
 		}
 

@@ -1,7 +1,7 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
-import org.boussinesq.boussinesq.Mesh;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
 
 public class ComputeR extends IsNoValue {
 
@@ -44,19 +44,19 @@ public class ComputeR extends IsNoValue {
 		double sum = 0;
 		// declaration of the array that holds the residual function for every
 		// cell
-		double[] arrR = new double[Mesh.Np];
+		double[] arrR = new double[ComputationalDomain.Np];
 
-		for (int i = 0; i < Mesh.Np; i++) {
-			if (isNoValue(Mesh.etaDirichlet[i], Mesh.NOVALUE)) {
+		for (int i = 0; i < ComputationalDomain.Np; i++) {
+			if (isNoValue(ComputationalDomain.etaDirichlet[i], ComputationalDomain.NOVALUE)) {
 
 				// non Dirichlet cells
-				for (int j = Mesh.Mp[i]; j < Mesh.Mp[i + 1]; j++) {
-					sum += arrT[j] * eta[Mesh.Mi[j]];
+				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
+					sum += arrT[j] * eta[ComputationalDomain.Mi[j]];
 				}
 
 				double waterVolume = PolygonGeometricalWetProperties
-						.computeWaterVolume(eta[i], Mesh.bedRockElevation[i],
-								Mesh.porosity[i], Mesh.planArea[i]);
+						.computeWaterVolume(eta[i], ComputationalDomain.bedRockElevation[i],
+								ComputationalDomain.porosity[i], ComputationalDomain.planArea[i]);
 				// equation (A3)
 				arrR[i] = waterVolume + sum - arrb[i];
 

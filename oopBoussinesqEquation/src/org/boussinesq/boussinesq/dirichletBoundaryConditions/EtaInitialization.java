@@ -1,6 +1,6 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
-import org.boussinesq.boussinesq.Mesh;
+import org.boussinesq.boussinesq.computationalDoman.ComputationalDomain;
 
 public class EtaInitialization extends IsNoValue {
 
@@ -8,14 +8,14 @@ public class EtaInitialization extends IsNoValue {
 		
 		// initialize eta array
 		for (int i = 0; i < eta.length; i++) {
-			if (isNoValue(Mesh.etaDirichlet[i], Mesh.NOVALUE)) {
+			if (isNoValue(ComputationalDomain.etaDirichlet[i], ComputationalDomain.NOVALUE)) {
 
 				// not Dirichlet cells
 				eta[i] = eta[i];
 			} else {
 
 				// Dirichlet cells
-				eta[i] = Mesh.etaDirichlet[i];
+				eta[i] = ComputationalDomain.etaDirichlet[i];
 			}
 		}
 		
