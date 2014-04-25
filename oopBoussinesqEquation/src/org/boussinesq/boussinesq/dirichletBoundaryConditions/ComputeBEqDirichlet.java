@@ -110,21 +110,21 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 	
 	
 	
-	public double computeVolumeDirichlet(double volume){
-		
-		for (int index = 0; index < ComputationalDomain.Np; index++){
-			
-			if (ComputationalDomain.etaDirichlet[index] != ComputationalDomain.NOVALUE){
-				
-				volume = volume + TIMESTEP * PolygonGeometricalWetProperties.computeWaterVolume(ComputationalDomain.etaDirichlet[index], ComputationalDomain.bedRockElevation[index], ComputationalDomain.porosity[index], ComputationalDomain.planArea[index]);
-				
-			}
-			
-		}
-		
-		return volume;
-		
-	}
+//	public double computeVolumeDirichlet(double volume){
+//		
+//		for (int index = 0; index < ComputationalDomain.Np; index++){
+//			
+//			if (ComputationalDomain.etaDirichlet[index] != ComputationalDomain.NOVALUE){
+//				
+//				volume = volume + TIMESTEP * PolygonGeometricalWetProperties.computeWaterVolume(ComputationalDomain.etaDirichlet[index], ComputationalDomain.bedRockElevation[index], ComputationalDomain.porosity[index], ComputationalDomain.planArea[index]);
+//				
+//			}
+//			
+//		}
+//		
+//		return volume;
+//		
+//	}
 	
 	
 	
@@ -232,7 +232,7 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 			
 			TextIO.putln("Time step " + (double) t/3600);
 			
-			volumeDirichlet = computeVolumeDirichlet(volumeDirichlet);
+//			volumeDirichlet = computeVolumeDirichlet(volumeDirichlet);
 			
 			fileName = myformatter.format(t);
 			FileWrite.openTxtFile(fileName.concat(".txt"), BoussinesqEquation.solutionDir, false);
