@@ -51,8 +51,8 @@ public class Solver {
 		ComputeJr cJr = new ComputeJr();
 		ComputeR cR = new ComputeR();
 		
-		ComputeBEq.timeCompute = 0;
-		ComputeBEq.timeSolver = 0;
+		ComputeBEqNoDirichlet.timeCompute = 0;
+		ComputeBEqNoDirichlet.timeSolver = 0;
 
 		do {
 			
@@ -92,8 +92,8 @@ public class Solver {
 			
 			System.out.println(maxResidual);
 			
-			ComputeBEq.timeCompute = ComputeBEq.timeCompute + (endCompute - startCompute);
-			ComputeBEq.timeSolver = ComputeBEq.timeSolver + (endSolver - startSolver);
+			ComputeBEqNoDirichlet.timeCompute = ComputeBEqNoDirichlet.timeCompute + (endCompute - startCompute);
+			ComputeBEqNoDirichlet.timeSolver = ComputeBEqNoDirichlet.timeSolver + (endSolver - startSolver);
 
 		} while (maxResidual > tolerance * 100);
 
