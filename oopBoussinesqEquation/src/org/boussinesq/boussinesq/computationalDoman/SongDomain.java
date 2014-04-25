@@ -90,8 +90,8 @@ public class SongDomain {
 //		ComputationalDomain.euclideanDistance[dim] = 1;
 //		ComputationalDomain.hydrConductivity[dim] = 0.1;
 
-		
 	}
+
 	
 	public void computePolygonsProperties(int dim){
 		

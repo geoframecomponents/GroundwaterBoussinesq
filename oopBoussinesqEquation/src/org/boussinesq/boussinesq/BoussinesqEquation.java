@@ -61,7 +61,9 @@ public class BoussinesqEquation implements TimeSimulation {
 		
 		String sep = System.getProperty("file.separator");
 				
+
 		String simulationType = "Song";
+
 		// long start=System.nanoTime();
 		
 //		solutionDir = FileWrite.makeDirectory(ReadFromScreen.readText("Write the name of the solution folder\n(it's better without space)"));
