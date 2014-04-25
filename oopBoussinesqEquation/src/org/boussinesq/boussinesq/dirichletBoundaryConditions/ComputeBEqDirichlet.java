@@ -16,6 +16,7 @@ import org.francescoS.usefulClasses.FileWrite;
 import org.francescoS.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
+import cern.jet.random.tdouble.Zeta;
 
 public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 
@@ -32,6 +33,7 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 	
 	double volumeOld = 0;
 	double volumeNew = 0;
+	double volumeDirichlet;
 	
 	static long timeCompute;
 	static long timeSolver;
@@ -108,6 +110,30 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 	
 	
 	
+	public double computeVolumeDirichlet(double volume){
+		
+		for (int index = 0; index < ComputationalDomain.Np; index++){
+			
+			if (ComputationalDomain.etaDirichlet[index] != ComputationalDomain.NOVALUE){
+				
+				volume = volume + TIMESTEP * ComputationalDomain.planArea[index] * Math.max(0, ComputationalDomain.etaDirichlet[index]-ComputationalDomain.bedRockElevation[index]);
+				
+			}
+			
+		}
+		
+		return volume;
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	/**
@@ -161,6 +187,8 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 	
 	public void computeBEq() throws IOException,
 			IterativeSolverDoubleNotConvergedException {
+		
+		
 
 		EtaInitialization etaInit = new EtaInitialization();
 
@@ -195,12 +223,16 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 		}
 
 		TextIO.putln("Initial volume: " + volumeOld);
+		
+
 
 		System.arraycopy(ComputationalDomain.eta, 0, eta, 0, ComputationalDomain.eta.length);
 
 		for (int t = 0; t < SIMULATIONTIME; t += TIMESTEP) {
 			
 			TextIO.putln("Time step " + (double) t/3600);
+			
+			volumeDirichlet = computeVolumeDirichlet(volumeDirichlet);
 			
 			fileName = myformatter.format(t);
 			FileWrite.openTxtFile(fileName.concat(".txt"), BoussinesqEquation.solutionDir, false);
@@ -221,6 +253,8 @@ public class ComputeBEqDirichlet extends ComputeT implements TimeSimulation {
 				volumeNew = volumeNew + volume[j];
 
 			}
+			
+			volumeNew = volumeNew - volumeDirichlet;
 			
 			writeSolution(t);
 			
