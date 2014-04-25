@@ -1,19 +1,13 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 
-import org.boussinesq.RowCompressedForm.RCConjugateGradient;
-//import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
-import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputeBEq;
 import org.boussinesq.boussinesq.ComputeT;
-import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
-import org.francescoS.usefulClasses.FileWrite;
 import org.francescoS.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
@@ -21,6 +15,8 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
 public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 
 	double[] eta;
+	double[] matT;
+	double[] arrb;
 	
 	double[] matTDirichlet;
 	double[] matTNoDirichlet;
@@ -28,8 +24,13 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 	double volumeDirichlet;
 
 	
+	ComputeT computeT;
+	ComputeTDirichlet cTDirichlet;
+	ComputeTNoDirichlet cTNoDirichlet;
+	
 	
 	int[] indexDiag;
+
 	RCIndexDiagonalElement rcIndexDiagonalElement;
 	MachineEpsilon cMEd;
 	double tolerance;
@@ -39,6 +40,11 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 		eta = new double[ComputationalDomain.Np];
 		rcIndexDiagonalElement = new RCIndexDiagonalElement();
 		cMEd = new MachineEpsilon();
+		
+		computeT = new ComputeT();
+		cTDirichlet = new ComputeTDirichlet();
+		cTNoDirichlet = new ComputeTNoDirichlet();
+
 	}
 	
 
@@ -46,12 +52,13 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 	
 	
 	
-	public void computeBEqArrays(ComputeTDirichlet cTDirichlet,
-			ComputeTNoDirichlet cTNoDirichlet, ComputeB cB) {
+	public void computeBEqArrays(double[] eta) {
 
-		matT = computeT(eta);
+		
+		matT = computeT.computeT(eta);
 		matTDirichlet = cTDirichlet.computeTDirichlet(matT);
 		matTNoDirichlet = cTNoDirichlet.computeTNoDirichlet(matT);
+		ComputeB cB = new ComputeB();
 		arrb = cB.computeB(eta, matTDirichlet);
 
 	}
@@ -69,12 +76,10 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 	public void computeBEq() throws IOException,
 			IterativeSolverDoubleNotConvergedException {
 
+		firstThings();
 		
 		EtaInitialization etaInit = new EtaInitialization();
 
-		ComputeTDirichlet cTDirichlet = new ComputeTDirichlet();
-		ComputeTNoDirichlet cTNoDirichlet = new ComputeTNoDirichlet();
-		
 		computeInitialVolume();
 
 		System.arraycopy(ComputationalDomain.eta, 0, eta, 0, ComputationalDomain.eta.length);
@@ -87,14 +92,13 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 
 			eta = etaInit.etaInitialization(eta);
 
-			computeBEqArrays(cTDirichlet, cTNoDirichlet, cB);
+			computeBEqArrays(eta);
 
-			eta = newton.newtonIteration(arrb, matTNoDirichlet, indexDiag, eta,
-					cg, tolerance);
-
-			computeOutputFeatures();
+			eta = solutionMethod(eta, matTNoDirichlet, arrb);
+					
+			computeOutputFeatures(eta);
 			
-			writeSolution(t);
+			writeSolution(t, eta);
 			
 			computeVolumeConservation();
 			

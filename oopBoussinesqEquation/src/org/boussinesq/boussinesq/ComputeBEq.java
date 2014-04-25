@@ -7,10 +7,6 @@ import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.Solver;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
-import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeB;
-import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
-import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeTDirichlet;
-import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeTNoDirichlet;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.francescoS.usefulClasses.FileWrite;
 import org.francescoS.usefulClasses.TextIO;
@@ -21,9 +17,9 @@ public class ComputeBEq implements TimeSimulation {
 
 	double[] aquiferThickness;
 	double[] volumeSource;
-	
-	double[] matT;
-	double[] arrb;
+	int[] indexDiag;
+	double tolerance;
+
 	double[] volume;
 	
 	double volumeOld = 0;
@@ -31,18 +27,21 @@ public class ComputeBEq implements TimeSimulation {
 	
 	String fileName = null;
 	
-	static long timeCompute;
-	static long timeSolver;
+	public static long timeCompute;
+	public static long timeSolver;
 	
 	
 	Solver newton;
 	RCConjugateGradient cg;
 	DecimalFormat myformatter;
+	RCIndexDiagonalElement rcIndexDiagonalElement;
+	MachineEpsilon cMEd;
 	
 	public ComputeBEq() {
 		
-		newton = new Solver();
+
 		cg = new RCConjugateGradient(ComputationalDomain.Np);
+		newton = new Solver();
 		
 		aquiferThickness = new double[ComputationalDomain.Np];
 		volumeSource = new double[ComputationalDomain.Np];
@@ -50,6 +49,9 @@ public class ComputeBEq implements TimeSimulation {
 		volume = new double[ComputationalDomain.Np];
 		
 		myformatter = computePattern();
+		
+		rcIndexDiagonalElement = new RCIndexDiagonalElement();
+		cMEd = new MachineEpsilon();
 		
 	}
 	
@@ -71,7 +73,7 @@ public class ComputeBEq implements TimeSimulation {
 		
 	}
 	
-	public void writeSolution(int time) throws IOException{
+	public void writeSolution(int time, double[] eta) throws IOException{
 		
 		FileWrite.writeStringIntString("Iteration number", (int) time/TIMESTEP + 1, "[ ]");
 		FileWrite.writeStringDoubleString("Timestep", TIMESTEP, "[s]");
@@ -99,16 +101,7 @@ public class ComputeBEq implements TimeSimulation {
 		return volume;
 		
 	}
-	
-	public void computeBEqArrays() {
-
-		ComputeT computeT = new ComputeT();
-		ComputeB cB = new ComputeB();
-		matT = computeT.computeT(eta);
-		arrb = cB.computeB(eta);
-
-	}
-	
+		
 	public void openTxtFile(int time) throws IOException{
 		
 		fileName = myformatter.format(time);
@@ -116,7 +109,7 @@ public class ComputeBEq implements TimeSimulation {
 		
 	}
 	
-	public void computeOutputFeatures(){
+	public void computeOutputFeatures(double[] eta){
 		
 		for (int j = 0; j < eta.length; j++) {
 			
@@ -153,6 +146,26 @@ public class ComputeBEq implements TimeSimulation {
 
 
 		volumeNew = 0;
+		
+	}
+	
+	public double[] solutionMethod(double[] etaOld, double[] matT, double[] arrb) throws IterativeSolverDoubleNotConvergedException{
+		
+		double[] eta = new double[etaOld.length];
+		
+		eta = newton.newtonIteration(arrb, matT, indexDiag, etaOld, cg,
+				tolerance);
+		
+		return eta;
+		
+	}
+	
+	public void firstThings(){
+		
+		indexDiag = rcIndexDiagonalElement.computeIndexDiag(ComputationalDomain.Np,
+				ComputationalDomain.Mp, ComputationalDomain.Mi);
+
+		tolerance = cMEd.computeMachineEpsilonDouble();
 		
 	}
 	

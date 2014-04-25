@@ -2,12 +2,11 @@ package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
 import java.io.IOException;
 
-import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.ComputeBEq;
-import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
+import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
-import org.boussinesq.machineEpsilon.MachineEpsilon;
+import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeB;
 import org.francescoS.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
@@ -15,28 +14,33 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
 public class ComputeBEqNoDirichlet extends ComputeBEq implements TimeSimulation {
 
 	double[] eta;
+	double[] matT;
+	double[] arrb;
 	
-	int[] indexDiag;
-	RCIndexDiagonalElement rcIndexDiagonalElement;
-	MachineEpsilon cMEd;
-	double tolerance;
 	
 	public ComputeBEqNoDirichlet() {
 		
 		eta = new double[ComputationalDomain.Np];
-		rcIndexDiagonalElement = new RCIndexDiagonalElement();
-		cMEd = new MachineEpsilon();
+
+
+	}
+	
+	public void computeBEqArrays(double[] eta) {
+
+		ComputeT computeT = new ComputeT();
+		ComputeB cB = new ComputeB();
+		matT = computeT.computeT(eta);
+		arrb = cB.computeB(eta);
+
 	}
 	
 	public void computeBEq() throws IOException,
 	IterativeSolverDoubleNotConvergedException {
 		// 	allocate the memory for eta array
 		
-		indexDiag = rcIndexDiagonalElement.computeIndexDiag(ComputationalDomain.Np,
-				ComputationalDomain.Mp, ComputationalDomain.Mi);
-
-		tolerance = cMEd.computeMachineEpsilonDouble();
-				
+			
+		firstThings();
+		
 		computeInitialVolume();
 		
 		// 	initialize eta array
@@ -48,14 +52,13 @@ public class ComputeBEqNoDirichlet extends ComputeBEq implements TimeSimulation 
 
 			openTxtFile(t);
 	
-			computeBEqArrays();
+			computeBEqArrays(eta);
 
-			eta = newton.newtonIteration(arrb, matT, indexDiag, eta, cg,
-			tolerance);
+			eta = solutionMethod(eta, matT, arrb);
 
-			computeOutputFeatures();
+			computeOutputFeatures(eta);
 	
-			writeSolution(t);
+			writeSolution(t, eta);
 	
 			computeVolumeConservation();
 	
