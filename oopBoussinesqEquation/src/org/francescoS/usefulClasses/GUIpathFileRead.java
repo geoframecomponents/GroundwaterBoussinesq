@@ -5,6 +5,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 public class GUIpathFileRead extends JPanel {
 	String sep = System.getProperty("file.separator");
@@ -13,7 +14,7 @@ public class GUIpathFileRead extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JFileChooser fileChooser = new JFileChooser();
+	JFileChooser fileChooser;
 	
 	public File openDialog(String title) {
 		// TODO Auto-generated constructor stub
@@ -46,12 +47,16 @@ public class GUIpathFileRead extends JPanel {
 	}
 	
 	
-	public File saveDialog(){
+	public File saveDialog(String title){
 		
 		File f, solutionDir;
 		
 		// parent component of the dialog
-		JFrame parentFrame = new JFrame();		
+		JFrame parentFrame = new JFrame();
+		
+		fileChooser = new JFileChooser();
+		
+		fileChooser.setDialogTitle(title);
 		
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int returnVal = fileChooser.showOpenDialog(parentFrame);

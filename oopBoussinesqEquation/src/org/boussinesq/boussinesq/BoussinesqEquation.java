@@ -46,7 +46,7 @@ public class BoussinesqEquation implements TimeSimulation {
 	public File defineSolutionPrintLocation(){
 		
 		GUIpathFileRead guiDir = new GUIpathFileRead();
-		File path = guiDir.saveDialog();
+		File path = guiDir.saveDialog("Input path of BEq solution");
 				
 		return path;
 	}

@@ -1,9 +1,10 @@
 package org.boussinesq.song;
 
-import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-//import java.util.Arrays;
+
+import org.francescoS.usefulClasses.FileWrite;
+import org.francescoS.usefulClasses.GUIpathFileRead;
 
 public class Song {
 
@@ -75,9 +76,25 @@ public class Song {
 		// System.out.println(Arrays.toString(xi));
 		return xi;
 	}
+	
+	public File defineSolutionPrintLocation(){
+		
+		GUIpathFileRead guiDir = new GUIpathFileRead();
+		File path = guiDir.saveDialog("Input path of Song solution");
+				
+		return path;
+	}
 
 	public void beqSong(double[] porosity) throws IOException {
 
+		File outputPathSong = defineSolutionPrintLocation();
+		
+		String song = "songks";
+		song = song.concat(Double.toString(hydraulicConductivity));
+		song = song.concat("days").concat(Integer.toString(t/(3600*24)));
+		
+		FileWrite.openTxtFile(song, outputPathSong, true);
+		
 		double[] ax = new double[nmax];
 		double[] solutionDimensionless = new double[x.length];
 		double[] solution = new double[x.length];
@@ -111,23 +128,11 @@ public class Song {
 
 		}
 
-		String outputPathSong;
-//		outputPathSong = "/home/francesco/song_5d_ks1.txt";
-		outputPathSong = "song_20d_ks001.txt";
+		FileWrite.writeOneDoubleColumn(solution);
+		FileWrite.closeTxtFile();
 		
-		FileWriter Rstatfile = new FileWriter(outputPathSong);
-		PrintWriter errestat = new PrintWriter(Rstatfile);
-
-		for (int j = 0; j < solution.length; j++) {
-
-			errestat.println(solution[j]);
-
-		}
-
-		errestat.println();
-		System.out.println();
-		Rstatfile.close();
-
+		
+		
 	}
 
 	public static void main(String[] args) throws IOException {
