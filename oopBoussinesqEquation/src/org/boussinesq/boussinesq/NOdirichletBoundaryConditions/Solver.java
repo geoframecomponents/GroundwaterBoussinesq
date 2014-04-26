@@ -94,7 +94,7 @@ public class Solver {
 			ComputeBEqNoDirichlet.timeCompute = ComputeBEqNoDirichlet.timeCompute + (endCompute - startCompute);
 			ComputeBEqNoDirichlet.timeSolver = ComputeBEqNoDirichlet.timeSolver + (endSolver - startSolver);
 
-		} while (maxResidual > tolerance * 100);
+		} while (maxResidual > tolerance * 1000);
 
 		return eta;
 

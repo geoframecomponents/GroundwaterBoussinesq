@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class GUIpathFileRead extends JPanel {
+	String sep = System.getProperty("file.separator");
 
 	/**
 	 * 
@@ -47,7 +48,7 @@ public class GUIpathFileRead extends JPanel {
 	
 	public File saveDialog(){
 		
-		File f;
+		File f, solutionDir;
 		
 		// parent component of the dialog
 		JFrame parentFrame = new JFrame();		
@@ -63,10 +64,12 @@ public class GUIpathFileRead extends JPanel {
 		        fileChooser.getSelectedFile().getAbsolutePath());
 		}
 		
-		return f;
+		solutionDir = new File(f, sep);
+		
+		return solutionDir;
 		
 	}
-	
+		
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

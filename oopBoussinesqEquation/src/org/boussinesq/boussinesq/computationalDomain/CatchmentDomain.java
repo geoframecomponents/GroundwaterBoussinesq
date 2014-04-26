@@ -14,6 +14,7 @@ public class CatchmentDomain {
 		
 		computeAdjacencyMatrixFeatures(gui);
 		computeSidesProperties(gui);
+		computePolygonsProperties(gui);
 		
 	}
 	
