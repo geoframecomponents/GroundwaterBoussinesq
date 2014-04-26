@@ -2,10 +2,12 @@ package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
 import java.io.IOException;
 
+import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.ComputeBEq;
 import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.TimeSimulation;
+import org.boussinesq.boussinesq.dirichletBoundaryConditions.Solver;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.francescoS.usefulClasses.TextIO;
@@ -23,7 +25,8 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 
 	double volumeDirichlet;
 
-	
+	Solver newton;
+	RCConjugateGradient cg;
 	ComputeT computeT;
 	ComputeTDirichlet cTDirichlet;
 	ComputeTNoDirichlet cTNoDirichlet;
@@ -40,10 +43,13 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 		eta = new double[ComputationalDomain.Np];
 		rcIndexDiagonalElement = new RCIndexDiagonalElement();
 		cMEd = new MachineEpsilon();
+		newton = new Solver();
+		cg = new RCConjugateGradient(ComputationalDomain.Np);
 		
 		computeT = new ComputeT();
 		cTDirichlet = new ComputeTDirichlet();
 		cTNoDirichlet = new ComputeTNoDirichlet();
+	
 
 	}
 	
@@ -61,6 +67,24 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 		ComputeB cB = new ComputeB();
 		arrb = cB.computeB(eta, matTDirichlet);
 
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	public double[] solutionMethod(double[] etaOld, double[] matT, double[] arrb) throws IterativeSolverDoubleNotConvergedException{
+		
+		double[] eta = new double[etaOld.length];
+		
+		eta = newton.newtonIteration(arrb, matT, indexDiag, etaOld, cg,
+				tolerance);
+		
+		return eta;
+		
 	}
 
 	

@@ -6,7 +6,7 @@ public class SongDomain {
 	
 	SongDomain(){
 
-		ComputationalDomain.Np = 400;
+		ComputationalDomain.Np = 100;
 		ComputationalDomain.NOVALUE = -999;
 		
 		computeAdjacencyMatrixFeatures(ComputationalDomain.Np);
@@ -81,7 +81,7 @@ public class SongDomain {
 		for (int i = 0; i < (dim +1); i++) {
 			ComputationalDomain.lengthSides[i] = 1;
 			ComputationalDomain.euclideanDistance[i] = 1;
-			ComputationalDomain.hydrConductivity[i] = 0.1;
+			ComputationalDomain.hydrConductivity[i] = 0.001;
 
 		}
 		
