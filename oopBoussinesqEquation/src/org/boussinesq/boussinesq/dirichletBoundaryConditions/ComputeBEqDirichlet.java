@@ -90,7 +90,14 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 	
 	
 	
-	
+	public void firstThings(){
+		
+		indexDiag = rcIndexDiagonalElement.computeIndexDiag(ComputationalDomain.Np,
+				ComputationalDomain.Mp, ComputationalDomain.Mi);
+
+		tolerance = cMEd.computeMachineEpsilonDouble();
+		
+	}
 	
 	
 	

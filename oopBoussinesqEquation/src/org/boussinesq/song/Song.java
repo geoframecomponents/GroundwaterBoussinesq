@@ -112,8 +112,8 @@ public class Song {
 		}
 
 		String outputPathSong;
-		outputPathSong = "/home/francesco/song_5d_ks1.txt";
-//		outputPathSong = "song_20d_ks001.txt";
+//		outputPathSong = "/home/francesco/song_5d_ks1.txt";
+		outputPathSong = "song_20d_ks001.txt";
 		
 		FileWriter Rstatfile = new FileWriter(outputPathSong);
 		PrintWriter errestat = new PrintWriter(Rstatfile);
