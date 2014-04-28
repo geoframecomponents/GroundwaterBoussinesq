@@ -75,7 +75,7 @@ public class ComputeBEq implements TimeSimulation {
 	
 	public void writeSolution(int time, double[] eta) throws IOException{
 		
-		FileWrite.writeStringIntString("Iteration number", (int) time/TIMESTEP + 1, "[ ]");
+		FileWrite.writeStringIntString("Iteration number", (int) time/TIMESTEP + 1, "");
 		FileWrite.writeStringDoubleString("Timestep", TIMESTEP, "[s]");
 		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME, "[s]");
 		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME/60, "[min]");
@@ -170,6 +170,10 @@ public class ComputeBEq implements TimeSimulation {
 	}
 	
 	public static void main(String[] args) {
+		
+		ComputeBEq test = new ComputeBEq();
+		
+		System.out.println(test.cMEd.computeMachineEpsilonDouble()*100);
 
 	}
 
