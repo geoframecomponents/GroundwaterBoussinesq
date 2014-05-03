@@ -10,7 +10,7 @@ import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.Solver;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
-import org.francescoS.usefulClasses.TextIO;
+import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
@@ -104,7 +104,7 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 	
 	
 	
-	public void computeBEq() throws IOException,
+	public void computeBEq(String boundaryCondition, String simulationType) throws IOException,
 			IterativeSolverDoubleNotConvergedException {
 
 		firstThings();
@@ -129,7 +129,7 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 					
 			computeOutputFeatures(eta);
 			
-			writeSolution(t, eta);
+			writeSolution(t, eta, boundaryCondition, simulationType);
 			
 			computeVolumeConservation();
 			

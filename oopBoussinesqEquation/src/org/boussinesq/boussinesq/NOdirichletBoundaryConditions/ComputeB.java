@@ -3,7 +3,7 @@ package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
-import org.francescoS.usefulClasses.TextIO;
+import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 public class ComputeB implements TimeSimulation {
 

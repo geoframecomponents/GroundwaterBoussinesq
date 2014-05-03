@@ -1,7 +1,7 @@
 /*
  * 
  */
-package org.francescoS.usefulClasses;
+package org.wordpress.growworkinghard.usefulClasses;
 /**
  * A class to write your solution on text file
  * 
@@ -151,6 +151,14 @@ public class FileWrite {
 	
 	
 	
+	
+	
+	
+	public static void writeStringString(String description, String string){
+		
+		writeData.println(description + ": " + string);
+		
+	}
 	
 	
 	

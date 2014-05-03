@@ -3,8 +3,8 @@ package org.boussinesq.song;
 import java.io.File;
 import java.io.IOException;
 
-import org.francescoS.usefulClasses.FileWrite;
-import org.francescoS.usefulClasses.GUIpathFileRead;
+import org.wordpress.growworkinghard.usefulClasses.FileWrite;
+import org.wordpress.growworkinghard.usefulClasses.GUIpathFileRead;
 
 public class Song {
 
