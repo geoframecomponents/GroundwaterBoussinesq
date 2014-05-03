@@ -8,8 +8,8 @@ import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.Solver;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
-import org.francescoS.usefulClasses.FileWrite;
-import org.francescoS.usefulClasses.TextIO;
+import org.wordpress.growworkinghard.usefulClasses.FileWrite;
+import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
@@ -73,8 +73,10 @@ public class ComputeBEq implements TimeSimulation {
 		
 	}
 	
-	public void writeSolution(int time, double[] eta) throws IOException{
+	public void writeSolution(int time, double[] eta, String bc, String simulation) throws IOException{
 		
+		FileWrite.writeStringString("Type of simulation", simulation);
+		FileWrite.writeStringString("Type of boundary conditions ", bc);
 		FileWrite.writeStringIntString("Iteration number", (int) time/TIMESTEP + 1, "");
 		FileWrite.writeStringDoubleString("Timestep", TIMESTEP, "[s]");
 		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME, "[s]");

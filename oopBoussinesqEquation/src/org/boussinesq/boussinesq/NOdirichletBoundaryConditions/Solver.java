@@ -1,9 +1,6 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
-//import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeJr;
-//import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeR;
-
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;

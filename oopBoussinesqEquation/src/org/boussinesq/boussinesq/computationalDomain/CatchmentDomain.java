@@ -2,8 +2,8 @@ package org.boussinesq.boussinesq.computationalDomain;
 
 import java.io.FileNotFoundException;
 
-import org.francescoS.usefulClasses.FileRead;
-import org.francescoS.usefulClasses.GUIpathFileRead;
+import org.wordpress.growworkinghard.usefulClasses.FileRead;
+import org.wordpress.growworkinghard.usefulClasses.GUIpathFileRead;
 
 public class CatchmentDomain {
 

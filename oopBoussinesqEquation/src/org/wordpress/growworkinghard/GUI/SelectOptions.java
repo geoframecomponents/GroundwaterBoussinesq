@@ -1,4 +1,4 @@
-package org.francescoS.GUI;
+package org.wordpress.growworkinghard.GUI;
 
 import java.awt.*;
 import java.awt.event.*;
