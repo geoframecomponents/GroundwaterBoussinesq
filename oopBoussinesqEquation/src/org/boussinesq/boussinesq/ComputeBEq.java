@@ -17,8 +17,8 @@ public class ComputeBEq implements TimeSimulation {
 
 	double[] aquiferThickness;
 	double[] volumeSource;
-	int[] indexDiag;
-	double tolerance;
+	protected int[] indexDiag;
+	protected double tolerance;
 
 	double[] volume;
 	
@@ -40,7 +40,7 @@ public class ComputeBEq implements TimeSimulation {
 	public ComputeBEq() {
 		
 
-		cg = new RCConjugateGradient(ComputationalDomain.Np);
+//		cg = new RCConjugateGradient(ComputationalDomain.Np);
 		newton = new Solver();
 		
 		aquiferThickness = new double[ComputationalDomain.Np];

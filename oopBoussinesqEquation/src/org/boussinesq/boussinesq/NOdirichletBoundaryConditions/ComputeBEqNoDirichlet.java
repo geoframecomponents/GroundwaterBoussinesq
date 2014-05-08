@@ -2,10 +2,12 @@ package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
 import java.io.IOException;
 
+import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.boussinesq.ComputeBEq;
 import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
+import org.boussinesq.boussinesq.dirichletBoundaryConditions.Solver;
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeB;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
@@ -16,11 +18,24 @@ public class ComputeBEqNoDirichlet extends ComputeBEq implements TimeSimulation 
 	double[] eta;
 	double[] matT;
 	double[] arrb;
+
 	
+	Solver newton;
+	RCConjugateGradient cg;
+	
+//	int[] indexDiag;
+
+//	RCIndexDiagonalElement rcIndexDiagonalElement;
+//	MachineEpsilon cMEd;
+//	double tolerance;
 	
 	public ComputeBEqNoDirichlet() {
 		
 		eta = new double[ComputationalDomain.Np];
+//		rcIndexDiagonalElement = new RCIndexDiagonalElement();
+//		cMEd = new MachineEpsilon();
+		newton = new Solver();
+		cg = new RCConjugateGradient(ComputationalDomain.Np);
 
 
 	}
@@ -32,6 +47,17 @@ public class ComputeBEqNoDirichlet extends ComputeBEq implements TimeSimulation 
 		matT = computeT.computeT(eta);
 		arrb = cB.computeB(eta);
 
+	}
+	
+	public double[] solutionMethod(double[] etaOld, double[] matT, double[] arrb) throws IterativeSolverDoubleNotConvergedException{
+		
+		double[] eta = new double[etaOld.length];
+		
+		eta = newton.newtonIteration(arrb, matT, indexDiag, etaOld, cg,
+				tolerance);
+		
+		return eta;
+		
 	}
 	
 	public void computeBEq(String boundaryCondition, String simulationType) throws IOException,

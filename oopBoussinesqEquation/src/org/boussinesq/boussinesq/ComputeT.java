@@ -49,14 +49,18 @@ public class ComputeT implements TimeSimulation {
 				if (ComputationalDomain.Mi[j] != i) {
 					// equation (21)
 					arrayT[j] = -TIMESTEP
-							* (1 / ComputationalDomain.euclideanDistance[(int) ComputationalDomain.Ml[j]-1])
-							* ComputationalDomain.hydrConductivity[(int) ComputationalDomain.Ml[j]-1]
-							* ComputationalDomain.lengthSides[(int) ComputationalDomain.Ml[j]-1]
+							* (1 / ComputationalDomain.euclideanDistance[(int) ComputationalDomain.Ml[j] - 1])
+							* ComputationalDomain.hydrConductivity[(int) ComputationalDomain.Ml[j] - 1]
+							* ComputationalDomain.lengthSides[(int) ComputationalDomain.Ml[j] - 1]
 							* Math.max(
-									Math.max(0, eta[ComputationalDomain.Mi[j]]
-											- ComputationalDomain.bedRockElevation[ComputationalDomain.Mi[j]]),
-									Math.max(0, eta[i]
-											- ComputationalDomain.bedRockElevation[i]));
+									Math.max(
+											0,
+											eta[ComputationalDomain.Mi[j]]
+													- ComputationalDomain.bedRockElevation[ComputationalDomain.Mi[j]]),
+									Math.max(
+											0,
+											eta[i]
+													- ComputationalDomain.bedRockElevation[i]));
 
 					rowSum += -arrayT[j];
 
@@ -72,5 +76,5 @@ public class ComputeT implements TimeSimulation {
 
 		return arrayT;
 	}
-	
+
 }

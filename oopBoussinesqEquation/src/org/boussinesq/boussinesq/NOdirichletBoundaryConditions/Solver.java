@@ -1,8 +1,11 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
+import java.util.ArrayList;
+
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
+import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseRCDoubleMatrix2D;
@@ -10,7 +13,7 @@ import cern.colt.matrix.tdouble.impl.SparseRCDoubleMatrix2D;
 public class Solver {
 
 	long startCompute, endCompute, startSolver, endSolver;
-
+	
 	
 	/**
 	 * Newton iteration.
@@ -40,8 +43,9 @@ public class Solver {
 			double tolerance) throws IterativeSolverDoubleNotConvergedException {
 
 		SparseRCDoubleMatrix2D matrixJr;
-		SparseDoubleMatrix1D matrixr;
-
+		DoubleMatrix1D matrixr;
+		
+		
 		double maxResidual = 10;
 
 		ComputeJr cJr = new ComputeJr();
@@ -91,7 +95,7 @@ public class Solver {
 			ComputeBEqNoDirichlet.timeCompute = ComputeBEqNoDirichlet.timeCompute + (endCompute - startCompute);
 			ComputeBEqNoDirichlet.timeSolver = ComputeBEqNoDirichlet.timeSolver + (endSolver - startSolver);
 
-		} while (maxResidual > tolerance * 1000);
+		} while (maxResidual > tolerance * 100);
 
 		return eta;
 
