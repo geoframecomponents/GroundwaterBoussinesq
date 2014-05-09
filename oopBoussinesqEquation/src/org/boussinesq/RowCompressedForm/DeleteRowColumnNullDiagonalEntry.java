@@ -1,4 +1,4 @@
-package org.boussinesq.boussinesq;
+package org.boussinesq.RowCompressedForm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,9 +53,9 @@ public class DeleteRowColumnNullDiagonalEntry {
 	public void computationalDomain(int size, double[] matT, int[] indexDiag,
 			int[] Mp, int[] Mj) {
 
+		// search the null diagonal entries and store the indices in two linked lists
+		
 		for (int i = 0; i < size; i++) {
-
-			// alNewMp.add(Mp[i]);
 
 			if (matT[indexDiag[i]] == 0) {
 				alNullDiag.add(i);
@@ -63,6 +63,8 @@ public class DeleteRowColumnNullDiagonalEntry {
 			}
 
 		}
+		
+		// store Mj and T in two linked lists
 
 		for (int i = 0; i < matT.length; i++) {
 
@@ -71,6 +73,9 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		}
 
+		
+		// search the entries of rows and columns of null diagonal entries
+		
 		int cont = 0;
 
 		while (alNullDiag.size() != 0) {
@@ -97,6 +102,8 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		}
 
+		// sort indices in ascending order
+		
 		Collections.sort(indices);
 
 		newIndices = new int[indices.size()];
@@ -107,6 +114,8 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		int prova;
 
+		// remove rows and columns from T and Mj linked lists
+		
 		while (contatore >= 0) {
 
 			prova = indices.get(contatore);
@@ -129,6 +138,8 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		contatore = 0;
 
+		// compute the new Mp array removing number of row entries
+		
 		while (contatore < alNullDiag2.size()) {
 
 			for (int i = 0; i < size; i++) {
@@ -157,6 +168,8 @@ public class DeleteRowColumnNullDiagonalEntry {
 		cont = 0;
 		contatore = 0;
 
+		// compute the new Mp array removing number of column entries 
+		
 		while (contatore < alNullDiag2.size()) {
 
 			for (int i = 0; i < size; i++) {
@@ -186,11 +199,11 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		}
 
+		// removing rows entries
+		
 		for (int i = 0; i < Mp.length; i++) {
 
 			if (cont < alNullDiag2.size() && i != alNullDiag2.get(cont)) {
-
-				// System.out.println(alNullDiag2.get(cont));
 
 				alNewMp.add(newMp[i]);
 
@@ -208,16 +221,11 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		cont = 0;
 
-		
-//		contatore = ;
-		
-		System.out.println(Arrays.toString(newMj));
-		
 		contatore = 0;
 		
+		// compute new Mj
+		
 		while (contatore < alNullDiag2.size()) {
-
-//			System.out.println("I'm here");
 			
 			for (int i = 0; i < newMj.length; i++){
 				
@@ -235,11 +243,7 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		newMp = convertInteger(alNewMp);
 
-		System.out.println(Arrays.toString(newMp));
-		System.out.println(Arrays.toString(newMj));
-
 		newMatT = convertDoubles(alT);
-		newMj = convertInteger(alNewMj);
 
 	}
 
@@ -278,7 +282,9 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		prova.computationalDomain(size, matT, indexDiag, Mp, Mj);
 
-		System.out.println(Arrays.toString(newMatT));
+		System.out.println("Mp: " + Arrays.toString(newMp));
+		System.out.println("Mj: " + Arrays.toString(newMj));
+		System.out.println("T : " + Arrays.toString(newMatT));
 
 		System.exit(0);
 
