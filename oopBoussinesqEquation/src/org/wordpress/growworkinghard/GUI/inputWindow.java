@@ -2,7 +2,7 @@ package org.wordpress.growworkinghard.GUI;
 
 
 import javax.swing.*;
-import javax.swing.JPanel;
+
 import java.awt.*;
 public class inputWindow {
    JFrame Frame1 = new JFrame("Test Frame");
@@ -54,6 +54,7 @@ public class inputWindow {
 
 public static void main (String[] arg0){
 	
+	@SuppressWarnings("unused")
 	inputWindow prova = new inputWindow();
 	
 }

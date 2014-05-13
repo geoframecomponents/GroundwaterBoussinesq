@@ -26,7 +26,7 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
 public class BoussinesqEquation implements TimeSimulation {
 
 	/** The boundary conditions. */
-	String boundaryConditions;
+	public static String boundaryConditions;
 	
 	String simulationType;
 
@@ -141,7 +141,7 @@ public class BoussinesqEquation implements TimeSimulation {
 			throws IterativeSolverDoubleNotConvergedException, IOException {
 
 		// initialize BC like case without Dirichlet cells
-		beq.boundaryConditions = "NoDirichlet";
+		BoussinesqEquation.boundaryConditions = "NoDirichlet";
 
 		// search a Dirichlet cell into the array of eta of Dirichlet
 		for (int i = 0; i < ComputationalDomain.etaDirichlet.length; i++) {
@@ -149,7 +149,7 @@ public class BoussinesqEquation implements TimeSimulation {
 			if (ComputationalDomain.etaDirichlet[i] != ComputationalDomain.NOVALUE) {
 
 				System.out.println(ComputationalDomain.etaDirichlet[i]);
-				beq.boundaryConditions = "Dirichlet";
+				BoussinesqEquation.boundaryConditions = "Dirichlet";
 				break;// go out the loop at the first Dirichlet cell
 			}
 
@@ -157,18 +157,18 @@ public class BoussinesqEquation implements TimeSimulation {
 
 		// the simulation type is shown by the video output
 		TextIO.putln("Simulation boundary conditions: "
-				+ beq.boundaryConditions);
+				+ BoussinesqEquation.boundaryConditions);
 
 		// choose the type of simulation at run time
-		if (beq.boundaryConditions.equals("Dirichlet")) {
+		if (BoussinesqEquation.boundaryConditions.equals("Dirichlet")) {
 
 			ComputeBEqDirichlet cBEqD = new ComputeBEqDirichlet();
-			cBEqD.computeBEq(beq.boundaryConditions,beq.simulationType);
+			cBEqD.computeBEq(BoussinesqEquation.boundaryConditions,beq.simulationType);
 
 		} else {
 
 			ComputeBEqNoDirichlet cBEq = new ComputeBEqNoDirichlet();
-			cBEq.computeBEq(beq.boundaryConditions,beq.simulationType);
+			cBEq.computeBEq(BoussinesqEquation.boundaryConditions,beq.simulationType);
 
 		}
 

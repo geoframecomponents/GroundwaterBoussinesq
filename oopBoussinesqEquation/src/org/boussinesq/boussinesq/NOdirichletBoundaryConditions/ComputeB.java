@@ -1,8 +1,8 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
+import org.boussinesq.boussinesq.ComputationalArrays;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.TimeSimulation;
-import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 public class ComputeB implements TimeSimulation {
@@ -36,28 +36,35 @@ public class ComputeB implements TimeSimulation {
 
 		// declaration of the array that holds the known terms of the linear
 		// system
-		double[] arrB = new double[ComputationalDomain.Np];
+		double[] arrB = new double[ComputationalArrays.numberOfPolygon];
 
-		for (int i = 0; i < ComputationalDomain.Np; i++) {
+		for (int i = 0; i < ComputationalArrays.numberOfPolygon; i++) {
 			// compute the water volume stored in the cell
-			double volume = PolygonGeometricalWetProperties.computeWaterVolume(eta[i], ComputationalDomain.bedRockElevation[i],
-					ComputationalDomain.porosity[i], ComputationalDomain.planArea[i]);
+			double volume = PolygonGeometricalWetProperties.computeWaterVolume(
+					eta[i], ComputationalArrays.bedRockElevation[i], ComputationalArrays.porosity[i],
+					ComputationalArrays.planarArea[i]);
 
 			// delta t deve essere minore di 1/c
-			arrB[i] = volume + TIMESTEP * ComputationalDomain.planArea[i]
-					* ComputationalDomain.source[i] - TIMESTEP
-					* ComputationalDomain.planArea[i] * ComputationalDomain.c[i]
-					* Math.pow(volume / ComputationalDomain.planArea[i], ComputationalDomain.m[i]);
-			
-			if (arrB[i] < 0){
-				
-				TextIO.putln("WARNING!!!\nThe element " + i + " of the array of known terms is NEGATIVE");
-				
+			arrB[i] = volume
+					+ TIMESTEP
+					* ComputationalArrays.planarArea[i]
+					* ComputationalArrays.source[i]
+					- TIMESTEP
+					* ComputationalArrays.planarArea[i]
+					* ComputationalArrays.coeffC[i]
+					* Math.pow(volume / ComputationalArrays.planarArea[i],
+							ComputationalArrays.coeffM[i]);
+
+			if (arrB[i] < 0) {
+
+				TextIO.putln("WARNING!!!\nThe element " + i
+						+ " of the array of known terms is NEGATIVE");
+
 			}
 
 		}
 
 		return arrB;
 	}
-	
+
 }

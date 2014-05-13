@@ -1,5 +1,6 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
+import org.boussinesq.boussinesq.ComputationalArrays;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
@@ -37,7 +38,7 @@ public class ComputeJr extends IsNoValue {
 	 * 
 	 * @return the Jacobian array of water volume stored in Row Compressed Form
 	 */
-	public double[] computeJr(int[] indexDiag, double[] arrT, double[] eta) {
+	public double[] computeJr(double[] arrT, double[] eta) {
 
 		// declaration of the array that holds the Jacobian of water volume
 		// stored
@@ -47,23 +48,24 @@ public class ComputeJr extends IsNoValue {
 
 		// cicle only in the cells, because it's necessary to inspect only
 		// diagonal entries
-		for (int i = 0; i < indexDiag.length; i++) {
+		for (int i = 0; i < ComputationalArrays.indexDiagonal.length; i++) {
 
-			if (isNoValue(ComputationalDomain.etaDirichlet[i], ComputationalDomain.NOVALUE)) {
+			if (isNoValue(ComputationalArrays.etaDirichlet[i],
+					ComputationalDomain.NOVALUE)) {
 				// non Dirichlet cells
 				// equation (A6)
-				arrJr[indexDiag[i]] = arrT[indexDiag[i]]
+				arrJr[ComputationalArrays.indexDiagonal[i]] = arrT[ComputationalArrays.indexDiagonal[i]]
 						+ PolygonGeometricalWetProperties.computeWetArea(
-								eta[i], ComputationalDomain.bedRockElevation[i],
-								ComputationalDomain.porosity[i], ComputationalDomain.planArea[i]);
+								eta[i], ComputationalArrays.bedRockElevation[i],
+								ComputationalArrays.porosity[i], ComputationalArrays.planarArea[i]);
 
 			} else {
 				// Dirichlet cells
-				arrJr[indexDiag[i]] = arrT[indexDiag[i]];
+				arrJr[ComputationalArrays.indexDiagonal[i]] = arrT[ComputationalArrays.indexDiagonal[i]];
 			}
 		}
 
 		return arrJr;
 	}
-	
+
 }

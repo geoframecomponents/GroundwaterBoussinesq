@@ -27,12 +27,13 @@ public class ComputeTDirichlet extends IsNoValue {
 		 * the matrix T is an array because this code uses the Row Compressed
 		 * Form to stored sparse matrix
 		 */
-		double[] arrayT = new double[ComputationalDomain.Ml.length];
+		double[] arrayT = new double[T.length];
 
 		/* for-loop to analyze the mesh cell by cell */
 		for (int i = 0; i < ComputationalDomain.Np; i++) {
 
-			if (!isNoValue(ComputationalDomain.etaDirichlet[i], ComputationalDomain.NOVALUE)) {
+			if (!isNoValue(ComputationalDomain.etaDirichlet[i],
+					ComputationalDomain.NOVALUE)) {
 
 				// Dirichlet cells
 				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
@@ -47,7 +48,9 @@ public class ComputeTDirichlet extends IsNoValue {
 				 */
 				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
 
-					if (!isNoValue(ComputationalDomain.etaDirichlet[ComputationalDomain.Mi[j]], ComputationalDomain.NOVALUE)) {
+					if (!isNoValue(
+							ComputationalDomain.etaDirichlet[ComputationalDomain.Mi[j]],
+							ComputationalDomain.NOVALUE)) {
 
 						// adjacent Dirichlet cell
 						arrayT[j] = T[j];
@@ -64,5 +67,5 @@ public class ComputeTDirichlet extends IsNoValue {
 
 		return arrayT;
 	}
-	
+
 }

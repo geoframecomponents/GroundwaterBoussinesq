@@ -5,6 +5,8 @@ import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
 public class ComputeT implements TimeSimulation {
 
+	public static boolean unlockDeleteRowColumn = false;
+
 	/**
 	 * Compute T.
 	 * 
@@ -20,7 +22,7 @@ public class ComputeT implements TimeSimulation {
 	 * 
 	 * @return the matrix T like array in Row Compressed Form
 	 */
-	public double[] computeT(double[] eta) {
+	public double[] computeT(double[] eta, int[] indexDiag) {
 
 		/*
 		 * variable to which sum the terms of matrix T (T is an array because is
@@ -71,6 +73,13 @@ public class ComputeT implements TimeSimulation {
 			}
 			// equation (20)
 			arrayT[index] = rowSum;
+
+			if (rowSum == 0
+					&& !unlockDeleteRowColumn
+					&& BoussinesqEquation.boundaryConditions
+							.equals("NoDirichlet"))
+				unlockDeleteRowColumn = true;
+
 			rowSum = 0;
 		}
 

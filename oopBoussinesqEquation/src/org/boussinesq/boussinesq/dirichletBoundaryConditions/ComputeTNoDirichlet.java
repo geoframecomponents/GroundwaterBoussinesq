@@ -1,5 +1,6 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
+import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
 public class ComputeTNoDirichlet extends IsNoValue {
@@ -21,18 +22,19 @@ public class ComputeTNoDirichlet extends IsNoValue {
 	 * 
 	 * @return the array of T in RC-F for non Dirichlet cells
 	 */
-	public double[] computeTNoDirichlet(double[] T) {
+	public double[] computeTNoDirichlet(double[] T, int[] indexDiag) {
 
 		/*
 		 * the matrix T is an array because this code uses the Row Compressed
 		 * Form to stored sparse matrix
 		 */
-		double[] arrayT = new double[ComputationalDomain.Ml.length];
+		double[] arrayT = new double[T.length];
 
 		/* for-loop to analyze the mesh cell by cell */
 		for (int i = 0; i < ComputationalDomain.Np; i++) {
 
-			if (isNoValue(ComputationalDomain.etaDirichlet[i], ComputationalDomain.NOVALUE)) {
+			if (isNoValue(ComputationalDomain.etaDirichlet[i],
+					ComputationalDomain.NOVALUE)) {
 
 				// non Dirichlet cells
 				/*
@@ -41,7 +43,9 @@ public class ComputeTNoDirichlet extends IsNoValue {
 				 */
 				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
 
-					if (isNoValue(ComputationalDomain.etaDirichlet[ComputationalDomain.Mi[j]], ComputationalDomain.NOVALUE)) {
+					if (isNoValue(
+							ComputationalDomain.etaDirichlet[ComputationalDomain.Mi[j]],
+							ComputationalDomain.NOVALUE)) {
 
 						// adjacent non Dirichlet cells
 						arrayT[j] = T[j];
@@ -53,10 +57,12 @@ public class ComputeTNoDirichlet extends IsNoValue {
 				}
 
 			}
+			
+			if (arrayT[indexDiag[i]] == 0) ComputeT.unlockDeleteRowColumn = true;
 
 		}
 
 		return arrayT;
 	}
-	
+
 }

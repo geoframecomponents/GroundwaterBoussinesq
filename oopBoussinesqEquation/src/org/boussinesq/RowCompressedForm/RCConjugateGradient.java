@@ -1,6 +1,5 @@
 package org.boussinesq.RowCompressedForm;
 
-import cern.colt.Arrays;
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.algo.solver.DoubleCG;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
@@ -9,12 +8,12 @@ import cern.colt.matrix.tdouble.algo.solver.preconditioner.DoubleICC;
 import cern.colt.matrix.tdouble.algo.solver.preconditioner.DoubleILU;
 import cern.colt.matrix.tdouble.algo.solver.preconditioner.DoublePreconditioner;
 import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
-import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseRCDoubleMatrix2D;
 
 /**
  * The Class RCConjugateGradient.
  */
+@SuppressWarnings("unused")
 public class RCConjugateGradient {
 
 	/** The matrix_ a. */
@@ -42,11 +41,11 @@ public class RCConjugateGradient {
 	 * @param Ml
 	 *            the ml
 	 */
-	public RCConjugateGradient(int SIZE) {
+	public RCConjugateGradient() {
 
-		matrix_x = new DenseDoubleMatrix1D(SIZE);
-		matSol = new DenseDoubleMatrix1D(SIZE);
-		dd = new DoubleICC(SIZE);
+//		matrix_x = new DenseDoubleMatrix1D(SIZE);
+//		matSol = new DenseDoubleMatrix1D(SIZE);
+//		dd = new DoubleDiagonal(SIZE);
 
 //		matrix_x.set(0, 0);
 //		matrix_x.set(0, 1);
@@ -65,6 +64,10 @@ public class RCConjugateGradient {
 			SparseRCDoubleMatrix2D matrix_A)
 			throws IterativeSolverDoubleNotConvergedException {
 
+		matrix_x = new DenseDoubleMatrix1D((int) matrix_b.size());
+		matSol = new DenseDoubleMatrix1D((int) matrix_b.size());
+		dd = new DoubleDiagonal((int) matrix_b.size());
+		
 		dd.setMatrix(matrix_A);
 		
 		DoubleCG conjugateGradient = new DoubleCG(matrix_x);
@@ -96,7 +99,7 @@ public class RCConjugateGradient {
 		SparseRCDoubleMatrix2D matrix_A = new SparseRCDoubleMatrix2D(b.length,
 				b.length, Mp, Mi, Ml);
 		// Mesh grid1 = new Mesh("Song");
-		RCConjugateGradient cg = new RCConjugateGradient(b.length);
+		RCConjugateGradient cg = new RCConjugateGradient();
 
 		cg.solverCG(matrix_b, matrix_A);
 		

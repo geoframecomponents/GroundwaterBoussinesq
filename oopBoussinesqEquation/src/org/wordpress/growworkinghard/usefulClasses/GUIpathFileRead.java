@@ -15,9 +15,16 @@ public class GUIpathFileRead extends JPanel {
 	private static final long serialVersionUID = 1L;
 	JFileChooser fileChooser;
 	
+	public GUIpathFileRead() {
+		// TODO Auto-generated constructor stub
+		
+		fileChooser = new JFileChooser();
+		
+	}
+	
 	public File openDialog(String title) {
 		// TODO Auto-generated constructor stub
-		fileChooser = new JFileChooser();
+		
 		
 		fileChooser.setDialogTitle(title);
 		int n = fileChooser.showOpenDialog(GUIpathFileRead.this);
@@ -55,7 +62,7 @@ public class GUIpathFileRead extends JPanel {
 		// parent component of the dialog
 		JFrame parentFrame = new JFrame();
 		
-		fileChooser = new JFileChooser();
+//		fileChooser = new JFileChooser();
 		
 		fileChooser.setDialogTitle(title);
 		
