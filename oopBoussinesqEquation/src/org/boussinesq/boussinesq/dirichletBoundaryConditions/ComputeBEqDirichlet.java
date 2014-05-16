@@ -115,6 +115,8 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 				etaNew[i] = ComputationalDomain.etaDirichlet[i];
 
 			}
+			
+			if(Math.abs(etaNew[i]) < tolerance) etaNew[i] = ComputationalDomain.bedRockElevation[i];
 
 		}
 

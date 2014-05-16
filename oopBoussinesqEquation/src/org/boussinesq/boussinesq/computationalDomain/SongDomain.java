@@ -4,7 +4,7 @@ public class SongDomain {
 
 	SongDomain() {
 
-		ComputationalDomain.Np = 500;
+		ComputationalDomain.Np = 1000;
 		ComputationalDomain.NOVALUE = -999;
 
 		computeAdjacencyMatrixFeatures(ComputationalDomain.Np);

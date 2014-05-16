@@ -66,7 +66,7 @@ public class RCConjugateGradient {
 
 		matrix_x = new DenseDoubleMatrix1D((int) matrix_b.size());
 		matSol = new DenseDoubleMatrix1D((int) matrix_b.size());
-		dd = new DoubleDiagonal((int) matrix_b.size());
+		dd = new DoubleICC((int) matrix_b.size());
 		
 		dd.setMatrix(matrix_A);
 		
@@ -76,7 +76,6 @@ public class RCConjugateGradient {
 		
 		conjugateGradient.setPreconditioner(dd);
 		
-//		DoubleCG conjugateGradient = new DoubleCG(matrix_b);
 		matSol = conjugateGradient.solve(matrix_A, matrix_b, matrix_x);
 		
 	}
