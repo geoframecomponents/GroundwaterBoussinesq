@@ -124,13 +124,15 @@ public class ComputeBEq implements TimeSimulation {
 
 		fileName = myformatter.format(time);
 		FileWrite.openTxtFile(fileName.concat(".txt"),
-				BoussinesqEquation.solutionDir, false);
+				BoussinesqEquation.solutionDirectory, false);
 
 	}
 
 	public void computeOutputFeatures(double[] eta) {
+		
+		int endForLoop = eta.length;
 
-		for (int j = 0; j < eta.length; j++) {
+		for (int j = 0; j < endForLoop; j++) {
 
 			volumeSource[j] = ComputationalDomain.source[j] * ComputationalDomain.planArea[j];
 			aquiferThickness[j] = Math.max(0, eta[j]

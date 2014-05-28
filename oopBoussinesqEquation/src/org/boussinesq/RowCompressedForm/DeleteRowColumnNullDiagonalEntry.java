@@ -10,15 +10,14 @@ import java.util.List;
 
 public class DeleteRowColumnNullDiagonalEntry {
 
-	public static LinkedList<Integer> alNewMj, alNullDiag;
-	// public static LinkedList<Integer> alNullDiag2;
+	public static ArrayList<Integer> alNewMj, alNullDiag;
 	private ArrayList<Integer> indices;
-	private LinkedList<Double> alT;
+	private ArrayList<Double> alT;
 
 	public double[] newMatT;
 	public static int[] newMj, newMp, newIndices;
 
-	public double[] convertDoubles(LinkedList<Double> doubles) {
+	public double[] convertDoubles(List<Double> doubles) {
 		double[] ret = new double[doubles.size()];
 		Iterator<Double> iterator = doubles.iterator();
 		int i = 0;
@@ -110,9 +109,11 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		newMp[0] = 0;
 
+		int endForLoop = newMj.length - 1;
+		
 		// compute Mp from Mj
 
-		for (int i = 0; i < newMj.length - 1; i++) {
+		for (int i = 0; i < endForLoop; i++) {
 
 			if (newMj[i] > newMj[i + 1]) {
 
@@ -131,7 +132,9 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 	public void computeNewArrayMj(int[] Mj) {
 
-		for (int i = 0; i < Mj.length; i++) {
+		int endForLoop = Mj.length;
+		
+		for (int i = 0; i < endForLoop; i++) {
 
 			alNewMj.add(Mj[i]);
 
@@ -158,9 +161,11 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		contatore = 0;
 
+		endForLoop = newMj.length;
+		
 		// compute new Mj
 
-		for (int i = 0; i < newMj.length; i++) {
+		for (int i = 0; i < endForLoop; i++) {
 
 			while (contatore < alNullDiag.size()) {
 
@@ -181,9 +186,11 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 	public double[] computeNewArrayT(double[] matT) {
 
-		alT = new LinkedList<Double>();
+		alT = new ArrayList<Double>();
 		
-		for (int i = 0; i < matT.length; i++) {
+		int endForLoop = matT.length;
+		
+		for (int i = 0; i < endForLoop; i++) {
 
 			alT.add(matT[i]);
 
@@ -217,153 +224,13 @@ public class DeleteRowColumnNullDiagonalEntry {
 	public void computationalDomain(int size, double[] matT,
 			int[] indexDiag, int[] Mp, int[] Mj) {
 
-		alNewMj = new LinkedList<Integer>();
-		alNullDiag = new LinkedList<Integer>();
+		alNewMj = new ArrayList<Integer>();
+		alNullDiag = new ArrayList<Integer>();
 		// alNullDiag2 = new LinkedList<Integer>();
 		indices = new ArrayList<Integer>();
-		alT = new LinkedList<Double>();
+		alT = new ArrayList<Double>();
 
 		searchRowColumnNullDiagonalEntries(size, matT, indexDiag, Mp, Mj);
-
-		// // search the null diagonal entries and store the indices in two
-		// linked
-		// // lists
-		//
-		// for (int i = 0; i < size; i++) {
-		//
-		// if (matT[indexDiag[i]] == 0) {
-		// alNullDiag.add(i);
-		// alNullDiag2.add(i);
-		// }
-		//
-		// }
-
-		// store Mj and T in two linked lists
-
-		// for (int i = 0; i < matT.length; i++) {
-		//
-		// alNewMj.add(Mj[i]);
-		// alT.add(matT[i]);
-		//
-		// }
-
-		// search the entries of rows and columns of null diagonal entries
-
-//		int cont = 0;
-//		int contatore = 0;
-//
-//		while (contatore < alNullDiag.size()) {
-//
-//			for (int i = 0; i < size; i++) {
-//
-//				for (int j = Mp[i]; j < Mp[i + 1]; j++) {
-//
-//					if (i == alNullDiag.get(contatore)) {
-//
-//						indices.add(j);
-//
-//					} else if (Mj[j] == alNullDiag.get(contatore)) {
-//
-//						indices.add(j);
-//
-//					}
-//
-//				}
-//
-//			}
-//
-//			// alNullDiag.remove(cont);
-//			contatore++;
-//
-//		}
-
-//		@SuppressWarnings("rawtypes")
-//		HashSet hs = new HashSet();
-//		hs.addAll(indices);
-//		indices.clear();
-//		indices.addAll(hs);
-//
-//		// sort indices in ascending order
-//
-//		Collections.sort(indices);
-//
-//		newIndices = new int[indices.size()];
-//		newIndices = convertInteger(indices);
-
-//		cont = 0;
-//		contatore = indices.size() - 1;
-//
-//		int prova;
-//
-//		// remove rows and columns from T and Mj linked lists
-//
-//		while (contatore >= 0) {
-//
-//			prova = indices.get(contatore);
-//			alT.remove(prova);
-//			alNewMj.remove(prova);
-//			contatore = contatore - 1;
-//
-//		}
-
-//		newMj = new int[alNewMj.size()];
-//		newMj = convertInteger(alNewMj);
-//		newMp = new int[size - alNullDiag.size()];
-
-//		cont = 0;
-//
-//		contatore = 0;
-//
-//		// compute new Mj
-//
-//		for (int i = 0; i < newMj.length; i++) {
-//
-//			while (contatore < alNullDiag.size()) {
-//
-//				if (newMj[i] > alNullDiag.get(contatore))
-//					cont++;
-//
-//				contatore++;
-//
-//			}
-//
-//			newMj[i] = newMj[i] - cont;
-//			cont = 0;
-//			contatore = 0;
-//
-//		}
-
-//		cont = 0;
-//		contatore = 1;
-//
-//		newMp = new int[Mp.length - alNullDiag.size()];
-//
-//		newMp[0] = 0;
-//
-//		// compute Mp from Mj
-//
-//		for (int i = 0; i < newMj.length - 1; i++) {
-//
-//			if (newMj[i] > newMj[i + 1]) {
-//
-//				newMp[contatore] = i + 1;
-//				contatore++;
-//				// cont = cont + 1;
-//			}
-//
-//		}
-//
-//		// newMp = convertInteger(alNewMp);
-//
-//		newMp[newMp.length - 1] = newMj.length;
-
-//		newMatT = convertDoubles(alT);
-//
-//		matT = new double[newMatT.length];
-//
-//		System.arraycopy(newMatT, 0, matT, 0, newMatT.length);
-
-//		return matT;
 
 	}
 
@@ -372,8 +239,10 @@ public class DeleteRowColumnNullDiagonalEntry {
 		LinkedList<Double> alEta = new LinkedList<Double>();
 
 		int cont = 0;
+		
+		int endForLoop = eta.length;
 
-		for (int i = 0; i < eta.length; i++) {
+		for (int i = 0; i < endForLoop; i++) {
 
 			if (cont >= alNullDiag.size()) {
 
@@ -404,7 +273,9 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		LinkedList<Double> llX = new LinkedList<Double>();
 
-		for (int i = 0; i < x.length; i++) {
+		int endForLoop = x.length;
+		
+		for (int i = 0; i < endForLoop; i++) {
 
 			llX.add(x[i]);
 
@@ -412,7 +283,9 @@ public class DeleteRowColumnNullDiagonalEntry {
 
 		int cont = 0;
 
-		while (cont < DeleteRowColumnNullDiagonalEntry.alNullDiag.size()) {
+		int endWhileLoop = DeleteRowColumnNullDiagonalEntry.alNullDiag.size();
+		
+		while (cont < endWhileLoop) {
 
 			llX.add(DeleteRowColumnNullDiagonalEntry.alNullDiag.get(cont),
 					element[cont]);

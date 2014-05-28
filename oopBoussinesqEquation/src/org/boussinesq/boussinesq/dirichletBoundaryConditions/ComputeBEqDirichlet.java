@@ -107,7 +107,9 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 
 		}
 
-		for (int i = 0; i < ComputationalDomain.etaDirichlet.length; i++) {
+		int endForLoop = ComputationalDomain.etaDirichlet.length;
+		
+		for (int i = 0; i < endForLoop; i++) {
 
 			if (!verifyDirichlet.isNoValue(ComputationalDomain.etaDirichlet[i],
 					ComputationalDomain.NOVALUE)) {

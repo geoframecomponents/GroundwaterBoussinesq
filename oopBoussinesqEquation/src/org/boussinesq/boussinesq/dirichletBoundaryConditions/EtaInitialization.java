@@ -6,8 +6,10 @@ public class EtaInitialization extends IsNoValue {
 
 	public double[] etaInitialization(double[] eta){
 		
+		int endForLoop = eta.length;
+		
 		// initialize eta array
-		for (int i = 0; i < eta.length; i++) {
+		for (int i = 0; i < endForLoop; i++) {
 			if (isNoValue(ComputationalDomain.etaDirichlet[i], ComputationalDomain.NOVALUE)) {
 
 				// not Dirichlet cells

@@ -9,6 +9,7 @@ import org.wordpress.growworkinghard.usefulClasses.GUIpathFileRead;
 public class Song {
 
 	double[] x;
+	int xLength;
 	// double[] porosity;
 	double hydraulicConductivity;
 	int t;
@@ -19,6 +20,7 @@ public class Song {
 	public Song(int time, int Np, double ks) {
 
 		x = new double[Np];
+		xLength = x.length;
 		t = time;
 		alpha = 0;
 		h1 = 1;
@@ -37,7 +39,9 @@ public class Song {
 
 		double[] a = new double[ax.length];
 
-		for (int i = 0; i < a.length; i++) {
+		int endForLoop = a.length;
+		
+		for (int i = 0; i < endForLoop; i++) {
 
 			a[i] = ax[i] * Math.pow(xi0, 2);
 
@@ -45,7 +49,7 @@ public class Song {
 
 		double sum = 0;
 
-		for (int i = 0; i < a.length; i++) {
+		for (int i = 0; i < endForLoop; i++) {
 
 			sum += a[i];
 
@@ -59,9 +63,11 @@ public class Song {
 
 	public double[] computeXI(double[] porosity) {
 
-		double[] xi = new double[x.length];
+		double[] xi = new double[xLength];
 
-		for (int i = 0; i < xi.length; i++) {
+		int endForLoop = xi.length;
+		
+		for (int i = 0; i < endForLoop; i++) {
 
 			xi[i] = x[i]
 					* Math.pow(
@@ -96,8 +102,8 @@ public class Song {
 		FileWrite.openTxtFile(song, outputPathSong, true);
 		
 		double[] ax = new double[nmax];
-		double[] solutionDimensionless = new double[x.length];
-		double[] solution = new double[x.length];
+		double[] solutionDimensionless = new double[xLength];
+		double[] solution = new double[xLength];
 
 		ax = SongCoefficient.CoefficientSongSolution(nmax,
 				(alpha / (alpha + 1)));
@@ -107,7 +113,9 @@ public class Song {
 		double xi0 = 0;
 		double sum = 0;
 
-		for (int i = 1; i < ax.length; i++) {
+		int endForLoop = ax.length;
+		
+		for (int i = 1; i < endForLoop; i++) {
 
 			sum += ax[i];
 
@@ -120,7 +128,9 @@ public class Song {
 		solutionDimensionless = SongDimensionless.beqSongDimensionless(
 				computeXI(porosity), xi0, computeA(ax, xi0));
 
-		for (int i = 0; i < solutionDimensionless.length; i++) {
+		endForLoop = solutionDimensionless.length;
+		
+		for (int i = 0; i < endForLoop; i++) {
 
 			// System.out.println(solutionDimensionless[i]);
 

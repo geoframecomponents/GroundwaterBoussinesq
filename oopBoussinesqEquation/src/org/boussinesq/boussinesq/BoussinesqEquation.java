@@ -16,9 +16,8 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
 /**
  * Boussinesq Equation class
  * 
- * @desc	This class is the MAIN CLASS to compute the piezometric head in 
- * 			every cell of a domain. This program implements the boussinesq
- * 			equation to obtain the result
+ * @desc	This class is the MAIN CLASS of the code that implements the boussinesq
+ * 			equation, in order to obtain the piezometric head in every cell of the unstructured domain of the catchment.
  * 
  * @author	F. Serafin, 2014
  * Copyright GPL v. 3 (http://www.gnu.org/licenses/gpl.html)
@@ -28,10 +27,75 @@ public class BoussinesqEquation implements TimeSimulation {
 	/** The boundary conditions. */
 	public static String boundaryConditions;
 	
-	String simulationType;
-
 	/** Directory of the solution. */
-	public static File solutionDir;
+	public static File solutionDirectory;
+	
+	String simulationType;
+	
+
+
+
+	
+	
+	
+	
+	
+		
+	/**
+	 * Define boundary conditions type.
+	 * 
+	 * @desc this method define boundary conditions type, observing the array of
+	 *       the eta of Dirichlet cells. In fact if this array is not null the
+	 *       compute of the solution follows BEqDirichlet code, slower than
+	 *       BEqNoDirichlet code.
+	 * 
+	 * @param beq
+	 *            the object boussinesq equation is composed by two variables:
+	 *            the type of boundary condition and the path where save the
+	 *            solution
+	 * @throws IterativeSolverDoubleNotConvergedException
+	 *             the iterative solver double not converged exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public void defineBoundaryConditionsType(BoussinesqEquation beq)
+			throws IterativeSolverDoubleNotConvergedException, IOException {
+
+		// initialize BC like case without Dirichlet cells
+		BoussinesqEquation.boundaryConditions = "NoDirichlet";
+
+		int endForLoop = ComputationalDomain.etaDirichlet.length;
+		
+		// search a Dirichlet cell into the array of eta of Dirichlet
+		for (int i = 0; i < endForLoop; i++) {
+
+			if (ComputationalDomain.etaDirichlet[i] != ComputationalDomain.NOVALUE) {
+
+				System.out.println(ComputationalDomain.etaDirichlet[i]);
+				BoussinesqEquation.boundaryConditions = "Dirichlet";
+				break;// go out the loop at the first Dirichlet cell
+			}
+
+		}
+
+		// the simulation type is shown by the video output
+		TextIO.putln("Simulation boundary conditions: "
+				+ BoussinesqEquation.boundaryConditions);
+
+		// choose the type of simulation at run time
+		if (BoussinesqEquation.boundaryConditions.equals("Dirichlet")) {
+
+			ComputeBEqDirichlet cBEqD = new ComputeBEqDirichlet();
+			cBEqD.computeBEq(BoussinesqEquation.boundaryConditions,beq.simulationType);
+
+		} else {
+
+			ComputeBEqNoDirichlet cBEq = new ComputeBEqNoDirichlet();
+			cBEq.computeBEq(BoussinesqEquation.boundaryConditions,beq.simulationType);
+
+		}
+
+	}
 
 	
 	
@@ -120,69 +184,7 @@ public class BoussinesqEquation implements TimeSimulation {
 	
 	
 	
-	/**
-	 * Define boundary conditions type.
-	 * 
-	 * @desc this method define boundary conditions type, observing the array of
-	 *       the eta of Dirichlet cells. In fact if this array is not null the
-	 *       compute of the solution follows BEqDirichlet code, slower than
-	 *       BEqNoDirichlet code.
-	 * 
-	 * @param beq
-	 *            the object boussinesq equation is composed by two variables:
-	 *            the type of boundary condition and the path where save the
-	 *            solution
-	 * @throws IterativeSolverDoubleNotConvergedException
-	 *             the iterative solver double not converged exception
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	public void defineBoundaryConditionsType(BoussinesqEquation beq)
-			throws IterativeSolverDoubleNotConvergedException, IOException {
 
-		// initialize BC like case without Dirichlet cells
-		BoussinesqEquation.boundaryConditions = "NoDirichlet";
-
-		// search a Dirichlet cell into the array of eta of Dirichlet
-		for (int i = 0; i < ComputationalDomain.etaDirichlet.length; i++) {
-
-			if (ComputationalDomain.etaDirichlet[i] != ComputationalDomain.NOVALUE) {
-
-				System.out.println(ComputationalDomain.etaDirichlet[i]);
-				BoussinesqEquation.boundaryConditions = "Dirichlet";
-				break;// go out the loop at the first Dirichlet cell
-			}
-
-		}
-
-		// the simulation type is shown by the video output
-		TextIO.putln("Simulation boundary conditions: "
-				+ BoussinesqEquation.boundaryConditions);
-
-		// choose the type of simulation at run time
-		if (BoussinesqEquation.boundaryConditions.equals("Dirichlet")) {
-
-			ComputeBEqDirichlet cBEqD = new ComputeBEqDirichlet();
-			cBEqD.computeBEq(BoussinesqEquation.boundaryConditions,beq.simulationType);
-
-		} else {
-
-			ComputeBEqNoDirichlet cBEq = new ComputeBEqNoDirichlet();
-			cBEq.computeBEq(BoussinesqEquation.boundaryConditions,beq.simulationType);
-
-		}
-
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * The main method.
 	 * 
@@ -203,7 +205,7 @@ public class BoussinesqEquation implements TimeSimulation {
 
 		BoussinesqEquation beq = new BoussinesqEquation();
 		beq.defineSimulationType();
-		solutionDir = beq.defineSolutionPrintLocation();
+		solutionDirectory = beq.defineSolutionPrintLocation();
 		beq.defineBoundaryConditionsType(beq);
 
 		System.exit(1);

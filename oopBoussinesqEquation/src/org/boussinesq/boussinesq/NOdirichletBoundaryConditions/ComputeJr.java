@@ -45,9 +45,11 @@ public class ComputeJr {
 
 		System.arraycopy(arrT, 0, arrJr, 0, arrT.length);
 
+		int endForLoop = ComputationalArrays.indexDiagonal.length;
+		
 		// cicle only in the cells, because it's necessary to inspect only
 		// diagonal entries
-		for (int i = 0; i < ComputationalArrays.indexDiagonal.length; i++) {
+		for (int i = 0; i < endForLoop; i++) {
 
 			// equation (A6)
 			arrJr[ComputationalArrays.indexDiagonal[i]] = arrT[ComputationalArrays.indexDiagonal[i]]
