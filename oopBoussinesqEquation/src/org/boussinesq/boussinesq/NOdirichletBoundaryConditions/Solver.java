@@ -85,7 +85,7 @@ public class Solver {
 			maxResidual = Math.max(Math.abs(cg.matSol.getMaxLocation()[0]),
 					Math.abs(cg.matSol.getMinLocation()[0]));
 
-			System.out.println(maxResidual);
+//			System.out.println(maxResidual);
 //			System.out.println(tolerance * 1000);
 
 			ComputeBEqNoDirichlet.timeCompute = ComputeBEqNoDirichlet.timeCompute

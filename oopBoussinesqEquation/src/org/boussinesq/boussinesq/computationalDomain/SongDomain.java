@@ -78,7 +78,7 @@ public class SongDomain {
 		for (int i = 0; i < (dim + 1); i++) {
 			ComputationalDomain.lengthSides[i] = 1;
 			ComputationalDomain.euclideanDistance[i] = 1;
-			ComputationalDomain.hydrConductivity[i] = 0.1;
+			ComputationalDomain.hydrConductivity[i] = 1;
 
 		}
 
@@ -101,7 +101,7 @@ public class SongDomain {
 			ComputationalDomain.eta[i] = 0;
 			ComputationalDomain.etaDirichlet[i] = -999;
 			ComputationalDomain.bedRockElevation[i] = 0;
-			ComputationalDomain.porosity[i] = 0.4;
+			ComputationalDomain.porosity[i] = 1;
 			ComputationalDomain.c[i] = 0;
 			ComputationalDomain.m[i] = 1;
 

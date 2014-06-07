@@ -5,10 +5,10 @@ import java.io.IOException;
 import org.boussinesq.RowCompressedForm.DeleteRowColumnNullDiagonalEntry;
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
+import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputationalArrays;
 import org.boussinesq.boussinesq.ComputeBEq;
 import org.boussinesq.boussinesq.ComputeT;
-import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.Solver;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
@@ -16,7 +16,7 @@ import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
-public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
+public class ComputeBEqDirichlet extends ComputeBEq {
 
 	double[] eta;
 	double[] matT;
@@ -148,7 +148,7 @@ public class ComputeBEqDirichlet extends ComputeBEq implements TimeSimulation {
 		System.arraycopy(ComputationalDomain.eta, 0, eta, 0,
 				ComputationalDomain.eta.length);
 
-		for (int t = 0; t < SIMULATIONTIME; t += TIMESTEP) {
+		for (int t = 0; t < BoussinesqEquation.SIMULATIONTIME; t += BoussinesqEquation.TIMESTEP) {
 
 			TextIO.putln("Time step " + (double) t / 3600);
 

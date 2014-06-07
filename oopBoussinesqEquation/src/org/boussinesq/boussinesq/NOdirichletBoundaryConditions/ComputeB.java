@@ -1,11 +1,11 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
+import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputationalArrays;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
-import org.boussinesq.boussinesq.TimeSimulation;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
-public class ComputeB implements TimeSimulation {
+public class ComputeB {
 
 	/**
 	 * Compute B.
@@ -46,10 +46,10 @@ public class ComputeB implements TimeSimulation {
 
 			// delta t deve essere minore di 1/c
 			arrB[i] = volume
-					+ TIMESTEP
+					+ BoussinesqEquation.TIMESTEP
 					* ComputationalArrays.planarArea[i]
 					* ComputationalArrays.source[i]
-					- TIMESTEP
+					- BoussinesqEquation.TIMESTEP
 					* ComputationalArrays.planarArea[i]
 					* ComputationalArrays.coeffC[i]
 					* Math.pow(volume / ComputationalArrays.planarArea[i],

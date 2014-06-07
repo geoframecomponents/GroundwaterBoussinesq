@@ -61,12 +61,16 @@ public class SelectOptions {
       final JComboBox<String> fruitCombo = new JComboBox<String>(options);    
       fruitCombo.setSelectedIndex(0);
 
-      JScrollPane fruitListScrollPane = new JScrollPane(fruitCombo);    
+      JScrollPane fruitListScrollPane = new JScrollPane(fruitCombo);   
+      
+//      JTextField jt = new JTextField("Default",10);
 
       JButton showButton = new JButton("OK");
       
       controlPanel.add(fruitListScrollPane);          
       controlPanel.add(showButton);
+      
+//      controlPanel.add(jt);
 
       mainFrame.setVisible(true); 
       

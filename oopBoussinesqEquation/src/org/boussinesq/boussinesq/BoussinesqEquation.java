@@ -2,12 +2,14 @@ package org.boussinesq.boussinesq;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeBEqNoDirichlet;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
 import org.boussinesq.song.Song;
 import org.wordpress.growworkinghard.GUI.SelectOptions;
+import org.wordpress.growworkinghard.usefulClasses.ComputePattern;
 import org.wordpress.growworkinghard.usefulClasses.GUIpathFileRead;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
@@ -16,31 +18,28 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
 /**
  * Boussinesq Equation class
  * 
- * @desc	This class is the MAIN CLASS of the code that implements the boussinesq
- * 			equation, in order to obtain the piezometric head in every cell of the unstructured domain of the catchment.
+ * @desc This class is the MAIN CLASS of the code that implements the boussinesq
+ *       equation, in order to obtain the piezometric head in every cell of the
+ *       unstructured domain of the catchment.
  * 
- * @author	F. Serafin, 2014
- * Copyright GPL v. 3 (http://www.gnu.org/licenses/gpl.html)
+ * @author F. Serafin, 2014 Copyright GPL v. 3
+ *         (http://www.gnu.org/licenses/gpl.html)
  * */
-public class BoussinesqEquation implements TimeSimulation {
+public class BoussinesqEquation{
 
 	/** The boundary conditions. */
 	public static String boundaryConditions;
-	
+
 	/** Directory of the solution. */
 	public static File solutionDirectory;
+
+	public static DecimalFormat myformatter;
+	
+	public static int TIMESTEP;
+	public static int SIMULATIONTIME;
 	
 	String simulationType;
-	
 
-
-
-	
-	
-	
-	
-	
-		
 	/**
 	 * Define boundary conditions type.
 	 * 
@@ -65,7 +64,7 @@ public class BoussinesqEquation implements TimeSimulation {
 		BoussinesqEquation.boundaryConditions = "NoDirichlet";
 
 		int endForLoop = ComputationalDomain.etaDirichlet.length;
-		
+
 		// search a Dirichlet cell into the array of eta of Dirichlet
 		for (int i = 0; i < endForLoop; i++) {
 
@@ -86,25 +85,25 @@ public class BoussinesqEquation implements TimeSimulation {
 		if (BoussinesqEquation.boundaryConditions.equals("Dirichlet")) {
 
 			ComputeBEqDirichlet cBEqD = new ComputeBEqDirichlet();
-			cBEqD.computeBEq(BoussinesqEquation.boundaryConditions,beq.simulationType);
+			cBEqD.computeBEq(BoussinesqEquation.boundaryConditions,
+					beq.simulationType);
 
 		} else {
 
 			ComputeBEqNoDirichlet cBEq = new ComputeBEqNoDirichlet();
-			cBEq.computeBEq(BoussinesqEquation.boundaryConditions,beq.simulationType);
+			cBEq.computeBEq(BoussinesqEquation.boundaryConditions,
+					beq.simulationType);
 
 		}
 
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
+	public void defineSimulationTime(){
+		
+		TIMESTEP = 1;
+		SIMULATIONTIME = 3600 * 24 * 20;
+		
+	}
 	
 	/**
 	 * Define simulation type.
@@ -129,16 +128,26 @@ public class BoussinesqEquation implements TimeSimulation {
 		viewOption.showComboboxDemo();
 
 		simulationType = SelectOptions.name;
-		
+
 		// load the corresponding computational domain
 		if (SelectOptions.name.equals("Song simulation")) {
 
 			ComputationalDomain.callSongDomain();
+			
+			String fileName;
 
-			// run the Song analytical solution
-			Song s = new Song(SIMULATIONTIME, ComputationalDomain.Np,
-					ComputationalDomain.hydrConductivity[0]);
-			s.beqSong(ComputationalDomain.porosity);
+			File outputPathSong = defineSolutionPrintLocation("Input path of Song solution");
+			
+			for (int time = 1; time < SIMULATIONTIME; time += TIMESTEP) {
+
+				fileName = BoussinesqEquation.myformatter.format(time);
+
+				// run the Song analytical solution
+				Song s = new Song(time, ComputationalDomain.Np,
+						ComputationalDomain.hydrConductivity[0]);
+				s.beqSong(ComputationalDomain.porosity, fileName, outputPathSong);
+				
+			}
 
 		} else {
 
@@ -148,15 +157,6 @@ public class BoussinesqEquation implements TimeSimulation {
 
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * Define solution print location.
 	 * 
@@ -167,31 +167,21 @@ public class BoussinesqEquation implements TimeSimulation {
 	 * 
 	 * @return the path where to save files with value at every time step
 	 */
-	public File defineSolutionPrintLocation() {
+	public File defineSolutionPrintLocation(String title) {
 
 		GUIpathFileRead guiDir = new GUIpathFileRead();
-		File path = guiDir.saveDialog("Input path of BEq solution");
+		File path = guiDir.saveDialog(title);
 
 		return path;
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 	/**
 	 * The main method.
 	 * 
-	 * @desc the main calls only the methods useless to start the simulation
-	 * 			1- define the simulation type (song or catchment)
-	 * 			2- define the location where save the results
-	 * 			3- define the type of simulation that must be run
+	 * @desc the main calls only the methods useless to start the simulation 1-
+	 *       define the simulation type (song or catchment) 2- define the
+	 *       location where save the results 3- define the type of simulation
+	 *       that must be run
 	 * 
 	 * @param args
 	 *            the arguments
@@ -204,8 +194,15 @@ public class BoussinesqEquation implements TimeSimulation {
 			throws IterativeSolverDoubleNotConvergedException, IOException {
 
 		BoussinesqEquation beq = new BoussinesqEquation();
+		
+		beq.defineSimulationTime();
+		
+		ComputePattern cp = new ComputePattern();
+		
+		myformatter = cp.computePattern(SIMULATIONTIME);
+		
 		beq.defineSimulationType();
-		solutionDirectory = beq.defineSolutionPrintLocation();
+		solutionDirectory = beq.defineSolutionPrintLocation("Input path of BEq solution");
 		beq.defineBoundaryConditionsType(beq);
 
 		System.exit(1);

@@ -1,9 +1,8 @@
 package org.boussinesq.boussinesq;
 
-import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
-public class ComputeT implements TimeSimulation {
+public class ComputeT{
 
 	public static boolean unlockDeleteRowColumn = false;
 
@@ -50,7 +49,7 @@ public class ComputeT implements TimeSimulation {
 
 				if (ComputationalDomain.Mi[j] != i) {
 					// equation (21)
-					arrayT[j] = -TIMESTEP
+					arrayT[j] = -BoussinesqEquation.TIMESTEP
 							* (1 / ComputationalDomain.euclideanDistance[(int) ComputationalDomain.Ml[j] - 1])
 							* ComputationalDomain.hydrConductivity[(int) ComputationalDomain.Ml[j] - 1]
 							* ComputationalDomain.lengthSides[(int) ComputationalDomain.Ml[j] - 1]

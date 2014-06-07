@@ -4,10 +4,10 @@ import java.io.IOException;
 
 import org.boussinesq.RowCompressedForm.DeleteRowColumnNullDiagonalEntry;
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
+import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputationalArrays;
 import org.boussinesq.boussinesq.ComputeBEq;
 import org.boussinesq.boussinesq.ComputeT;
-import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.Solver;
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeB;
@@ -15,7 +15,7 @@ import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
-public class ComputeBEqNoDirichlet extends ComputeBEq implements TimeSimulation {
+public class ComputeBEqNoDirichlet extends ComputeBEq {
 
 	double[] eta;
 	double[] matT1, matT;
@@ -53,9 +53,9 @@ public class ComputeBEqNoDirichlet extends ComputeBEq implements TimeSimulation 
 		deleteRowColumn.computationalDomain(ComputationalDomain.Np, matT1,
 				indexDiag, ComputationalDomain.Mp, ComputationalDomain.Mi);
 
-		matT = computationalArrays
-				.DefineDomainProperties(matT1, eta, indexDiag, deleteRowColumn);
-		
+		matT = computationalArrays.DefineDomainProperties(matT1, eta,
+				indexDiag, deleteRowColumn);
+
 		arrb = deleteRowColumn.computeCellsArray(arrb1);
 
 	}
@@ -96,7 +96,7 @@ public class ComputeBEqNoDirichlet extends ComputeBEq implements TimeSimulation 
 		System.arraycopy(ComputationalDomain.eta, 0, eta, 0,
 				ComputationalDomain.eta.length);
 
-		for (int t = 0; t < SIMULATIONTIME; t += TIMESTEP) {
+		for (int t = 0; t < BoussinesqEquation.SIMULATIONTIME; t += BoussinesqEquation.TIMESTEP) {
 
 			TextIO.putln("Time step " + (double) t / 3600);
 

@@ -13,7 +13,7 @@ import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
-public class ComputeBEq implements TimeSimulation {
+public class ComputeBEq{
 
 	double[] aquiferThickness;
 	double[] volumeSource;
@@ -32,7 +32,7 @@ public class ComputeBEq implements TimeSimulation {
 
 	Solver newton;
 	RCConjugateGradient cg;
-	DecimalFormat myformatter;
+
 	RCIndexDiagonalElement rcIndexDiagonalElement;
 	MachineEpsilon cMEd;
 
@@ -46,30 +46,28 @@ public class ComputeBEq implements TimeSimulation {
 
 		volume = new double[ComputationalDomain.Np];
 
-		myformatter = computePattern();
-
 		rcIndexDiagonalElement = new RCIndexDiagonalElement();
 		cMEd = new MachineEpsilon();
 
 	}
 
-	public DecimalFormat computePattern() {
-
-		int[] c = new int[String.valueOf(SIMULATIONTIME).length()];
-
-		StringBuilder builder = new StringBuilder(c.length);
-
-		for (int i : c) {
-
-			builder.append(c[i]);
-
-		}
-
-		String pattern = builder.toString();
-
-		return new DecimalFormat(pattern);
-
-	}
+//	public DecimalFormat computePattern() {
+//
+//		int[] c = new int[String.valueOf(BoussinesqEquation.SIMULATIONTIME).length()];
+//
+//		StringBuilder builder = new StringBuilder(c.length);
+//
+//		for (int i : c) {
+//
+//			builder.append(c[i]);
+//
+//		}
+//
+//		String pattern = builder.toString();
+//
+//		return new DecimalFormat(pattern);
+//
+//	}
 
 	public void writeSolution(int time, double[] eta, String bc,
 			String simulation) throws IOException {
@@ -77,12 +75,12 @@ public class ComputeBEq implements TimeSimulation {
 		FileWrite.writeStringString("Type of simulation", simulation);
 		FileWrite.writeStringString("Type of boundary conditions ", bc);
 		FileWrite.writeStringIntString("Iteration number", (int) time
-				/ TIMESTEP + 1, "");
-		FileWrite.writeStringDoubleString("Timestep", TIMESTEP, "[s]");
-		FileWrite.writeStringDoubleString("Time of simulation", SIMULATIONTIME,
+				/ BoussinesqEquation.TIMESTEP + 1, "");
+		FileWrite.writeStringDoubleString("Timestep", BoussinesqEquation.TIMESTEP, "[s]");
+		FileWrite.writeStringDoubleString("Time of simulation", BoussinesqEquation.SIMULATIONTIME,
 				"[s]");
 		FileWrite.writeStringDoubleString("Time of simulation",
-				SIMULATIONTIME / 60, "[min]");
+				BoussinesqEquation.SIMULATIONTIME / 60, "[min]");
 		FileWrite
 				.writeStringDoubleString("Initial volume", volumeOld, "[ m^3]");
 		FileWrite.writeStringDoubleString("Total volume", volumeNew, "[m^3]");
@@ -107,10 +105,10 @@ public class ComputeBEq implements TimeSimulation {
 				ComputationalDomain.planArea[index]);
 
 		volume = volume
-				- TIMESTEP
+				- BoussinesqEquation.TIMESTEP
 				* ComputationalDomain.planArea[index]
 				* ComputationalDomain.source[index]
-				+ TIMESTEP
+				+ BoussinesqEquation.TIMESTEP
 				* ComputationalDomain.planArea[index]
 				* ComputationalDomain.c[index]
 				* Math.pow(volume / ComputationalDomain.planArea[index],
@@ -122,7 +120,7 @@ public class ComputeBEq implements TimeSimulation {
 
 	public void openTxtFile(int time) throws IOException {
 
-		fileName = myformatter.format(time);
+		fileName = BoussinesqEquation.myformatter.format(time);
 		FileWrite.openTxtFile(fileName.concat(".txt"),
 				BoussinesqEquation.solutionDirectory, false);
 

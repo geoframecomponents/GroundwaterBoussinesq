@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.wordpress.growworkinghard.usefulClasses.FileWrite;
 import org.wordpress.growworkinghard.usefulClasses.GUIpathFileRead;
+import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 public class Song {
 
@@ -40,22 +41,22 @@ public class Song {
 		double[] a = new double[ax.length];
 
 		int endForLoop = a.length;
-		
+
 		for (int i = 0; i < endForLoop; i++) {
 
 			a[i] = ax[i] * Math.pow(xi0, 2);
 
 		}
 
-		double sum = 0;
+//		double sum = 0;
+//
+//		for (int i = 0; i < endForLoop; i++) {
+//
+//			sum += a[i];
+//
+//		}
 
-		for (int i = 0; i < endForLoop; i++) {
-
-			sum += a[i];
-
-		}
-
-		System.out.println("Somma a: " + sum);
+//		System.out.println("Somma a: " + sum);
 
 		return a;
 
@@ -66,7 +67,7 @@ public class Song {
 		double[] xi = new double[xLength];
 
 		int endForLoop = xi.length;
-		
+
 		for (int i = 0; i < endForLoop; i++) {
 
 			xi[i] = x[i]
@@ -82,25 +83,25 @@ public class Song {
 		// System.out.println(Arrays.toString(xi));
 		return xi;
 	}
-	
-	public File defineSolutionPrintLocation(){
-		
-		GUIpathFileRead guiDir = new GUIpathFileRead();
-		File path = guiDir.saveDialog("Input path of Song solution");
-				
-		return path;
-	}
 
-	public void beqSong(double[] porosity) throws IOException {
+	// public File defineSolutionPrintLocation(){
+	//
+	// GUIpathFileRead guiDir = new GUIpathFileRead();
+	// File path = guiDir.saveDialog("Input path of Song solution");
+	//
+	// return path;
+	// }
 
-		File outputPathSong = defineSolutionPrintLocation();
-		
-		String song = "songks";
-		song = song.concat(Double.toString(hydraulicConductivity));
-		song = song.concat("days").concat(Integer.toString(t/(3600*24)));
-		
-		FileWrite.openTxtFile(song, outputPathSong, true);
-		
+	public void beqSong(double[] porosity, String pattern, File outputPathSong)
+			throws IOException {
+
+		// File outputPathSong = defineSolutionPrintLocation();
+
+		String song = "song_";
+		song = song.concat(pattern);
+
+		FileWrite.openTxtFile(song.concat(".txt"), outputPathSong, true);
+
 		double[] ax = new double[nmax];
 		double[] solutionDimensionless = new double[xLength];
 		double[] solution = new double[xLength];
@@ -114,7 +115,7 @@ public class Song {
 		double sum = 0;
 
 		int endForLoop = ax.length;
-		
+
 		for (int i = 1; i < endForLoop; i++) {
 
 			sum += ax[i];
@@ -129,7 +130,7 @@ public class Song {
 				computeXI(porosity), xi0, computeA(ax, xi0));
 
 		endForLoop = solutionDimensionless.length;
-		
+
 		for (int i = 0; i < endForLoop; i++) {
 
 			// System.out.println(solutionDimensionless[i]);
@@ -137,12 +138,12 @@ public class Song {
 			solution[i] = h1 * Math.pow(t, alpha) * solutionDimensionless[i];
 
 		}
+		
+		TextIO.putln("Time step: " + (double) t/3600);
 
 		FileWrite.writeOneDoubleColumn(solution);
 		FileWrite.closeTxtFile();
-		
-		
-		
+
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -159,7 +160,7 @@ public class Song {
 		}
 
 		Song s = new Song(time, dim, 0.1);
-		s.beqSong(porosity);
+//		s.beqSong(porosity, "001", "Input path of Song solution");
 
 		System.exit(1);
 
