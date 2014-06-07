@@ -100,8 +100,8 @@ public class BoussinesqEquation{
 
 	public void defineSimulationTime(){
 		
-		TIMESTEP = 1;
-		SIMULATIONTIME = 3600 * 24 * 20;
+		TIMESTEP = 3600;
+		SIMULATIONTIME = 3600 * 24 * 5;
 		
 	}
 	

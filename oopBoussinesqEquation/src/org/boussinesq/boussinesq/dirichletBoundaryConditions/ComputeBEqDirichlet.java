@@ -2,26 +2,15 @@ package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
 import java.io.IOException;
 
-import org.boussinesq.RowCompressedForm.DeleteRowColumnNullDiagonalEntry;
-import org.boussinesq.RowCompressedForm.RCConjugateGradient;
-import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputationalArrays;
 import org.boussinesq.boussinesq.ComputeBEq;
-import org.boussinesq.boussinesq.ComputeT;
-import org.boussinesq.boussinesq.dirichletBoundaryConditions.Solver;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
-import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
 public class ComputeBEqDirichlet extends ComputeBEq {
-
-	double[] eta;
-	double[] matT;
-	double[] arrb1;
-	double[] arrb;
 
 	double[] matTDirichlet;
 	double[] matTDirichlet1;
@@ -31,39 +20,24 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 	double volumeDirichlet;
 
 	Solver newton;
-	RCConjugateGradient cg;
-	ComputeT computeT;
 	ComputeTDirichlet cTDirichlet;
 	ComputeTNoDirichlet cTNoDirichlet;
-	DeleteRowColumnNullDiagonalEntry deleteRowColumn;
-	ComputationalArrays computeNewArray;
 	IsNoValue verifyDirichlet;
 
 	ComputeB cB;
 
-	int[] indexDiag;
-
-	RCIndexDiagonalElement rcIndexDiagonalElement;
-	MachineEpsilon cMEd;
-	double tolerance;
-
 	public ComputeBEqDirichlet() {
 
 		eta = new double[ComputationalDomain.Np];
-
-		rcIndexDiagonalElement = new RCIndexDiagonalElement();
-		cMEd = new MachineEpsilon();
 		newton = new Solver();
-		cg = new RCConjugateGradient();
+		cB = new ComputeB();
 
-		deleteRowColumn = new DeleteRowColumnNullDiagonalEntry();
-		computeNewArray = new ComputationalArrays();
 		verifyDirichlet = new IsNoValue();
 
-		computeT = new ComputeT();
+		
 		cTDirichlet = new ComputeTDirichlet();
 		cTNoDirichlet = new ComputeTNoDirichlet();
-		cB = new ComputeB();
+		
 
 	}
 
@@ -80,7 +54,7 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 				matTNoDirichlet1, indexDiag, ComputationalDomain.Mp,
 				ComputationalDomain.Mi);
 
-		matTNoDirichlet = computeNewArray.DefineDomainProperties(
+		matTNoDirichlet = computationalArrays.DefineDomainProperties(
 				matTNoDirichlet1, eta, indexDiag, deleteRowColumn);
 
 		arrb = deleteRowColumn.computeCellsArray(arrb1);
@@ -126,21 +100,11 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 	}
 
-	public void firstThings() {
-
-		indexDiag = rcIndexDiagonalElement.computeIndexDiag(
-				ComputationalDomain.Np, ComputationalDomain.Mp,
-				ComputationalDomain.Mi);
-
-		tolerance = cMEd.computeMachineEpsilonDouble();
-
-	}
-
 	public void computeBEq(String boundaryCondition, String simulationType)
 			throws IOException, IterativeSolverDoubleNotConvergedException {
-
+		
 		firstThings();
-
+		
 		EtaInitialization etaInit = new EtaInitialization();
 
 		computeInitialVolume();

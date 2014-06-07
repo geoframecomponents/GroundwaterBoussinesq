@@ -1,20 +1,26 @@
 package org.boussinesq.boussinesq;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 
+import org.boussinesq.RowCompressedForm.DeleteRowColumnNullDiagonalEntry;
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
-import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.Solver;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
+
 import org.wordpress.growworkinghard.usefulClasses.FileWrite;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
-import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
-public class ComputeBEq{
+public class ComputeBEq {
 
+	protected double[] eta;
+	protected double[] matT;
+	
+	protected double[] arrb1;
+	protected double[] arrb;
+	
 	double[] aquiferThickness;
 	double[] volumeSource;
 	protected int[] indexDiag;
@@ -30,16 +36,28 @@ public class ComputeBEq{
 	public static long timeCompute;
 	public static long timeSolver;
 
-	Solver newton;
-	RCConjugateGradient cg;
+	// protected Solver newton;
+	protected RCConjugateGradient cg;
 
-	RCIndexDiagonalElement rcIndexDiagonalElement;
-	MachineEpsilon cMEd;
+	protected RCIndexDiagonalElement rcIndexDiagonalElement;
+	protected MachineEpsilon cMEd;
+
+	protected DeleteRowColumnNullDiagonalEntry deleteRowColumn;
+	protected ComputationalArrays computationalArrays;
+
+	protected ComputeT computeT;
+
+	// protected ComputeB cB;
 
 	public ComputeBEq() {
 
-		// cg = new RCConjugateGradient(ComputationalDomain.Np);
-		newton = new Solver();
+		computeT = new ComputeT();
+
+		cg = new RCConjugateGradient();
+		// newton = new Solver();
+
+		computationalArrays = new ComputationalArrays();
+		deleteRowColumn = new DeleteRowColumnNullDiagonalEntry();
 
 		aquiferThickness = new double[ComputationalDomain.Np];
 		volumeSource = new double[ComputationalDomain.Np];
@@ -51,24 +69,6 @@ public class ComputeBEq{
 
 	}
 
-//	public DecimalFormat computePattern() {
-//
-//		int[] c = new int[String.valueOf(BoussinesqEquation.SIMULATIONTIME).length()];
-//
-//		StringBuilder builder = new StringBuilder(c.length);
-//
-//		for (int i : c) {
-//
-//			builder.append(c[i]);
-//
-//		}
-//
-//		String pattern = builder.toString();
-//
-//		return new DecimalFormat(pattern);
-//
-//	}
-
 	public void writeSolution(int time, double[] eta, String bc,
 			String simulation) throws IOException {
 
@@ -76,9 +76,10 @@ public class ComputeBEq{
 		FileWrite.writeStringString("Type of boundary conditions ", bc);
 		FileWrite.writeStringIntString("Iteration number", (int) time
 				/ BoussinesqEquation.TIMESTEP + 1, "");
-		FileWrite.writeStringDoubleString("Timestep", BoussinesqEquation.TIMESTEP, "[s]");
-		FileWrite.writeStringDoubleString("Time of simulation", BoussinesqEquation.SIMULATIONTIME,
-				"[s]");
+		FileWrite.writeStringDoubleString("Timestep",
+				BoussinesqEquation.TIMESTEP, "[s]");
+		FileWrite.writeStringDoubleString("Time of simulation",
+				BoussinesqEquation.SIMULATIONTIME, "[s]");
 		FileWrite.writeStringDoubleString("Time of simulation",
 				BoussinesqEquation.SIMULATIONTIME / 60, "[min]");
 		FileWrite
@@ -127,12 +128,13 @@ public class ComputeBEq{
 	}
 
 	public void computeOutputFeatures(double[] eta) {
-		
+
 		int endForLoop = eta.length;
 
 		for (int j = 0; j < endForLoop; j++) {
 
-			volumeSource[j] = ComputationalDomain.source[j] * ComputationalDomain.planArea[j];
+			volumeSource[j] = ComputationalDomain.source[j]
+					* ComputationalDomain.planArea[j];
 			aquiferThickness[j] = Math.max(0, eta[j]
 					- ComputationalDomain.bedRockElevation[j]);
 			volume[j] = computeVolume(j, eta[j]);
@@ -170,17 +172,6 @@ public class ComputeBEq{
 		}
 
 		volumeNew = 0;
-
-	}
-
-	public double[] solutionMethod(double[] etaOld, double[] matT, double[] arrb)
-			throws IterativeSolverDoubleNotConvergedException {
-
-		double[] eta = new double[etaOld.length];
-
-		eta = newton.newtonIteration(arrb, matT, etaOld, cg, tolerance);
-
-		return eta;
 
 	}
 

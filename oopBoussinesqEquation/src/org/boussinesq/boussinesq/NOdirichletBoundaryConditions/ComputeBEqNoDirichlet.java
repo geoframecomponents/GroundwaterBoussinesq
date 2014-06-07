@@ -2,50 +2,32 @@ package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
 import java.io.IOException;
 
-import org.boussinesq.RowCompressedForm.DeleteRowColumnNullDiagonalEntry;
-import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputationalArrays;
 import org.boussinesq.boussinesq.ComputeBEq;
-import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
-import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.Solver;
-import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeB;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
 public class ComputeBEqNoDirichlet extends ComputeBEq {
 
-	double[] eta;
-	double[] matT1, matT;
-	double[] arrb;
-	double[] arrb1;
+	double[] matT1;
 
 	Solver newton;
-	RCConjugateGradient cg;
-
-	DeleteRowColumnNullDiagonalEntry deleteRowColumn;
-	ComputationalArrays computationalArrays;
-
-	ComputeT computeT;
 	ComputeB cB;
 
 	public ComputeBEqNoDirichlet() {
 
 		eta = new double[ComputationalDomain.Np];
 		newton = new Solver();
-		cg = new RCConjugateGradient();
-		computeT = new ComputeT();
 		cB = new ComputeB();
-
-		deleteRowColumn = new DeleteRowColumnNullDiagonalEntry();
 
 	}
 
 	public void computeBEqArrays(double[] eta) {
 
-		computationalArrays = new ComputationalArrays();
+		
 
 		matT1 = computeT.computeT(eta, indexDiag);
 		arrb1 = cB.computeB(eta);
