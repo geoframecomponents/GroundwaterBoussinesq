@@ -1,9 +1,10 @@
 package org.boussinesq.boussinesq;
 
-import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
-public class ComputeT implements TimeSimulation {
+public class ComputeT {
+
+	public static boolean unlockDeleteRowColumn = false;
 
 	/**
 	 * Compute T.
@@ -20,7 +21,7 @@ public class ComputeT implements TimeSimulation {
 	 * 
 	 * @return the matrix T like array in Row Compressed Form
 	 */
-	public double[] computeT(double[] eta) {
+	public double[] computeT(double[] eta, int[] indexDiag) {
 
 		/*
 		 * variable to which sum the terms of matrix T (T is an array because is
@@ -48,15 +49,19 @@ public class ComputeT implements TimeSimulation {
 
 				if (ComputationalDomain.Mi[j] != i) {
 					// equation (21)
-					arrayT[j] = -TIMESTEP
-							* (1 / ComputationalDomain.euclideanDistance[(int) ComputationalDomain.Ml[j]-1])
-							* ComputationalDomain.hydrConductivity[(int) ComputationalDomain.Ml[j]-1]
-							* ComputationalDomain.lengthSides[(int) ComputationalDomain.Ml[j]-1]
+					arrayT[j] = -BoussinesqEquation.TIMESTEP
+							* (1 / ComputationalDomain.euclideanDistance[(int) ComputationalDomain.Ml[j] - 1])
+							* ComputationalDomain.hydrConductivity[(int) ComputationalDomain.Ml[j] - 1]
+							* ComputationalDomain.lengthSides[(int) ComputationalDomain.Ml[j] - 1]
 							* Math.max(
-									Math.max(0, eta[ComputationalDomain.Mi[j]]
-											- ComputationalDomain.bedRockElevation[ComputationalDomain.Mi[j]]),
-									Math.max(0, eta[i]
-											- ComputationalDomain.bedRockElevation[i]));
+									Math.max(
+											0,
+											eta[ComputationalDomain.Mi[j]]
+													- ComputationalDomain.bedRockElevation[ComputationalDomain.Mi[j]]),
+									Math.max(
+											0,
+											eta[i]
+													- ComputationalDomain.bedRockElevation[i]));
 
 					rowSum += -arrayT[j];
 
@@ -67,10 +72,15 @@ public class ComputeT implements TimeSimulation {
 			}
 			// equation (20)
 			arrayT[index] = rowSum;
+
+			if (BoussinesqEquation.boundaryConditions.equals("NoDirichlet")
+					&& rowSum == 0 && !unlockDeleteRowColumn)
+				unlockDeleteRowColumn = true;
+
 			rowSum = 0;
 		}
 
 		return arrayT;
 	}
-	
+
 }

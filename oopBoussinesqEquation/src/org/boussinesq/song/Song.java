@@ -1,23 +1,27 @@
 package org.boussinesq.song;
 
-import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-//import java.util.Arrays;
+
+import org.wordpress.growworkinghard.usefulClasses.FileWrite;
+import org.wordpress.growworkinghard.usefulClasses.GUIpathFileRead;
+import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 public class Song {
 
 	double[] x;
+	int xLength;
 	// double[] porosity;
 	double hydraulicConductivity;
-	int t;
+	double t;
 	int alpha;
 	static int h1;
 	int nmax;
 
-	public Song(int time, int Np, double ks) {
+	public Song(double time, int Np, double ks) {
 
 		x = new double[Np];
+		xLength = x.length;
 		t = time;
 		alpha = 0;
 		h1 = 1;
@@ -36,21 +40,23 @@ public class Song {
 
 		double[] a = new double[ax.length];
 
-		for (int i = 0; i < a.length; i++) {
+		int endForLoop = a.length;
+
+		for (int i = 0; i < endForLoop; i++) {
 
 			a[i] = ax[i] * Math.pow(xi0, 2);
 
 		}
 
-		double sum = 0;
+//		double sum = 0;
+//
+//		for (int i = 0; i < endForLoop; i++) {
+//
+//			sum += a[i];
+//
+//		}
 
-		for (int i = 0; i < a.length; i++) {
-
-			sum += a[i];
-
-		}
-
-		System.out.println("Somma a: " + sum);
+//		System.out.println("Somma a: " + sum);
 
 		return a;
 
@@ -58,9 +64,11 @@ public class Song {
 
 	public double[] computeXI(double[] porosity) {
 
-		double[] xi = new double[x.length];
+		double[] xi = new double[xLength];
 
-		for (int i = 0; i < xi.length; i++) {
+		int endForLoop = xi.length;
+
+		for (int i = 0; i < endForLoop; i++) {
 
 			xi[i] = x[i]
 					* Math.pow(
@@ -76,11 +84,27 @@ public class Song {
 		return xi;
 	}
 
-	public void beqSong(double[] porosity) throws IOException {
+	// public File defineSolutionPrintLocation(){
+	//
+	// GUIpathFileRead guiDir = new GUIpathFileRead();
+	// File path = guiDir.saveDialog("Input path of Song solution");
+	//
+	// return path;
+	// }
+
+	public void beqSong(double[] porosity, String pattern, File outputPathSong)
+			throws IOException {
+
+		// File outputPathSong = defineSolutionPrintLocation();
+
+		String song = "song_";
+		song = song.concat(pattern);
+
+		FileWrite.openTxtFile(song.concat(".txt"), outputPathSong, true);
 
 		double[] ax = new double[nmax];
-		double[] solutionDimensionless = new double[x.length];
-		double[] solution = new double[x.length];
+		double[] solutionDimensionless = new double[xLength];
+		double[] solution = new double[xLength];
 
 		ax = SongCoefficient.CoefficientSongSolution(nmax,
 				(alpha / (alpha + 1)));
@@ -90,7 +114,9 @@ public class Song {
 		double xi0 = 0;
 		double sum = 0;
 
-		for (int i = 1; i < ax.length; i++) {
+		int endForLoop = ax.length;
+
+		for (int i = 1; i < endForLoop; i++) {
 
 			sum += ax[i];
 
@@ -103,30 +129,20 @@ public class Song {
 		solutionDimensionless = SongDimensionless.beqSongDimensionless(
 				computeXI(porosity), xi0, computeA(ax, xi0));
 
-		for (int i = 0; i < solutionDimensionless.length; i++) {
+		endForLoop = solutionDimensionless.length;
+
+		for (int i = 0; i < endForLoop; i++) {
 
 			// System.out.println(solutionDimensionless[i]);
 
 			solution[i] = h1 * Math.pow(t, alpha) * solutionDimensionless[i];
 
 		}
-
-		String outputPathSong;
-		outputPathSong = "/home/francesco/song_5d_ks1.txt";
-//		outputPathSong = "song_20d_ks001.txt";
 		
-		FileWriter Rstatfile = new FileWriter(outputPathSong);
-		PrintWriter errestat = new PrintWriter(Rstatfile);
+		TextIO.putln("Time step: " + (double) t/3600);
 
-		for (int j = 0; j < solution.length; j++) {
-
-			errestat.println(solution[j]);
-
-		}
-
-		errestat.println();
-		System.out.println();
-		Rstatfile.close();
+		FileWrite.writeOneDoubleColumn(solution);
+		FileWrite.closeTxtFile();
 
 	}
 
@@ -144,7 +160,7 @@ public class Song {
 		}
 
 		Song s = new Song(time, dim, 0.1);
-		s.beqSong(porosity);
+//		s.beqSong(porosity, "001", "Input path of Song solution");
 
 		System.exit(1);
 

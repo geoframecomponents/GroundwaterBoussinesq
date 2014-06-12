@@ -9,19 +9,13 @@ public class SongDimensionless {
 
 		// initialization of double in java is equal to zero
 		double[] solution = new double[xi.length];
-		/*
-		 * double[] temp = new double[xi.length];
-		 * 
-		 * for (int i = 0; i < xi.length; i++) {
-		 * 
-		 * temp[i] = Math.max(0, 1 - xi[i] / xi0);
-		 * 
-		 * }
-		 */
 
-		for (int i = 0; i < a.length; i++) {
+		int endForLoop1 = a.length;
+		int endForLoop2 = xi.length;
+		
+		for (int i = 0; i < endForLoop1; i++) {
 
-			for (int j = 0; j < xi.length; j++) {
+			for (int j = 0; j < endForLoop2; j++) {
 
 				solution[j] = solution[j] + a[i]
 						* Math.pow(Math.max(0, 1 - xi[j] / xi0), i);
@@ -29,9 +23,6 @@ public class SongDimensionless {
 			}
 
 		}
-
-		// System.out.println("Song dimensionless2\n" +
-		// Arrays.toString(solution));
 
 		return solution;
 

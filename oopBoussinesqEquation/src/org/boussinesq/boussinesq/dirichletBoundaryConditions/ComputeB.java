@@ -1,10 +1,11 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
+import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
-import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
+import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
-public class ComputeB implements TimeSimulation {
+public class ComputeB {
 
 	/**
 	 * Compute B.
@@ -49,10 +50,16 @@ public class ComputeB implements TimeSimulation {
 			}
 
 			// delta t deve essere minore di 1/c
-			arrB[i] = volume + TIMESTEP * ComputationalDomain.planArea[i]
-					* ComputationalDomain.source[i] - sum - TIMESTEP
+			arrB[i] = volume + BoussinesqEquation.TIMESTEP * ComputationalDomain.planArea[i]
+					* ComputationalDomain.source[i] - sum - BoussinesqEquation.TIMESTEP
 					* ComputationalDomain.planArea[i] * ComputationalDomain.c[i]
 					* Math.pow(volume / ComputationalDomain.planArea[i], ComputationalDomain.m[i]);
+			
+			if (arrB[i] < 0){
+				
+				TextIO.putln("WARNING!!!\nThe element " + i + " of the array of known terms is NEGATIVE");
+				
+			}
 
 		}
 

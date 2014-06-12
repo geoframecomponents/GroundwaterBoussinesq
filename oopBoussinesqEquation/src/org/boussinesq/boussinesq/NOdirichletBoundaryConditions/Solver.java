@@ -1,12 +1,9 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
-//import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeJr;
-//import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeR;
+import org.boussinesq.boussinesq.ComputationalArrays;
 
-import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
-import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
-
+import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseRCDoubleMatrix2D;
@@ -15,7 +12,6 @@ public class Solver {
 
 	long startCompute, endCompute, startSolver, endSolver;
 
-	
 	/**
 	 * Newton iteration.
 	 * 
@@ -39,31 +35,32 @@ public class Solver {
 	 * @throws IterativeSolverDoubleNotConvergedException
 	 *             the iterative solver double not converged exception
 	 */
-	public double[] newtonIteration(double[] arrb, double[] arrT,
-			int[] indexDiag, double[] eta, RCConjugateGradient cg,
-			double tolerance) throws IterativeSolverDoubleNotConvergedException {
+	public double[] newtonIteration(double[] arrb, double[] arrT, double[] eta,
+			RCConjugateGradient cg, double tolerance)
+			throws IterativeSolverDoubleNotConvergedException {
 
 		SparseRCDoubleMatrix2D matrixJr;
-		SparseDoubleMatrix1D matrixr;
+		DoubleMatrix1D matrixr;
 
 		double maxResidual = 10;
 
 		ComputeJr cJr = new ComputeJr();
 		ComputeR cR = new ComputeR();
-		
-		ComputeBEq.timeCompute = 0;
-		ComputeBEq.timeSolver = 0;
+
+		ComputeBEqNoDirichlet.timeCompute = 0;
+		ComputeBEqNoDirichlet.timeSolver = 0;
 
 		do {
-			
-			startCompute=System.nanoTime();
+
+			startCompute = System.nanoTime();
 
 			// compute Jr
-			double[] jr = cJr.computeJr(indexDiag, arrT, eta);
+			double[] jr = cJr.computeJr(arrT, eta);
 
 			// convert array in sparse matrix for DoubleCG class
-			matrixJr = new SparseRCDoubleMatrix2D(ComputationalDomain.Np, ComputationalDomain.Np, ComputationalDomain.Mp,
-					ComputationalDomain.Mi, jr);
+			matrixJr = new SparseRCDoubleMatrix2D(ComputationalArrays.numberOfPolygon,
+					ComputationalArrays.numberOfPolygon, ComputationalArrays.arrayMp,
+					ComputationalArrays.arrayMj, jr);
 
 			// compute the residual function
 			double[] r = cR.computeR(arrT, arrb, eta);
@@ -71,31 +68,32 @@ public class Solver {
 			// convert array in sparse matrix for DoubleCG class
 			matrixr = new SparseDoubleMatrix1D(r);
 
-			endCompute=System.nanoTime();
-			 
-			
-			startSolver=System.nanoTime();
-			
+			endCompute = System.nanoTime();
+
+			startSolver = System.nanoTime();
+
 			cg.solverCG(matrixr, matrixJr);
 
-			endSolver=System.nanoTime();
+			endSolver = System.nanoTime();
 
-			
 			// compute the new eta for every cell
-			for (int i = 0; i < ComputationalDomain.Np; i++) {
+			for (int i = 0; i < ComputationalArrays.numberOfPolygon; i++) {
 				eta[i] = eta[i] - cg.matSol.get(i);
 			}
 
 			// compute the max residual
 			maxResidual = Math.max(Math.abs(cg.matSol.getMaxLocation()[0]),
 					Math.abs(cg.matSol.getMinLocation()[0]));
-			
-			System.out.println(maxResidual);
-			
-			ComputeBEq.timeCompute = ComputeBEq.timeCompute + (endCompute - startCompute);
-			ComputeBEq.timeSolver = ComputeBEq.timeSolver + (endSolver - startSolver);
 
-		} while (maxResidual > tolerance * 100);
+//			System.out.println(maxResidual);
+//			System.out.println(tolerance * 1000);
+
+			ComputeBEqNoDirichlet.timeCompute = ComputeBEqNoDirichlet.timeCompute
+					+ (endCompute - startCompute);
+			ComputeBEqNoDirichlet.timeSolver = ComputeBEqNoDirichlet.timeSolver
+					+ (endSolver - startSolver);
+
+		} while (maxResidual > tolerance * 1000);
 
 		return eta;
 

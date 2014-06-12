@@ -35,7 +35,7 @@ public class SongCoefficient {
 
 		}
 
-		System.out.println(Arrays.toString(a));
+//		System.out.println(Arrays.toString(a));
 
 		return a;
 
