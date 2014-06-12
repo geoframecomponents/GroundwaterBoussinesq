@@ -13,12 +13,12 @@ public class Song {
 	int xLength;
 	// double[] porosity;
 	double hydraulicConductivity;
-	int t;
+	double t;
 	int alpha;
 	static int h1;
 	int nmax;
 
-	public Song(int time, int Np, double ks) {
+	public Song(double time, int Np, double ks) {
 
 		x = new double[Np];
 		xLength = x.length;

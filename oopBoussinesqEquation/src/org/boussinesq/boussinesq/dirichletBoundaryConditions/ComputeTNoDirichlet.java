@@ -58,7 +58,9 @@ public class ComputeTNoDirichlet extends IsNoValue {
 
 			}
 			
-			if (arrayT[indexDiag[i]] == 0) ComputeT.unlockDeleteRowColumn = true;
+			if (arrayT[indexDiag[i]] == 0) {
+				ComputeT.unlockDeleteRowColumn = true;
+			}
 
 		}
 

@@ -2,7 +2,7 @@ package org.boussinesq.boussinesq;
 
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 
-public class ComputeT{
+public class ComputeT {
 
 	public static boolean unlockDeleteRowColumn = false;
 
@@ -73,10 +73,8 @@ public class ComputeT{
 			// equation (20)
 			arrayT[index] = rowSum;
 
-			if (rowSum == 0
-					&& !unlockDeleteRowColumn
-					&& BoussinesqEquation.boundaryConditions
-							.equals("NoDirichlet"))
+			if (BoussinesqEquation.boundaryConditions.equals("NoDirichlet")
+					&& rowSum == 0 && !unlockDeleteRowColumn)
 				unlockDeleteRowColumn = true;
 
 			rowSum = 0;

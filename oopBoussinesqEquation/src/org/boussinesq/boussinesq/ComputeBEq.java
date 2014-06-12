@@ -69,29 +69,30 @@ public class ComputeBEq {
 
 	}
 
-	public void writeSolution(int time, double[] eta, String bc,
+	public void writeSolution(double time, double[] eta, String bc,
 			String simulation) throws IOException {
 
-		FileWrite.writeStringString("Type of simulation", simulation);
-		FileWrite.writeStringString("Type of boundary conditions ", bc);
-		FileWrite.writeStringIntString("Iteration number", (int) time
-				/ BoussinesqEquation.TIMESTEP + 1, "");
-		FileWrite.writeStringDoubleString("Timestep",
-				BoussinesqEquation.TIMESTEP, "[s]");
-		FileWrite.writeStringDoubleString("Time of simulation",
-				BoussinesqEquation.SIMULATIONTIME, "[s]");
-		FileWrite.writeStringDoubleString("Time of simulation",
-				BoussinesqEquation.SIMULATIONTIME / 60, "[min]");
-		FileWrite
-				.writeStringDoubleString("Initial volume", volumeOld, "[ m^3]");
-		FileWrite.writeStringDoubleString("Total volume", volumeNew, "[m^3]");
-		FileWrite.writeStringDoubleString("Time convergence of CG",
-				timeSolver / 1000000000.0, "[s]");
-		FileWrite.writeFourStringColumn("PiezHead", "AquifThick",
-				"WaterVolume", "Source");
-		FileWrite.writeFourStringColumn("[m]", "[m]", "[m^3]", "[m^3/s]");
-		FileWrite.writeFourDoubleColumn(eta, aquiferThickness, volume,
-				volumeSource);
+//		FileWrite.writeStringString("Type of simulation", simulation);
+//		FileWrite.writeStringString("Type of boundary conditions ", bc);
+//		FileWrite.writeStringIntString("Iteration number", (int) time
+//				/ BoussinesqEquation.TIMESTEP + 1, "");
+//		FileWrite.writeStringDoubleString("Timestep",
+//				BoussinesqEquation.TIMESTEP, "[s]");
+//		FileWrite.writeStringDoubleString("Time of simulation",
+//				BoussinesqEquation.SIMULATIONTIME, "[s]");
+//		FileWrite.writeStringDoubleString("Time of simulation",
+//				BoussinesqEquation.SIMULATIONTIME / 60, "[min]");
+//		FileWrite
+//				.writeStringDoubleString("Initial volume", volumeOld, "[ m^3]");
+//		FileWrite.writeStringDoubleString("Total volume", volumeNew, "[m^3]");
+//		FileWrite.writeStringDoubleString("Time convergence of CG",
+//				timeSolver / 1000000000.0, "[s]");
+//		FileWrite.writeFourStringColumn("PiezHead", "AquifThick",
+//				"WaterVolume", "Source");
+//		FileWrite.writeFourStringColumn("[m]", "[m]", "[m^3]", "[m^3/s]");
+//		FileWrite.writeFourDoubleColumn(eta, aquiferThickness, volume,
+//				volumeSource);
+		FileWrite.writeOneDoubleColumn(eta);
 		FileWrite.closeTxtFile();
 
 	}
@@ -119,7 +120,7 @@ public class ComputeBEq {
 
 	}
 
-	public void openTxtFile(int time) throws IOException {
+	public void openTxtFile(double time) throws IOException {
 
 		fileName = BoussinesqEquation.myformatter.format(time);
 		FileWrite.openTxtFile(fileName.concat(".txt"),

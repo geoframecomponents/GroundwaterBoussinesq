@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.boussinesq.boussinesq.BoussinesqEquation;
 import org.boussinesq.boussinesq.ComputationalArrays;
 import org.boussinesq.boussinesq.ComputeBEq;
+import org.boussinesq.boussinesq.ComputeT;
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
@@ -34,10 +35,8 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 		verifyDirichlet = new IsNoValue();
 
-		
 		cTDirichlet = new ComputeTDirichlet();
 		cTNoDirichlet = new ComputeTNoDirichlet();
-		
 
 	}
 
@@ -45,19 +44,36 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 		matT = computeT.computeT(eta, indexDiag);
 
-		matTNoDirichlet1 = cTNoDirichlet.computeTNoDirichlet(matT, indexDiag);
 		matTDirichlet = cTDirichlet.computeTDirichlet(matT);
 
-		arrb1 = cB.computeB(eta, matTDirichlet);
+		matTNoDirichlet1 = cTNoDirichlet.computeTNoDirichlet(matT,
+				indexDiag);
+		
+		if (ComputeT.unlockDeleteRowColumn) {
 
-		deleteRowColumn.computationalDomain(ComputationalDomain.Np,
-				matTNoDirichlet1, indexDiag, ComputationalDomain.Mp,
-				ComputationalDomain.Mi);
+			arrb1 = cB.computeB(eta, matTDirichlet);
 
-		matTNoDirichlet = computationalArrays.DefineDomainProperties(
-				matTNoDirichlet1, eta, indexDiag, deleteRowColumn);
+			deleteRowColumn.computationalDomain(ComputationalDomain.Np,
+					matTNoDirichlet1, indexDiag, ComputationalDomain.Mp,
+					ComputationalDomain.Mi);
 
-		arrb = deleteRowColumn.computeCellsArray(arrb1);
+			matTNoDirichlet = deleteRowColumn
+					.computeNewArrayT(matTNoDirichlet1);
+			computationalArrays.wetDomain(eta, indexDiag,
+					deleteRowColumn);
+
+			arrb = deleteRowColumn.computeCellsArray(arrb1);
+
+		} else {
+
+			matTNoDirichlet = cTNoDirichlet.computeTNoDirichlet(matT,
+					indexDiag);
+			
+			arrb = cB.computeB(eta, matTDirichlet);
+
+			computationalArrays.completeDomain(eta, indexDiag);
+			
+		}
 
 	}
 
@@ -70,8 +86,10 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 		double[] etaNew = new double[ComputationalDomain.eta.length];
 
-		if (ComputationalArrays.matrixReduction) {
+		if (ComputeT.unlockDeleteRowColumn) {
 
+			ComputeT.unlockDeleteRowColumn = false;
+			
 			etaNew = deleteRowColumn.addRemovedElements(eta,
 					ComputationalDomain.bedRockElevation);
 
@@ -82,7 +100,7 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 		}
 
 		int endForLoop = ComputationalDomain.etaDirichlet.length;
-		
+
 		for (int i = 0; i < endForLoop; i++) {
 
 			if (!verifyDirichlet.isNoValue(ComputationalDomain.etaDirichlet[i],
@@ -91,8 +109,9 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 				etaNew[i] = ComputationalDomain.etaDirichlet[i];
 
 			}
-			
-			if(Math.abs(etaNew[i]) < tolerance) etaNew[i] = ComputationalDomain.bedRockElevation[i];
+
+			if (Math.abs(etaNew[i]) < tolerance)
+				etaNew[i] = ComputationalDomain.bedRockElevation[i];
 
 		}
 
@@ -102,9 +121,9 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 	public void computeBEq(String boundaryCondition, String simulationType)
 			throws IOException, IterativeSolverDoubleNotConvergedException {
-		
+
 		firstThings();
-		
+
 		EtaInitialization etaInit = new EtaInitialization();
 
 		computeInitialVolume();
@@ -112,7 +131,7 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 		System.arraycopy(ComputationalDomain.eta, 0, eta, 0,
 				ComputationalDomain.eta.length);
 
-		for (int t = 0; t < BoussinesqEquation.SIMULATIONTIME; t += BoussinesqEquation.TIMESTEP) {
+		for (double t = 0; t < BoussinesqEquation.SIMULATIONTIME; t += BoussinesqEquation.TIMESTEP) {
 
 			TextIO.putln("Time step " + (double) t / 3600);
 
@@ -128,8 +147,6 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 			computeOutputFeatures(eta);
 
 			writeSolution(t, eta, boundaryCondition, simulationType);
-
-			ComputationalArrays.matrixReduction = false;
 
 			computeVolumeConservation();
 

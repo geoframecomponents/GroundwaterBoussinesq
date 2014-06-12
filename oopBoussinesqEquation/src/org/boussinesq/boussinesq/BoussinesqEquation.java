@@ -35,11 +35,14 @@ public class BoussinesqEquation{
 
 	public static DecimalFormat myformatter;
 	
-	public static int TIMESTEP;
+	public static double TIMESTEP;
 	public static int SIMULATIONTIME;
 	
 	String simulationType;
 
+	ComputeBEqDirichlet cBEqD;
+	ComputeBEqNoDirichlet cBEqND;
+	
 	/**
 	 * Define boundary conditions type.
 	 * 
@@ -57,12 +60,13 @@ public class BoussinesqEquation{
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void defineBoundaryConditionsType(BoussinesqEquation beq)
+	private void defineBoundaryConditionsType(BoussinesqEquation beq)
 			throws IterativeSolverDoubleNotConvergedException, IOException {
 
 		// initialize BC like case without Dirichlet cells
 		BoussinesqEquation.boundaryConditions = "NoDirichlet";
 
+		// for a better implementation of the for-loop
 		int endForLoop = ComputationalDomain.etaDirichlet.length;
 
 		// search a Dirichlet cell into the array of eta of Dirichlet
@@ -70,7 +74,6 @@ public class BoussinesqEquation{
 
 			if (ComputationalDomain.etaDirichlet[i] != ComputationalDomain.NOVALUE) {
 
-				System.out.println(ComputationalDomain.etaDirichlet[i]);
 				BoussinesqEquation.boundaryConditions = "Dirichlet";
 				break;// go out the loop at the first Dirichlet cell
 			}
@@ -84,14 +87,16 @@ public class BoussinesqEquation{
 		// choose the type of simulation at run time
 		if (BoussinesqEquation.boundaryConditions.equals("Dirichlet")) {
 
-			ComputeBEqDirichlet cBEqD = new ComputeBEqDirichlet();
+			// compute BEq in presence of Dirichlet cells
+			cBEqD = new ComputeBEqDirichlet();
 			cBEqD.computeBEq(BoussinesqEquation.boundaryConditions,
 					beq.simulationType);
 
 		} else {
 
-			ComputeBEqNoDirichlet cBEq = new ComputeBEqNoDirichlet();
-			cBEq.computeBEq(BoussinesqEquation.boundaryConditions,
+			// compute BEq without Dirichlet cells
+			cBEqND = new ComputeBEqNoDirichlet();
+			cBEqND.computeBEq(BoussinesqEquation.boundaryConditions,
 					beq.simulationType);
 
 		}
@@ -100,7 +105,7 @@ public class BoussinesqEquation{
 
 	public void defineSimulationTime(){
 		
-		TIMESTEP = 3600;
+		TIMESTEP = 0.1;
 		SIMULATIONTIME = 3600 * 24 * 5;
 		
 	}
@@ -116,7 +121,7 @@ public class BoussinesqEquation{
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void defineSimulationType() throws IOException {
+	private void defineSimulationType() throws IOException {
 
 		SelectOptions viewOption = new SelectOptions();// prepare new GUI
 
@@ -132,22 +137,23 @@ public class BoussinesqEquation{
 		// load the corresponding computational domain
 		if (SelectOptions.name.equals("Song simulation")) {
 
+			// load the domain for Song simulation
 			ComputationalDomain.callSongDomain();
 			
-			String fileName;
-
-			File outputPathSong = defineSolutionPrintLocation("Input path of Song solution");
-			
-			for (int time = 1; time < SIMULATIONTIME; time += TIMESTEP) {
-
-				fileName = BoussinesqEquation.myformatter.format(time);
-
-				// run the Song analytical solution
-				Song s = new Song(time, ComputationalDomain.Np,
-						ComputationalDomain.hydrConductivity[0]);
-				s.beqSong(ComputationalDomain.porosity, fileName, outputPathSong);
-				
-			}
+//			String fileName;
+//
+//			File outputPathSong = defineSolutionPrintLocation("Input path of Song solution");
+//			
+//			for (double time = TIMESTEP; time < SIMULATIONTIME; time += TIMESTEP) {
+//
+//				fileName = BoussinesqEquation.myformatter.format(time);
+//
+//				// run the Song analytical solution
+//				Song s = new Song(time, ComputationalDomain.Np,
+//						ComputationalDomain.hydrConductivity[0]);
+//				s.beqSong(ComputationalDomain.porosity, fileName, outputPathSong);
+//				
+//			}
 
 		} else {
 
@@ -167,7 +173,7 @@ public class BoussinesqEquation{
 	 * 
 	 * @return the path where to save files with value at every time step
 	 */
-	public File defineSolutionPrintLocation(String title) {
+	private File defineSolutionPrintLocation(String title) {
 
 		GUIpathFileRead guiDir = new GUIpathFileRead();
 		File path = guiDir.saveDialog(title);
