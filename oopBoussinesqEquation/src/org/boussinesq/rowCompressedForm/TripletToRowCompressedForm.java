@@ -1,4 +1,4 @@
-package org.boussinesq.RowCompressedForm;
+package org.boussinesq.rowCompressedForm;
 
 import java.util.ArrayList;
 import java.util.Arrays;

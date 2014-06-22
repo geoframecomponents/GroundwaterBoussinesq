@@ -1,7 +1,5 @@
 package org.boussinesq.song;
 
-import java.util.Arrays;
-
 public class SongCoefficient {
 
 	public static double[] CoefficientSongSolution(int nmax, double lambda) {
@@ -38,11 +36,6 @@ public class SongCoefficient {
 //		System.out.println(Arrays.toString(a));
 
 		return a;
-
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 

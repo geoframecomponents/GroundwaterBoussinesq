@@ -1,8 +1,8 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
-import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
+import org.boussinesq.boussinesq.computationalDomain.AbstractDomain;
 
-public class ComputeTDirichlet extends IsNoValue {
+public class ComputeTDirichlet {
 
 	/**
 	 * Compute T for Dirichlet cells.
@@ -21,7 +21,7 @@ public class ComputeTDirichlet extends IsNoValue {
 	 * 
 	 * @return the array of T in RC-F for Dirichlet cells
 	 */
-	public double[] computeTDirichlet(double[] T) {
+	public double[] computeTDirichlet(double[] T, IsNoValue verifyDirichlet) {
 
 		/*
 		 * the matrix T is an array because this code uses the Row Compressed
@@ -30,13 +30,13 @@ public class ComputeTDirichlet extends IsNoValue {
 		double[] arrayT = new double[T.length];
 
 		/* for-loop to analyze the mesh cell by cell */
-		for (int i = 0; i < ComputationalDomain.Np; i++) {
+		for (int i = 0; i < AbstractDomain.Np; i++) {
 
-			if (!isNoValue(ComputationalDomain.etaDirichlet[i],
-					ComputationalDomain.NOVALUE)) {
+			if (!verifyDirichlet.isNoValue(AbstractDomain.etaDirichlet[i],
+					AbstractDomain.NOVALUE)) {
 
 				// Dirichlet cells
-				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
+				for (int j = AbstractDomain.Mp[i]; j < AbstractDomain.Mp[i + 1]; j++) {
 					arrayT[j] = T[j];
 				}
 			} else {
@@ -46,11 +46,11 @@ public class ComputeTDirichlet extends IsNoValue {
 				 * nested for-loop to analyze shared edges between the i-th cell
 				 * and the Mi[j]-th cell
 				 */
-				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
+				for (int j = AbstractDomain.Mp[i]; j < AbstractDomain.Mp[i + 1]; j++) {
 
-					if (!isNoValue(
-							ComputationalDomain.etaDirichlet[ComputationalDomain.Mi[j]],
-							ComputationalDomain.NOVALUE)) {
+					if (!verifyDirichlet.isNoValue(
+							AbstractDomain.etaDirichlet[AbstractDomain.Mi[j]],
+							AbstractDomain.NOVALUE)) {
 
 						// adjacent Dirichlet cell
 						arrayT[j] = T[j];

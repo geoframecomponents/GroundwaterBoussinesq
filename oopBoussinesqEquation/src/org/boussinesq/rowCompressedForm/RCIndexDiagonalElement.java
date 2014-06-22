@@ -1,4 +1,4 @@
-package org.boussinesq.RowCompressedForm;
+package org.boussinesq.rowCompressedForm;
 
 public class RCIndexDiagonalElement {
 

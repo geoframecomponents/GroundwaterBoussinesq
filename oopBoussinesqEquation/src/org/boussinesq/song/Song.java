@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.wordpress.growworkinghard.usefulClasses.FileWrite;
-import org.wordpress.growworkinghard.usefulClasses.GUIpathFileRead;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 public class Song {
@@ -159,7 +158,7 @@ public class Song {
 
 		}
 
-		Song s = new Song(time, dim, 0.1);
+		new Song(time, dim, 0.1);
 //		s.beqSong(porosity, "001", "Input path of Song solution");
 
 		System.exit(1);

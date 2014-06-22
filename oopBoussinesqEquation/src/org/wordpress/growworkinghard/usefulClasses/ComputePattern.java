@@ -21,5 +21,21 @@ public class ComputePattern {
 		return new DecimalFormat(pattern);
 
 	}
+	
+	public static void main (String[] arg0){
+		
+		ComputePattern prova = new ComputePattern();
+		
+		DecimalFormat ris = null;
+		
+		ris = prova.computePattern(100);
+		
+		double n = 1.10;
+		
+		String prova2 = ris.format(n);
+		
+		System.out.println(prova2);
+		
+	}
 
 }

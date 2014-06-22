@@ -1,15 +1,11 @@
 package org.boussinesq.boussinesq.computationalDomain;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import org.interfacesPDE.nonLinearParabolicPDE.UnstructuredMeshDomain;
 
 /**
  * The Class Grid.
  */
-public class ComputationalDomain {
-
-	public String dataFolder;
-	public File dataPath;
+public abstract class AbstractDomain implements UnstructuredMeshDomain {
 
 	// POLYGONS PROPERTIES
 
@@ -59,31 +55,5 @@ public class ComputationalDomain {
 
 	/** The Ml. */
 	public static double[] Ml;
-
-	public static void callSongDomain(){
-		
-		new SongDomain();
-		
-	}
-	
-	public static void callCatchmentDomain() throws FileNotFoundException{
-		
-		new CatchmentDomain();
-		
-	}
-
-	/**
-	 * The main method.
-	 * 
-	 * @param args
-	 *            the arguments
-	 * @throws FileNotFoundException 
-	 */
-	public static void main(String[] args) {
-
-		System.exit(0);
-
-
-	}
 
 }

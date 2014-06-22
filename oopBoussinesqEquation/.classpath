@@ -3,5 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/parallelcolt-0.9.4.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/interfacesPDE"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

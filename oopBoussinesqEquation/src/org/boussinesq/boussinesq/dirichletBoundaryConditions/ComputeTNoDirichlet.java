@@ -1,9 +1,10 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
-import org.boussinesq.boussinesq.ComputeT;
-import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
+import org.boussinesq.boussinesq.AbstractComputeBEq;
+//import org.boussinesq.boussinesq.AbstractComputeT;
+import org.boussinesq.boussinesq.computationalDomain.AbstractDomain;
 
-public class ComputeTNoDirichlet extends IsNoValue {
+public class ComputeTNoDirichlet {
 
 	/**
 	 * Compute T for non Dirichlet cells.
@@ -22,7 +23,8 @@ public class ComputeTNoDirichlet extends IsNoValue {
 	 * 
 	 * @return the array of T in RC-F for non Dirichlet cells
 	 */
-	public double[] computeTNoDirichlet(double[] T, int[] indexDiag) {
+	public double[] computeTNoDirichlet(double[] T, int[] indexDiag,
+			IsNoValue verifyDirichlet) {
 
 		/*
 		 * the matrix T is an array because this code uses the Row Compressed
@@ -31,21 +33,21 @@ public class ComputeTNoDirichlet extends IsNoValue {
 		double[] arrayT = new double[T.length];
 
 		/* for-loop to analyze the mesh cell by cell */
-		for (int i = 0; i < ComputationalDomain.Np; i++) {
+		for (int i = 0; i < AbstractDomain.Np; i++) {
 
-			if (isNoValue(ComputationalDomain.etaDirichlet[i],
-					ComputationalDomain.NOVALUE)) {
+			if (verifyDirichlet.isNoValue(AbstractDomain.etaDirichlet[i],
+					AbstractDomain.NOVALUE)) {
 
 				// non Dirichlet cells
 				/*
 				 * nested for-loop to analyze shared edges between the i-th cell
 				 * and the Mi[j]-th cell
 				 */
-				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
+				for (int j = AbstractDomain.Mp[i]; j < AbstractDomain.Mp[i + 1]; j++) {
 
-					if (isNoValue(
-							ComputationalDomain.etaDirichlet[ComputationalDomain.Mi[j]],
-							ComputationalDomain.NOVALUE)) {
+					if (verifyDirichlet.isNoValue(
+							AbstractDomain.etaDirichlet[AbstractDomain.Mi[j]],
+							AbstractDomain.NOVALUE)) {
 
 						// adjacent non Dirichlet cells
 						arrayT[j] = T[j];
@@ -57,9 +59,9 @@ public class ComputeTNoDirichlet extends IsNoValue {
 				}
 
 			}
-			
+
 			if (arrayT[indexDiag[i]] == 0) {
-				ComputeT.unlockDeleteRowColumn = true;
+				AbstractComputeBEq.unlockDeleteRowColumn = true;
 			}
 
 		}

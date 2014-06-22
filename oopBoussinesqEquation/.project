@@ -3,6 +3,7 @@
 	<name>oopBoussinesqEquation</name>
 	<comment></comment>
 	<projects>
+		<project>interfacesPDE</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

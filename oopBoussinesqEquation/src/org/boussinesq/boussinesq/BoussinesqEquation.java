@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
-import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeBEqNoDirichlet;
-import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
+import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.ComputeBEq;
+import org.boussinesq.boussinesq.computationalDomain.CatchmentDomain;
+import org.boussinesq.boussinesq.computationalDomain.AbstractDomain;
+import org.boussinesq.boussinesq.computationalDomain.SongDomain;
 import org.boussinesq.boussinesq.dirichletBoundaryConditions.ComputeBEqDirichlet;
 import org.boussinesq.song.Song;
 import org.wordpress.growworkinghard.GUI.SelectOptions;
@@ -25,24 +27,26 @@ import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedExc
  * @author F. Serafin, 2014 Copyright GPL v. 3
  *         (http://www.gnu.org/licenses/gpl.html)
  * */
-public class BoussinesqEquation{
+public class BoussinesqEquation {
 
 	/** The boundary conditions. */
 	public static String boundaryConditions;
+	
+	public static String simulationType;
 
 	/** Directory of the solution. */
 	public static File solutionDirectory;
 
 	public static DecimalFormat myformatter;
-	
+
 	public static double TIMESTEP;
 	public static int SIMULATIONTIME;
-	
-	String simulationType;
 
-	ComputeBEqDirichlet cBEqD;
-	ComputeBEqNoDirichlet cBEqND;
+	AbstractComputeBEq cBEq;
 	
+//	ComputeBEqDirichlet cBEqD;
+//	ComputeBEqNoDirichlet cBEqND;
+
 	/**
 	 * Define boundary conditions type.
 	 * 
@@ -67,12 +71,12 @@ public class BoussinesqEquation{
 		BoussinesqEquation.boundaryConditions = "NoDirichlet";
 
 		// for a better implementation of the for-loop
-		int endForLoop = ComputationalDomain.etaDirichlet.length;
+		int endForLoop = AbstractDomain.etaDirichlet.length;
 
 		// search a Dirichlet cell into the array of eta of Dirichlet
 		for (int i = 0; i < endForLoop; i++) {
 
-			if (ComputationalDomain.etaDirichlet[i] != ComputationalDomain.NOVALUE) {
+			if (AbstractDomain.etaDirichlet[i] != AbstractDomain.NOVALUE) {
 
 				BoussinesqEquation.boundaryConditions = "Dirichlet";
 				break;// go out the loop at the first Dirichlet cell
@@ -88,28 +92,26 @@ public class BoussinesqEquation{
 		if (BoussinesqEquation.boundaryConditions.equals("Dirichlet")) {
 
 			// compute BEq in presence of Dirichlet cells
-			cBEqD = new ComputeBEqDirichlet();
-			cBEqD.computeBEq(BoussinesqEquation.boundaryConditions,
-					beq.simulationType);
+			cBEq = new ComputeBEqDirichlet();
+			cBEq.temporalLoop();
 
 		} else {
 
 			// compute BEq without Dirichlet cells
-			cBEqND = new ComputeBEqNoDirichlet();
-			cBEqND.computeBEq(BoussinesqEquation.boundaryConditions,
-					beq.simulationType);
+			cBEq = new ComputeBEq();
+			cBEq.temporalLoop();
 
 		}
 
 	}
 
-	public void defineSimulationTime(){
-		
-		TIMESTEP = 0.1;
-		SIMULATIONTIME = 3600 * 24 * 5;
-		
+	public void defineSimulationTime() {
+
+		TIMESTEP = 360;
+		SIMULATIONTIME = 3600 * 24 * 1;
+
 	}
-	
+
 	/**
 	 * Define simulation type.
 	 * 
@@ -137,28 +139,28 @@ public class BoussinesqEquation{
 		// load the corresponding computational domain
 		if (SelectOptions.name.equals("Song simulation")) {
 
-			// load the domain for Song simulation
-			ComputationalDomain.callSongDomain();
-			
-//			String fileName;
-//
-//			File outputPathSong = defineSolutionPrintLocation("Input path of Song solution");
-//			
-//			for (double time = TIMESTEP; time < SIMULATIONTIME; time += TIMESTEP) {
-//
-//				fileName = BoussinesqEquation.myformatter.format(time);
-//
-//				// run the Song analytical solution
-//				Song s = new Song(time, ComputationalDomain.Np,
-//						ComputationalDomain.hydrConductivity[0]);
-//				s.beqSong(ComputationalDomain.porosity, fileName, outputPathSong);
-//				
-//			}
+			new SongDomain();
+
+			String fileName;
+
+			File outputPathSong = defineSolutionPrintLocation("Input path of Song solution");
+
+			for (double time = TIMESTEP; time < SIMULATIONTIME; time += TIMESTEP) {
+
+				fileName = BoussinesqEquation.myformatter.format(time);
+
+				// run the Song analytical solution
+				Song s = new Song(time, AbstractDomain.Np,
+						AbstractDomain.hydrConductivity[0]);
+				s.beqSong(AbstractDomain.porosity, fileName,
+						outputPathSong);
+
+			}
 
 		} else {
 
-			// load data of catchment basin
-			ComputationalDomain.callCatchmentDomain();
+			new CatchmentDomain();
+
 		}
 
 	}
@@ -200,15 +202,16 @@ public class BoussinesqEquation{
 			throws IterativeSolverDoubleNotConvergedException, IOException {
 
 		BoussinesqEquation beq = new BoussinesqEquation();
-		
+
 		beq.defineSimulationTime();
-		
+
 		ComputePattern cp = new ComputePattern();
-		
+
 		myformatter = cp.computePattern(SIMULATIONTIME);
-		
+
 		beq.defineSimulationType();
-		solutionDirectory = beq.defineSolutionPrintLocation("Input path of BEq solution");
+		solutionDirectory = beq
+				.defineSolutionPrintLocation("Input path of BEq solution");
 		beq.defineBoundaryConditionsType(beq);
 
 		System.exit(1);

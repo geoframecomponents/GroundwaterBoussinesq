@@ -1,28 +1,29 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
-import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
+import org.boussinesq.boussinesq.computationalDomain.AbstractDomain;
 
-public class EtaInitialization extends IsNoValue {
+public class EtaInitialization {
 
-	public double[] etaInitialization(double[] eta){
-		
+	public double[] etaInitialization(double[] eta, IsNoValue verifyDirichlet) {
+
 		int endForLoop = eta.length;
-		
+
 		// initialize eta array
 		for (int i = 0; i < endForLoop; i++) {
-			if (isNoValue(ComputationalDomain.etaDirichlet[i], ComputationalDomain.NOVALUE)) {
+			if (verifyDirichlet.isNoValue(AbstractDomain.etaDirichlet[i],
+					AbstractDomain.NOVALUE)) {
 
 				// not Dirichlet cells
 				eta[i] = eta[i];
 			} else {
 
 				// Dirichlet cells
-				eta[i] = ComputationalDomain.etaDirichlet[i];
+				eta[i] = AbstractDomain.etaDirichlet[i];
 			}
 		}
-		
+
 		return eta;
-		
+
 	}
-	
+
 }

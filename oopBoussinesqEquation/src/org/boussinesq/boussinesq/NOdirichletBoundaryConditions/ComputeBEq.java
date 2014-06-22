@@ -1,4 +1,4 @@
-package org.boussinesq.boussinesq.dirichletBoundaryConditions;
+package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
 import java.io.IOException;
 
@@ -13,32 +13,21 @@ import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
-public class ComputeBEqDirichlet extends AbstractComputeBEq {
+public class ComputeBEq extends AbstractComputeBEq {
 
 	private double[] completeArray_T;
-	private double[] completeArray_Tdirichlet;
-	private double[] actualArray_TNoDirichlet;
-	private double[] completeArray_TNoDirichlet1;
 
 	private Solver newtonIteration;
-	private ComputeTDirichlet computeTDirichlet;
-	private ComputeTNoDirichlet computeTNoDirichlet;
-	private IsNoValue verifyDirichletCells;
 
 	private DeleteRowColumnNullDiagonalEntry deleteSuperDryCells;
-	private ActualComputationalDomain computeActualArrays;
+	private ActualComputationalDomain computeActualDomainArrays;
 	
-	public ComputeBEqDirichlet() {
+	public ComputeBEq() {
 
 		eta = new double[AbstractDomain.Np];
 		newtonIteration = new Solver();
 
-		verifyDirichletCells = new IsNoValue();
-
-		computeTDirichlet = new ComputeTDirichlet();
-		computeTNoDirichlet = new ComputeTNoDirichlet();
-
-		computeActualArrays = new ActualComputationalDomain();
+		computeActualDomainArrays = new ActualComputationalDomain();
 		deleteSuperDryCells = new DeleteRowColumnNullDiagonalEntry();
 		
 	}
@@ -103,35 +92,30 @@ public class ComputeBEqDirichlet extends AbstractComputeBEq {
 		}
 
 		return arrayT;
+
 	}
 
 	public double[] computeArrayTerm(double[] eta) {
 
-		double[] arrB = new double[AbstractDomain.Np];
+		double[] arrB = new double[ActualComputationalDomain.numberOfPolygons];
 
-		for (int i = 0; i < AbstractDomain.Np; i++) {
+		for (int i = 0; i < ActualComputationalDomain.numberOfPolygons; i++) {
 			// compute the water volume stored in the cell
 			double volume = PolygonGeometricalWetProperties.computeWaterVolume(
-					eta[i], AbstractDomain.bedRockElevation[i],
-					AbstractDomain.porosity[i], AbstractDomain.planArea[i]);
-			// equation (19)
-			double sum = 0;
-			for (int j = AbstractDomain.Mp[i]; j < AbstractDomain.Mp[i + 1]; j++) {
-				sum += completeArray_Tdirichlet[j]
-						* AbstractDomain.etaDirichlet[AbstractDomain.Mi[j]];
-			}
+					eta[i], ActualComputationalDomain.bedRockElevation[i],
+					ActualComputationalDomain.porosity[i],
+					ActualComputationalDomain.planarArea[i]);
 
 			// delta t deve essere minore di 1/c
 			arrB[i] = volume
 					+ BoussinesqEquation.TIMESTEP
-					* AbstractDomain.planArea[i]
-					* AbstractDomain.source[i]
-					- sum
+					* ActualComputationalDomain.planarArea[i]
+					* ActualComputationalDomain.source[i]
 					- BoussinesqEquation.TIMESTEP
-					* AbstractDomain.planArea[i]
-					* AbstractDomain.c[i]
-					* Math.pow(volume / AbstractDomain.planArea[i],
-							AbstractDomain.m[i]);
+					* ActualComputationalDomain.planarArea[i]
+					* ActualComputationalDomain.ratingCurveCoeff_c[i]
+					* Math.pow(volume / ActualComputationalDomain.planarArea[i],
+							ActualComputationalDomain.ratingCurveCoeff_m[i]);
 
 			if (arrB[i] < 0) {
 
@@ -148,34 +132,24 @@ public class ComputeBEqDirichlet extends AbstractComputeBEq {
 
 	public void assemblePDE(double[] eta) {
 
-		completeArray_T = computeMatrixTerm(eta);
-
-		completeArray_Tdirichlet = computeTDirichlet.computeTDirichlet(completeArray_T, verifyDirichletCells);
-
-		completeArray_TNoDirichlet1 = computeTNoDirichlet.computeTNoDirichlet(completeArray_T, indexDiag, verifyDirichletCells);
-
 		if (AbstractComputeBEq.unlockDeleteRowColumn) {
 
+			completeArray_T = computeMatrixTerm(eta);
 			completeArray_b = computeArrayTerm(eta);
 
-			deleteSuperDryCells.computationalDomain(AbstractDomain.Np,
-					completeArray_TNoDirichlet1, indexDiag, AbstractDomain.Mp,
-					AbstractDomain.Mi);
+			deleteSuperDryCells.computationalDomain(AbstractDomain.Np, completeArray_T,
+					indexDiag, AbstractDomain.Mp, AbstractDomain.Mi);
 
-			actualArray_TNoDirichlet = deleteSuperDryCells
-					.computeNewArrayT(completeArray_TNoDirichlet1);
-			computeActualArrays.wetDomain(eta, indexDiag, deleteSuperDryCells);
+			actualArray_T = deleteSuperDryCells.computeNewArrayT(completeArray_T);
 
 			actualArray_b = deleteSuperDryCells.reduceToActualArray(completeArray_b);
 
 		} else {
 
-			actualArray_TNoDirichlet = computeTNoDirichlet
-					.computeTNoDirichlet(completeArray_T, indexDiag, verifyDirichletCells);
-
+			actualArray_T = computeMatrixTerm(eta);
 			actualArray_b = computeArrayTerm(eta);
 
-			computeActualArrays.completeDomain(eta, indexDiag);
+			computeActualDomainArrays.completeDomain(eta, indexDiag);
 
 		}
 
@@ -203,35 +177,19 @@ public class ComputeBEqDirichlet extends AbstractComputeBEq {
 
 		}
 
-		int endForLoop = AbstractDomain.etaDirichlet.length;
-
-		for (int i = 0; i < endForLoop; i++) {
-
-			if (!verifyDirichletCells.isNoValue(AbstractDomain.etaDirichlet[i],
-					AbstractDomain.NOVALUE)) {
-
-				etaNew[i] = AbstractDomain.etaDirichlet[i];
-
-			}
-
-			if (Math.abs(etaNew[i]) < tolerance)
-				etaNew[i] = AbstractDomain.bedRockElevation[i];
-
-		}
-
 		return etaNew;
 
 	}
 
 	public void temporalLoop() throws IOException,
 			IterativeSolverDoubleNotConvergedException {
+		// allocate the memory for eta array
 
 		firstThings();
 
-		EtaInitialization etaInit = new EtaInitialization();
-
 		computeInitialVolume();
 
+		// initialize eta array
 		System.arraycopy(AbstractDomain.eta, 0, eta, 0,
 				AbstractDomain.eta.length);
 
@@ -241,12 +199,9 @@ public class ComputeBEqDirichlet extends AbstractComputeBEq {
 
 			openTxtFile(t);
 
-			eta = etaInit.etaInitialization(eta, verifyDirichletCells);
-
 			assemblePDE(eta);
 
-			eta = callSolution(ActualComputationalDomain.eta,
-					actualArray_TNoDirichlet, actualArray_b);
+			eta = callSolution(AbstractDomain.eta, actualArray_T, actualArray_b);
 
 			computeOutputVariables(eta);
 
