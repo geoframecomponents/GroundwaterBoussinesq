@@ -1,6 +1,6 @@
 package org.boussinesq.rowCompressedForm;
 
-import org.interfacesPDE.nonLinearParabolicPDE.solver.RowCompressedConjugateGradient;
+import org.interfacesPDE.solver.RowCompressedConjugateGradient;
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.algo.solver.DoubleCG;
@@ -81,10 +81,11 @@ public class RCConjugateGradient implements RowCompressedConjugateGradient {
 		denseArray_x = new DenseDoubleMatrix1D(equationNumber);
 		arraySolution = new DenseDoubleMatrix1D(equationNumber);
 
-		cgICC_preconditioner(equationNumber, matrix_A);
+//		cgICC_preconditioner(equationNumber, matrix_A);
+//		cgILU_preconditioner(equationNumber, matrix_A);
 		
 		DoubleCG conjugateGradient = new DoubleCG(denseArray_x);
-		conjugateGradient.setPreconditioner(preconditioner);
+//		conjugateGradient.setPreconditioner(preconditioner);
 		arraySolution = conjugateGradient.solve(matrix_A, matrix_b, denseArray_x);
 
 	}

@@ -13,13 +13,22 @@ public class CatchmentDomain extends AbstractDomain {
 
 		gui = new GUIpathFileRead();
 
-		computeAdjacencyMatrixFeatures();
-		computeSidesProperties();
-		computePolygonsProperties();
+		getGridProperties();
+		getSideProperties();
+		getPolygonProperties();
 
 	}
+	
+	public void getBoundaryConditions() throws FileNotFoundException {
+		
+		FileRead readED = new FileRead();
+		/** The eta. */
+		AbstractDomain.etaDirichlet = readED.readDoubleArray(gui
+				.openDialog("HYDRAULIC HEAD DIRICHLET BC array"));
+		
+	}
 
-	public void computeAdjacencyMatrixFeatures() throws FileNotFoundException {
+	public void getGridProperties() throws FileNotFoundException {
 
 		FileRead readMp = new FileRead();
 		/** The Mp. */
@@ -33,10 +42,6 @@ public class CatchmentDomain extends AbstractDomain {
 		/** The Ml. */
 		AbstractDomain.Ml = readMl.readDoubleArray(gui.openDialog("Ml array"));
 
-	}
-
-	public void computeSidesProperties() throws FileNotFoundException {
-
 		FileRead readLS = new FileRead();
 		/** The length sides. */
 		AbstractDomain.lengthSides = readLS.readDoubleArray(gui
@@ -47,18 +52,15 @@ public class CatchmentDomain extends AbstractDomain {
 		AbstractDomain.euclideanDistance = readEucD.readDoubleArray(gui
 				.openDialog("EUCLIDEAN DISTANCE array"));
 
-		FileRead readHydrC = new FileRead();
-		/** The hydr conductivity. */
-		AbstractDomain.hydrConductivity = readHydrC.readDoubleArray(gui
-				.openDialog("HYDRAULIC CONDUCTIVITY array"));
-
 	}
 
-	public void computePolygonsProperties() throws FileNotFoundException {
-
-		FileRead readEta = new FileRead();
-		/** The eta. */
-		AbstractDomain.eta = readEta.readDoubleArray(gui.openDialog("HYDRAULIC HEAD array"));
+//	public void getInitalConditions() throws FileNotFoundException {
+//		
+//
+//		
+//	}
+	
+	public void getPolygonProperties() throws FileNotFoundException {
 
 		FileRead readPlanArea = new FileRead();
 		/** The plan area. */
@@ -69,12 +71,8 @@ public class CatchmentDomain extends AbstractDomain {
 
 		FileRead readSource = new FileRead();
 		/** The source. per unit area of the polygon */
-		AbstractDomain.source = readSource.readDoubleArray(gui.openDialog("SOURCE array"));
-
-		FileRead readED = new FileRead();
-		/** The eta. */
-		AbstractDomain.etaDirichlet = readED.readDoubleArray(gui
-				.openDialog("HYDRAULIC HEAD DIRICHLET BC array"));
+		AbstractDomain.source = readSource.readDoubleArray(gui
+				.openDialog("SOURCE array"));
 
 		FileRead readBRE = new FileRead();
 		/** The bottom elevation. */
@@ -82,7 +80,8 @@ public class CatchmentDomain extends AbstractDomain {
 				.openDialog("BEDROCK ELEVATION array"));
 
 		FileRead readPor = new FileRead();
-		AbstractDomain.porosity = readPor.readDoubleArray(gui.openDialog("POROSITY array"));
+		AbstractDomain.porosity = readPor.readDoubleArray(gui
+				.openDialog("POROSITY array"));
 
 		FileRead readC = new FileRead();
 		AbstractDomain.c = readC.readDoubleArray(gui
@@ -92,6 +91,24 @@ public class CatchmentDomain extends AbstractDomain {
 		AbstractDomain.m = readM.readDoubleArray(gui
 				.openDialog("M array - coeff of flow rate"));
 
+	}
+
+	public void getSideProperties() throws FileNotFoundException {
+
+		FileRead readHydrC = new FileRead();
+		/** The hydr conductivity. */
+		AbstractDomain.hydrConductivity = readHydrC.readDoubleArray(gui
+				.openDialog("HYDRAULIC CONDUCTIVITY array"));
+
+	}
+
+	public void getInitialConditions() throws FileNotFoundException {
+		
+		FileRead readEta = new FileRead();
+		/** The eta. */
+		AbstractDomain.eta = readEta.readDoubleArray(gui
+				.openDialog("HYDRAULIC HEAD array"));
+		
 	}
 
 }

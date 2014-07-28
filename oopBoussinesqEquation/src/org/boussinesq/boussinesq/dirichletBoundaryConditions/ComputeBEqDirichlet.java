@@ -133,12 +133,12 @@ public class ComputeBEqDirichlet extends AbstractComputeBEq {
 					* Math.pow(volume / AbstractDomain.planArea[i],
 							AbstractDomain.m[i]);
 
-			if (arrB[i] < 0) {
-
-				TextIO.putln("WARNING!!!\nThe element " + i
-						+ " of the array of known terms is NEGATIVE");
-
-			}
+//			if (arrB[i] < 0) {
+//
+//				TextIO.putln("WARNING!!!\nThe element " + i
+//						+ " of the array of known terms is NEGATIVE");
+//
+//			}
 
 		}
 

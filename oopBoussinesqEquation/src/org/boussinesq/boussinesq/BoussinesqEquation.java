@@ -39,7 +39,7 @@ public class BoussinesqEquation {
 
 	public static DecimalFormat myformatter;
 
-	public static double TIMESTEP;
+	public static int TIMESTEP;
 	public static int SIMULATIONTIME;
 
 	AbstractComputeBEq cBEq;
@@ -92,8 +92,8 @@ public class BoussinesqEquation {
 		if (BoussinesqEquation.boundaryConditions.equals("Dirichlet")) {
 
 			// compute BEq in presence of Dirichlet cells
-			cBEq = new ComputeBEqDirichlet();
-			cBEq.temporalLoop();
+//			cBEq = new ComputeBEqDirichlet();
+//			cBEq.temporalLoop();
 
 		} else {
 
@@ -107,8 +107,8 @@ public class BoussinesqEquation {
 
 	public void defineSimulationTime() {
 
-		TIMESTEP = 360;
-		SIMULATIONTIME = 3600 * 24 * 1;
+		TIMESTEP = 10;
+		SIMULATIONTIME = 3600 * 24 * 5;
 
 	}
 
@@ -145,9 +145,13 @@ public class BoussinesqEquation {
 
 			File outputPathSong = defineSolutionPrintLocation("Input path of Song solution");
 
-			for (double time = TIMESTEP; time < SIMULATIONTIME; time += TIMESTEP) {
+//			int time = SIMULATIONTIME;
+			
+			for (int time = 10; time < SIMULATIONTIME; time += TIMESTEP) {
 
 				fileName = BoussinesqEquation.myformatter.format(time);
+				
+				
 
 				// run the Song analytical solution
 				Song s = new Song(time, AbstractDomain.Np,

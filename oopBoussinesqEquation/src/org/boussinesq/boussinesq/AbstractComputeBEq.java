@@ -135,7 +135,7 @@ public abstract class AbstractComputeBEq implements ObjectAssembler {
 
 		}
 
-		TextIO.putln("Initial volume: " + volumeOld);
+//		TextIO.putln("Initial volume: " + volumeOld);
 
 	}
 
@@ -143,9 +143,9 @@ public abstract class AbstractComputeBEq implements ObjectAssembler {
 
 		if (Math.abs(volumeNew - volumeOld) > Math.pow(10, -6)) {
 
-			TextIO.putln("WARNING!!! The system is losing mass");
-			TextIO.putln("The difference between initial volume and compute volume is: "
-					+ Math.abs(volumeNew - volumeOld));
+//			TextIO.putln("WARNING!!! The system is losing mass");
+//			TextIO.putln("The difference between initial volume and compute volume is: "
+//					+ Math.abs(volumeNew - volumeOld));
 
 		}
 

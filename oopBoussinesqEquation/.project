@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>interfacesPDE</project>
+		<project>meshNumericalMethods</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -165,6 +165,9 @@ public class Solver extends IsNoValue implements LinearSystemAssembler {
 			ComputeBEqDirichlet.timeSolver = ComputeBEqDirichlet.timeSolver
 					+ (endSolver - startSolver);
 
+//			System.out.println("tolerance" + tolerance);
+//			System.out.println("residual" + maxResidual);
+			
 		} while (maxResidual > tolerance * 100);
 
 		return eta;

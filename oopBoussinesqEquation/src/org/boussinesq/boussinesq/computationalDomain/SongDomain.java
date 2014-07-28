@@ -1,20 +1,37 @@
 package org.boussinesq.boussinesq.computationalDomain;
 
 public class SongDomain extends AbstractDomain {
-	
+
 	int dim;
-	
+
 	public SongDomain() {
 
-		AbstractDomain.Np = 1000;
+		AbstractDomain.Np = 1200;
 		dim = Np;
 
-		computeAdjacencyMatrixFeatures();
-		computeSidesProperties();
-		computePolygonsProperties();
+		getBoundaryConditions();
+		getGridProperties();
+		getInitialConditions();
+		getSideProperties();
+		getPolygonProperties();
 	}
 
-	public void computeAdjacencyMatrixFeatures() {
+	public void getBoundaryConditions() {
+
+		AbstractDomain.etaDirichlet = new double[dim];
+
+		for (int i = 0; i < dim; i++) {
+
+			AbstractDomain.etaDirichlet[i] = -9999;
+
+		}
+
+		AbstractDomain.etaDirichlet[0] = 1;//			}
+
+
+	}
+
+	public void getGridProperties() {
 
 		AbstractDomain.Mp = new int[dim + 1];
 		AbstractDomain.Mi = new int[dim * 3 - 2];
@@ -71,7 +88,44 @@ public class SongDomain extends AbstractDomain {
 
 	}
 
-	public void computeSidesProperties() {
+	public void getInitialConditions() {
+
+		AbstractDomain.eta = new double[dim];
+
+		for (int i = 0; i < dim; i++) {
+
+			AbstractDomain.eta[i] = 0;
+
+		}
+		
+	}
+
+	public void getPolygonProperties() {
+
+		AbstractDomain.planArea = new double[dim];
+		AbstractDomain.source = new double[dim];
+		AbstractDomain.bedRockElevation = new double[dim];
+		AbstractDomain.porosity = new double[dim];
+		AbstractDomain.c = new double[dim];
+		AbstractDomain.m = new double[dim];
+
+		for (int i = 0; i < dim; i++) {
+
+			AbstractDomain.planArea[i] = 1;
+			AbstractDomain.source[i] = 0;
+			AbstractDomain.bedRockElevation[i] = 0;
+			AbstractDomain.porosity[i] = 1;
+			AbstractDomain.c[i] = 0;
+			AbstractDomain.m[i] = 1;
+
+		}
+
+		AbstractDomain.c[dim - 1] = 1;
+		AbstractDomain.m[dim - 1] = 1;
+
+	}
+
+	public void getSideProperties() {
 
 		AbstractDomain.lengthSides = new double[dim + 1];
 		AbstractDomain.euclideanDistance = new double[dim + 1];
@@ -80,39 +134,9 @@ public class SongDomain extends AbstractDomain {
 		for (int i = 0; i < (dim + 1); i++) {
 			AbstractDomain.lengthSides[i] = 1;
 			AbstractDomain.euclideanDistance[i] = 1;
-			AbstractDomain.hydrConductivity[i] = 0.01;
+			AbstractDomain.hydrConductivity[i] = 1;
 
 		}
-
-	}
-
-	public void computePolygonsProperties() {
-
-		AbstractDomain.planArea = new double[dim];
-		AbstractDomain.source = new double[dim];
-		AbstractDomain.eta = new double[dim];
-		AbstractDomain.etaDirichlet = new double[dim];
-		AbstractDomain.bedRockElevation = new double[dim];
-		AbstractDomain.porosity = new double[dim];
-		AbstractDomain.c = new double[dim];
-		AbstractDomain.m = new double[dim];
-
-		for (int i = 0; i < dim; i++) {
-			
-			AbstractDomain.planArea[i] = 1;
-			AbstractDomain.source[i] = 0;
-			AbstractDomain.eta[i] = 0;
-			AbstractDomain.etaDirichlet[i] = -9999;
-			AbstractDomain.bedRockElevation[i] = 0;
-			AbstractDomain.porosity[i] = 0.4;
-			AbstractDomain.c[i] = 0;
-			AbstractDomain.m[i] = 1;
-
-		}
-
-		AbstractDomain.c[dim - 1] = 1;
-		AbstractDomain.m[dim - 1] = 1;
-		AbstractDomain.etaDirichlet[0] = 1;
 
 	}
 

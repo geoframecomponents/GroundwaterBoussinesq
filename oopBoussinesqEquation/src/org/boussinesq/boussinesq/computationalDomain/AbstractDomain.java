@@ -1,16 +1,18 @@
 package org.boussinesq.boussinesq.computationalDomain;
 
-import org.interfacesPDE.nonLinearParabolicPDE.UnstructuredMeshDomain;
+import java.io.FileNotFoundException;
+
+import org.interfacesPDE.nonLinearParabolicPDE.BoundaryConditions;
+import org.interfacesPDE.nonLinearParabolicPDE.InitialConditions;
+import org.meshNumericalMethods.unstructuredMesh.UnstructuredMeshDomain;
 
 /**
  * The Class Grid.
  */
-public abstract class AbstractDomain implements UnstructuredMeshDomain {
+public abstract class AbstractDomain implements UnstructuredMeshDomain,
+		BoundaryConditions, InitialConditions {
 
 	// POLYGONS PROPERTIES
-
-	/** The plan area. */
-	public static double[] planArea;
 
 	public static int Np;
 
@@ -36,12 +38,6 @@ public abstract class AbstractDomain implements UnstructuredMeshDomain {
 
 	// SIDES PROPERTIES
 
-	/** The length sides. */
-	public static double[] lengthSides;
-
-	/** The euclidean distance. */
-	public static double[] euclideanDistance;
-
 	/** The hydr conductivity. */
 	public static double[] hydrConductivity;
 
@@ -56,4 +52,30 @@ public abstract class AbstractDomain implements UnstructuredMeshDomain {
 	/** The Ml. */
 	public static double[] Ml;
 
+	/** The length sides. */
+	public static double[] lengthSides;
+
+	/** The euclidean distance. */
+	public static double[] euclideanDistance;
+	
+	/** The plan area. */
+	public static double[] planArea;
+	
+	
+
+	public abstract void getGridProperties() throws FileNotFoundException;
+
+	public abstract void getSideProperties() throws FileNotFoundException;
+
+	public abstract void getPolygonProperties() throws FileNotFoundException;
+
+	
+	
+	public abstract void getBoundaryConditions() throws FileNotFoundException;
+	
+	
+	
+	public abstract void getInitialConditions() throws FileNotFoundException;
+	
+	
 }

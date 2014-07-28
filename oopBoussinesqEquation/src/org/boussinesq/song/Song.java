@@ -2,6 +2,7 @@ package org.boussinesq.song;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import org.wordpress.growworkinghard.usefulClasses.FileWrite;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
@@ -12,12 +13,12 @@ public class Song {
 	int xLength;
 	// double[] porosity;
 	double hydraulicConductivity;
-	double t;
+	int t;
 	int alpha;
 	static int h1;
 	int nmax;
 
-	public Song(double time, int Np, double ks) {
+	public Song(int time, int Np, double ks) {
 
 		x = new double[Np];
 		xLength = x.length;
@@ -94,13 +95,18 @@ public class Song {
 	public void beqSong(double[] porosity, String pattern, File outputPathSong)
 			throws IOException {
 
-		// File outputPathSong = defineSolutionPrintLocation();
+//		 File outputPathSong = defineSolutionPrintLocation();
 
-		String song = "song_";
-		song = song.concat(pattern);
+//		String song = "song_";
+//		song = song.concat(pattern);
+//
+//		FileWrite.openTxtFile(song.concat(".txt"), outputPathSong, true);
 
-		FileWrite.openTxtFile(song.concat(".txt"), outputPathSong, true);
-
+		
+//		DecimalFormat df = new DecimalFormat("#.#");
+//		
+//		t = Double.parseDouble(df.format(t));
+		
 		double[] ax = new double[nmax];
 		double[] solutionDimensionless = new double[xLength];
 		double[] solution = new double[xLength];
@@ -137,11 +143,21 @@ public class Song {
 			solution[i] = h1 * Math.pow(t, alpha) * solutionDimensionless[i];
 
 		}
+
+//		if (((int)Math.round(t*100)) % 100 == 0){
+		
+		String song = "song_";
+		song = song.concat(pattern);
+
+		FileWrite.openTxtFile(song.concat(".txt"), outputPathSong, true);
 		
 		TextIO.putln("Time step: " + (double) t/3600);
 
+		FileWrite.writeStringDoubleString("Time: ", t, "[s]");
 		FileWrite.writeOneDoubleColumn(solution);
 		FileWrite.closeTxtFile();
+		
+//		}
 
 	}
 
