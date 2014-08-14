@@ -6,6 +6,6 @@ public class TimeSimulation {
 	public final static int TIMESTEP = 3600;
 
 	/** legth of the simulation */
-	public final static int SIMULATIONTIME = 3600 * 48;
+	public final static int SIMULATIONTIME = 3600 * 24 * 4;
 
 }

@@ -131,44 +131,6 @@ public abstract class ComputeBEq extends AbstractPde {
 		
 	}
 	
-	public void computeInitialVolume(){
-		
-//		for (int i = 0; i < mesh.Np; i++){
-//			
-//			volume[i] = PolygonGeometricalWetProperties.computeWaterVolume(mesh.eta[i], mesh.bedRockElevation[i], mesh.porosity[i], mesh.planArea[i]);
-//			volumeOld = volumeOld + volume[i];
-//	
-//		}
-//
-//		TextIO.putln("Initial volume: " + volumeOld);
-		
-	}
-	
-	public void computeVolumeConservation(){
-		
-//		if (Math.abs(volumeNew-volumeOld) > Math.pow(10, -6)){
-//			
-//			TextIO.putln("WARNING!!! The system is losing mass");
-//			TextIO.putln("The difference between initial volume and compute volume is: " + Math.abs(volumeNew-volumeOld));
-//	
-//		}
-
-
-		volumeNew = 0;
-		
-	}
-	
-//	public double[] solutionMethod(double[] etaOld, double[] matT, double[] arrb) throws IterativeSolverDoubleNotConvergedException{
-//		
-//		double[] eta = new double[etaOld.length];
-//		
-//		eta = newton.newtonIteration(arrb, matT, indexDiag, etaOld, cg,
-//				tolerance);
-//		
-//		return eta;
-//		
-//	}
-	
 	public void firstThings(AbstractRCAdjacencyMatrixBased mesh){
 		
 		indexDiag = rcIndexDiagonalElement.computeIndexDiag(mesh.polygonsNumber,

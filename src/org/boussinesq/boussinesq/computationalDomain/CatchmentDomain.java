@@ -1,5 +1,6 @@
 package org.boussinesq.boussinesq.computationalDomain;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.wordpress.growworkinghard.usefulClasses.FileRead;
@@ -9,7 +10,12 @@ public class CatchmentDomain extends ComputationalDomain {
 
 	GUIpathFileRead gui = new GUIpathFileRead();
 	
+	public String dataFolder;
+	public File dataPath;
+	
 	public CatchmentDomain() throws FileNotFoundException {
+		
+		NOVALUE = -999;
 		
 		getAdjacencyMatrix();
 		getGridProperties();

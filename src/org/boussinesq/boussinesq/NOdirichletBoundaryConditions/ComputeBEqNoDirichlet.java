@@ -1,6 +1,5 @@
 package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 
-//import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
@@ -25,12 +24,6 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 	
 	PdeTermT computeT;
 	PdeTermB computeB;
-
-	// int[] indexDiag;
-
-	// RCIndexDiagonalElement rcIndexDiagonalElement;
-	// MachineEpsilon cMEd;
-	// double tolerance;
 
 	public ComputeBEqNoDirichlet(AbstractRCAdjacencyMatrixBased mesh) {
 
@@ -101,8 +94,6 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 
 		firstThings(mesh);
 
-		computeInitialVolume();
-
 		// initialize eta array
 		System.arraycopy(mesh.eta, 0, eta, 0,
 				mesh.eta.length);
@@ -153,8 +144,6 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			computeVolumeConservation();
 
 			// countLoop++;
 

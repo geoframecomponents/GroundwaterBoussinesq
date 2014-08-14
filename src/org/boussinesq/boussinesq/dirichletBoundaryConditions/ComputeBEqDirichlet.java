@@ -46,8 +46,8 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 		newton = new Solver();
 		cg = new RCConjugateGradient(mesh.polygonsNumber);
 
-//		computeT = new PdeTermT();
-//		computeB = new PdeTermB();
+		computeT = new PdeTermT();
+		computeB = new PdeTermB();
 		cTDirichlet = new ComputeTDirichlet();
 		cTNoDirichlet = new ComputeTNoDirichlet();
 
@@ -55,9 +55,6 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 	public void computeBEqArrays(double[] eta,
 			AbstractRCAdjacencyMatrixBased mesh) {
-
-		computeT = new PdeTermT();
-		computeB = new PdeTermB();
 		
 		matT = assemblePdeTerm(eta, mesh, computeT);
 
@@ -75,20 +72,6 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 				if (mesh.Mi[j] != i) {
 					// equation (21)
-//					arrayT[j] = -TimeSimulation.TIMESTEP
-//							* (1 / ComputationalDomain.euclideanDistance[(int) ComputationalDomain.Ml[j] - 1])
-//							* ComputationalDomain.hydrConductivity[(int) ComputationalDomain.Ml[j] - 1]
-//							* ComputationalDomain.lengthSides[(int) ComputationalDomain.Ml[j] - 1]
-//							* Math.max(
-//									Math.max(
-//											0,
-//											eta[ComputationalDomain.Mi[j]]
-//													- ComputationalDomain.bedRockElevation[ComputationalDomain.Mi[j]]),
-//									Math.max(
-//											0,
-//											eta[i]
-//													- ComputationalDomain.bedRockElevation[i]));
-
 					rowSum += -matT[j];
 
 				} else {
@@ -155,8 +138,6 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 		firstThings(mesh);
 
-		computeInitialVolume();
-
 		System.arraycopy(mesh.eta, 0, eta, 0, mesh.eta.length);
 
 		temporalLoop(mesh);
@@ -207,8 +188,6 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			computeVolumeConservation();
 
 			contatore++;
 

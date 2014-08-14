@@ -2,30 +2,15 @@ package org.boussinesq.boussinesq.computationalDomain;
 
 import java.io.FileNotFoundException;
 
-//import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
+import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
 
-public class SongDomain extends ComputationalDomain {
+public class SongDomain extends AbstractRCAdjacencyMatrixBased {
 	
-	
-//	NOVALUE = -999;
-	
-//	double[] hydrConductivity = new double[polygonsNumber + 1];
-	
+
 	public SongDomain() throws FileNotFoundException{
 
-		// SIDES PROPERTIES
-
-		/** The length sides. */
-//		public double[] lengthSides;
-
-		/** The euclidean distance. */
-//		public double[] euclideanDistance;
-
-		/** The hydr conductivity. */
-//		double[] hydrConductivity;
-
-		
-		polygonsNumber = 1200;
+		NOVALUE = -999;
+		polygonsNumber = 800;
 		
 		getAdjacencyMatrix();
 		getGridProperties();
@@ -69,10 +54,6 @@ public class SongDomain extends ComputationalDomain {
 		int ind = 2;
 
 		for (int i = 1; i < polygonsNumber; i++) {
-			/*
-			 * nested for-loop to analyze diagonal entries, which are
-			 * identified by a negative number
-			 */
 
 			for (int j = Mp[i]; j < Mp[i + 1]; j++) {
 
@@ -127,7 +108,7 @@ public class SongDomain extends ComputationalDomain {
 			eta[i] = 0;
 			etaDirichlet[i] = -999;
 			bedRockElevation[i] = 0;
-			porosity[i] = 1;
+			porosity[i] = 0.4;
 			c[i] = 0;
 			m[i] = 1;
 
@@ -146,7 +127,7 @@ public class SongDomain extends ComputationalDomain {
 		
 		for (int i = 0; i < (polygonsNumber +1); i++) {
 			
-			hydrConductivity[i] = 1;
+			hydrConductivity[i] = 0.001;
 
 		}
 		
