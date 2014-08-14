@@ -3,7 +3,11 @@ package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 import java.util.ArrayList;
 
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
+<<<<<<< HEAD
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
+=======
+import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
+>>>>>>> thesis_structure
 
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
@@ -40,7 +44,11 @@ public class Solver {
 	 */
 	public double[] newtonIteration(double[] arrb, double[] arrT,
 			int[] indexDiag, double[] eta, RCConjugateGradient cg,
+<<<<<<< HEAD
 			double tolerance) throws IterativeSolverDoubleNotConvergedException {
+=======
+			double tolerance, AbstractRCAdjacencyMatrixBased mesh) throws IterativeSolverDoubleNotConvergedException {
+>>>>>>> thesis_structure
 
 		SparseRCDoubleMatrix2D matrixJr;
 		DoubleMatrix1D matrixr;
@@ -59,6 +67,7 @@ public class Solver {
 			startCompute=System.nanoTime();
 
 			// compute Jr
+<<<<<<< HEAD
 			double[] jr = cJr.computeJr(indexDiag, arrT, eta);
 
 			// convert array in sparse matrix for DoubleCG class
@@ -67,6 +76,16 @@ public class Solver {
 
 			// compute the residual function
 			double[] r = cR.computeR(arrT, arrb, eta);
+=======
+			double[] jr = cJr.computeJr(indexDiag, arrT, eta, mesh);
+
+			// convert array in sparse matrix for DoubleCG class
+			matrixJr = new SparseRCDoubleMatrix2D(mesh.polygonsNumber, mesh.polygonsNumber, mesh.Mp,
+					mesh.Mi, jr);
+
+			// compute the residual function
+			double[] r = cR.computeR(arrT, arrb, eta, mesh);
+>>>>>>> thesis_structure
 
 			// convert array in sparse matrix for DoubleCG class
 			matrixr = new SparseDoubleMatrix1D(r);
@@ -82,7 +101,11 @@ public class Solver {
 
 			
 			// compute the new eta for every cell
+<<<<<<< HEAD
 			for (int i = 0; i < ComputationalDomain.Np; i++) {
+=======
+			for (int i = 0; i < mesh.polygonsNumber; i++) {
+>>>>>>> thesis_structure
 				eta[i] = eta[i] - cg.matSol.get(i);
 			}
 

@@ -1,11 +1,18 @@
 package org.boussinesq.boussinesq.computationalDomain;
 
 import java.io.File;
+<<<<<<< HEAD
 import java.io.FileNotFoundException;
+=======
+//import java.io.FileNotFoundException;
+
+import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
+>>>>>>> thesis_structure
 
 /**
  * The Class Grid.
  */
+<<<<<<< HEAD
 public class ComputationalDomain {
 
 	public String dataFolder;
@@ -89,5 +96,11 @@ public class ComputationalDomain {
 
 
 	}
+=======
+public abstract class ComputationalDomain extends AbstractRCAdjacencyMatrixBased {
+
+
+
+>>>>>>> thesis_structure
 
 }

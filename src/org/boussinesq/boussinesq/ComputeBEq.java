@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.Solver;
+<<<<<<< HEAD
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
 import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.wordpress.growworkinghard.usefulClasses.FileWrite;
@@ -14,6 +15,17 @@ import org.wordpress.growworkinghard.usefulClasses.TextIO;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
 public class ComputeBEq implements TimeSimulation {
+=======
+import org.boussinesq.machineEpsilon.MachineEpsilon;
+import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
+import org.partialDifferentialEquation.nonLinearParabolicPDE.AbstractPde;
+import org.wordpress.growworkinghard.usefulClasses.FileWrite;
+//import org.wordpress.growworkinghard.usefulClasses.TextIO;
+//
+//import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
+
+public abstract class ComputeBEq extends AbstractPde {
+>>>>>>> thesis_structure
 
 	double[] aquiferThickness;
 	double[] volumeSource;
@@ -40,6 +52,7 @@ public class ComputeBEq implements TimeSimulation {
 	public ComputeBEq() {
 		
 
+<<<<<<< HEAD
 //		cg = new RCConjugateGradient(ComputationalDomain.Np);
 		newton = new Solver();
 		
@@ -52,12 +65,26 @@ public class ComputeBEq implements TimeSimulation {
 		
 		rcIndexDiagonalElement = new RCIndexDiagonalElement();
 		cMEd = new MachineEpsilon();
+=======
+//		cg = new RCConjugateGradient(mesh.Np);
+//		newton = new Solver();
+		
+
+		myformatter = computePattern();
+		
+//		rcIndexDiagonalElement = new RCIndexDiagonalElement();
+//		cMEd = new MachineEpsilon();
+>>>>>>> thesis_structure
 		
 	}
 	
 	public DecimalFormat computePattern(){
 		
+<<<<<<< HEAD
 		int[] c = new int[String.valueOf(SIMULATIONTIME).length()];
+=======
+		int[] c = new int[String.valueOf(TimeSimulation.SIMULATIONTIME).length()];
+>>>>>>> thesis_structure
 		
 		StringBuilder builder = new StringBuilder(c.length);
 		
@@ -73,7 +100,11 @@ public class ComputeBEq implements TimeSimulation {
 		
 	}
 	
+<<<<<<< HEAD
 	public void writeSolution(int time, double[] eta, String bc, String simulation) throws IOException{
+=======
+	public void writeSolution(int time, double[] eta, AbstractRCAdjacencyMatrixBased mesh) throws IOException{
+>>>>>>> thesis_structure
 		
 //		FileWrite.writeStringString("Type of simulation", simulation);
 //		FileWrite.writeStringString("Type of boundary conditions ", bc);
@@ -88,12 +119,17 @@ public class ComputeBEq implements TimeSimulation {
 //		FileWrite.writeFourStringColumn("[m]", "[m]", "[m^3]", "[m^3/s]");
 //		FileWrite.writeFourDoubleColumn(eta,aquiferThickness,volume,volumeSource);
 //		FileWrite.writeStringDoubleString("Time: ", time, "[s]");
+<<<<<<< HEAD
 		FileWrite.writeTwoDoubleColumn(eta,ComputationalDomain.outflow);
+=======
+		FileWrite.writeOneDoubleColumn(eta);
+>>>>>>> thesis_structure
 //		FileWrite.writeOneDoubleColumn(eta);
 		FileWrite.closeTxtFile();
 		
 	}
 	
+<<<<<<< HEAD
 	public double computeVolume(int index,double eta){
 		
 		double volume;
@@ -102,6 +138,16 @@ public class ComputeBEq implements TimeSimulation {
 				
 		volume = volume	- TIMESTEP * ComputationalDomain.planArea[index] * ComputationalDomain.source[index]
 						+ TIMESTEP * ComputationalDomain.planArea[index] * ComputationalDomain.c[index] * Math.pow(volume/ComputationalDomain.planArea[index], ComputationalDomain.m[index]);
+=======
+	public double computeVolume(int index,double eta, AbstractRCAdjacencyMatrixBased mesh){
+		
+		double volume;
+		
+		volume = PolygonGeometricalWetProperties.computeWaterVolume(eta, mesh.bedRockElevation[index], mesh.porosity[index], mesh.planArea[index]);
+				
+		volume = volume	- TimeSimulation.TIMESTEP * mesh.planArea[index] * mesh.source[index]
+						+ TimeSimulation.TIMESTEP * mesh.planArea[index] * mesh.c[index] * Math.pow(volume/mesh.planArea[index], mesh.m[index]);
+>>>>>>> thesis_structure
 		
 		return volume;
 		
@@ -114,6 +160,7 @@ public class ComputeBEq implements TimeSimulation {
 		
 	}
 	
+<<<<<<< HEAD
 	public void computeOutputFeatures(double[] eta){
 		
 		for (int j = 0; j < eta.length; j++) {
@@ -121,12 +168,29 @@ public class ComputeBEq implements TimeSimulation {
 			volumeSource[j] = ComputationalDomain.source[j] * ComputationalDomain.planArea[j];
 			aquiferThickness[j] = Math.max(0, eta[j]-ComputationalDomain.bedRockElevation[j]);
 			volume[j] = computeVolume(j,eta[j]);
+=======
+	public void computeOutputFeatures(double[] eta, AbstractRCAdjacencyMatrixBased mesh){
+		
+		
+		double[] aquiferThickness = new double[mesh.polygonsNumber];
+				
+		double[] volume = new double[mesh.polygonsNumber];
+		
+		double[] volumeSource = new double[mesh.polygonsNumber];
+		
+		for (int j = 0; j < eta.length; j++) {
+			
+			volumeSource[j] = mesh.source[j] * mesh.planArea[j];
+			aquiferThickness[j] = Math.max(0, eta[j]-mesh.bedRockElevation[j]);
+			volume[j] = computeVolume(j,eta[j], mesh);
+>>>>>>> thesis_structure
 			volumeNew = volumeNew + volume[j];
 
 		}
 		
 	}
 	
+<<<<<<< HEAD
 	public void computeInitialVolume(){
 		
 //		for (int i = 0; i < ComputationalDomain.Np; i++){
@@ -169,11 +233,18 @@ public class ComputeBEq implements TimeSimulation {
 		
 		indexDiag = rcIndexDiagonalElement.computeIndexDiag(ComputationalDomain.Np,
 				ComputationalDomain.Mp, ComputationalDomain.Mi);
+=======
+	public void firstThings(AbstractRCAdjacencyMatrixBased mesh){
+		
+		indexDiag = rcIndexDiagonalElement.computeIndexDiag(mesh.polygonsNumber,
+				mesh.Mp, mesh.Mi);
+>>>>>>> thesis_structure
 
 		tolerance = cMEd.computeMachineEpsilonDouble();
 		
 	}
 	
+<<<<<<< HEAD
 	public static void main(String[] args) {
 		
 		ComputeBEq test = new ComputeBEq();
@@ -182,4 +253,6 @@ public class ComputeBEq implements TimeSimulation {
 
 	}
 
+=======
+>>>>>>> thesis_structure
 }

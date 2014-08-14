@@ -1,7 +1,11 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
 import org.boussinesq.boussinesq.PolygonGeometricalWetProperties;
+<<<<<<< HEAD
 import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
+=======
+import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
+>>>>>>> thesis_structure
 
 public class ComputeR extends IsNoValue {
 
@@ -24,7 +28,11 @@ public class ComputeR extends IsNoValue {
 	 *            the bedrock elevation
 	 * @param porosity
 	 *            the porosity
+<<<<<<< HEAD
 	 * @param Np
+=======
+	 * @param polygonsNumber
+>>>>>>> thesis_structure
 	 *            the number of polygons
 	 * @param Mp
 	 *            the array that holds the number of non-zero entries in
@@ -38,12 +46,18 @@ public class ComputeR extends IsNoValue {
 	 * 
 	 * @return the array of the residual function
 	 */
+<<<<<<< HEAD
 	public double[] computeR(double[] arrT, double[] arrb, double[] eta) {
+=======
+	public double[] computeR(double[] arrT, double[] arrb, double[] eta,
+			AbstractRCAdjacencyMatrixBased mesh) {
+>>>>>>> thesis_structure
 
 		// variable where allocate the matrix-vector multiplication
 		double sum = 0;
 		// declaration of the array that holds the residual function for every
 		// cell
+<<<<<<< HEAD
 		double[] arrR = new double[ComputationalDomain.Np];
 
 		for (int i = 0; i < ComputationalDomain.Np; i++) {
@@ -57,6 +71,21 @@ public class ComputeR extends IsNoValue {
 				double waterVolume = PolygonGeometricalWetProperties
 						.computeWaterVolume(eta[i], ComputationalDomain.bedRockElevation[i],
 								ComputationalDomain.porosity[i], ComputationalDomain.planArea[i]);
+=======
+		double[] arrR = new double[mesh.polygonsNumber];
+
+		for (int i = 0; i < mesh.polygonsNumber; i++) {
+			if (isNoValue(mesh.etaDirichlet[i], mesh.NOVALUE)) {
+
+				// non Dirichlet cells
+				for (int j = mesh.Mp[i]; j < mesh.Mp[i + 1]; j++) {
+					sum += arrT[j] * eta[mesh.Mi[j]];
+				}
+
+				double waterVolume = PolygonGeometricalWetProperties
+						.computeWaterVolume(eta[i], mesh.bedRockElevation[i],
+								mesh.porosity[i], mesh.planArea[i]);
+>>>>>>> thesis_structure
 				// equation (A3)
 				arrR[i] = waterVolume + sum - arrb[i];
 
@@ -70,5 +99,9 @@ public class ComputeR extends IsNoValue {
 
 		return arrR;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> thesis_structure
 }
