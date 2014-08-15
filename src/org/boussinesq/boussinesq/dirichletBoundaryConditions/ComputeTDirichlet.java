@@ -1,10 +1,6 @@
 package org.boussinesq.boussinesq.dirichletBoundaryConditions;
 
-<<<<<<< HEAD
-import org.boussinesq.boussinesq.computationalDomain.ComputationalDomain;
-=======
 import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
->>>>>>> thesis_structure
 
 public class ComputeTDirichlet extends IsNoValue {
 
@@ -25,28 +21,13 @@ public class ComputeTDirichlet extends IsNoValue {
 	 * 
 	 * @return the array of T in RC-F for Dirichlet cells
 	 */
-<<<<<<< HEAD
-	public double[] computeTDirichlet(double[] T) {
-=======
 	public double[] computeTDirichlet(double[] T,
 			AbstractRCAdjacencyMatrixBased mesh) {
->>>>>>> thesis_structure
 
 		/*
 		 * the matrix T is an array because this code uses the Row Compressed
 		 * Form to stored sparse matrix
 		 */
-<<<<<<< HEAD
-		double[] arrayT = new double[ComputationalDomain.Ml.length];
-
-		/* for-loop to analyze the mesh cell by cell */
-		for (int i = 0; i < ComputationalDomain.Np; i++) {
-
-			if (!isNoValue(ComputationalDomain.etaDirichlet[i], ComputationalDomain.NOVALUE)) {
-
-				// Dirichlet cells
-				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
-=======
 		double[] arrayT = new double[mesh.Ml.length];
 
 		/* for-loop to analyze the mesh cell by cell */
@@ -56,7 +37,6 @@ public class ComputeTDirichlet extends IsNoValue {
 
 				// Dirichlet cells
 				for (int j = mesh.Mp[i]; j < mesh.Mp[i + 1]; j++) {
->>>>>>> thesis_structure
 					arrayT[j] = T[j];
 				}
 			} else {
@@ -66,15 +46,9 @@ public class ComputeTDirichlet extends IsNoValue {
 				 * nested for-loop to analyze shared edges between the i-th cell
 				 * and the Mi[j]-th cell
 				 */
-<<<<<<< HEAD
-				for (int j = ComputationalDomain.Mp[i]; j < ComputationalDomain.Mp[i + 1]; j++) {
-
-					if (!isNoValue(ComputationalDomain.etaDirichlet[ComputationalDomain.Mi[j]], ComputationalDomain.NOVALUE)) {
-=======
 				for (int j = mesh.Mp[i]; j < mesh.Mp[i + 1]; j++) {
 
 					if (!isNoValue(mesh.etaDirichlet[mesh.Mi[j]], mesh.NOVALUE)) {
->>>>>>> thesis_structure
 
 						// adjacent Dirichlet cell
 						arrayT[j] = T[j];
@@ -91,9 +65,5 @@ public class ComputeTDirichlet extends IsNoValue {
 
 		return arrayT;
 	}
-<<<<<<< HEAD
-	
-=======
 
->>>>>>> thesis_structure
 }
