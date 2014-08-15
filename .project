@@ -3,11 +3,8 @@
 	<name>beqElementsDiagonal</name>
 	<comment></comment>
 	<projects>
-<<<<<<< HEAD
-=======
 		<project>meshNumericalMethods</project>
 		<project>partialDifferentialEquation</project>
->>>>>>> thesis_structure
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -56,7 +56,7 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 	public void computeBEqArrays(double[] eta,
 			AbstractRCAdjacencyMatrixBased mesh) {
 		
-		matT = assemblePdeTerm(eta, mesh, computeT);
+		
 
 		double rowSum = 0;
 
@@ -171,6 +171,8 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 				e1.printStackTrace();
 			}
 
+			matT = assemblePdeTerm(eta, mesh, computeT);
+			
 			computeBEqArrays(eta, mesh);
 
 			try {
