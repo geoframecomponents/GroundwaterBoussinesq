@@ -15,7 +15,7 @@ public class CatchmentDomain extends ComputationalDomain {
 	
 	public CatchmentDomain() throws FileNotFoundException {
 		
-		NOVALUE = -999;
+		NOVALUE = -9999;
 		
 		getAdjacencyMatrix();
 		getGridProperties();
@@ -68,7 +68,7 @@ public class CatchmentDomain extends ComputationalDomain {
 		FileRead readEta = new FileRead();
 		/** The eta. */
 		eta = readEta.readDoubleArray(gui
-				.openDialog("HYDRAULIC HEAD array"));
+				.openDialog("INITIAL HYDRAULIC HEAD array"));
 
 		FileRead readSource = new FileRead();
 		/** The source. per unit area of the polygon */

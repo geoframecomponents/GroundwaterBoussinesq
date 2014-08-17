@@ -2,11 +2,16 @@ package org.boussinesq.RowCompressedForm;
 
 import cern.colt.Arrays;
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
+import cern.colt.matrix.tdouble.algo.solver.DoubleBiCG;
 import cern.colt.matrix.tdouble.algo.solver.DoubleCG;
+import cern.colt.matrix.tdouble.algo.solver.DoubleCGICCTest;
+import cern.colt.matrix.tdouble.algo.solver.DoubleCGLS;
+import cern.colt.matrix.tdouble.algo.solver.DoubleCGS;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 import cern.colt.matrix.tdouble.algo.solver.preconditioner.DoubleDiagonal;
 import cern.colt.matrix.tdouble.algo.solver.preconditioner.DoubleICC;
 import cern.colt.matrix.tdouble.algo.solver.preconditioner.DoubleILU;
+import cern.colt.matrix.tdouble.algo.solver.preconditioner.DoubleILUT;
 import cern.colt.matrix.tdouble.algo.solver.preconditioner.DoublePreconditioner;
 import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
@@ -17,18 +22,15 @@ import cern.colt.matrix.tdouble.impl.SparseRCDoubleMatrix2D;
  */
 public class RCConjugateGradient {
 
-	/** The matrix_ a. */
-	SparseRCDoubleMatrix2D matrix_A;
-
 	/** The matrix_x. */
 	DenseDoubleMatrix1D matrix_x;
 
 	/** The mat sol. */
 	public DoubleMatrix1D matSol;
-
-	DoubleMatrix1D prova;
 	
 	DoublePreconditioner dd;
+	
+	DoubleCG conjugateGradient;
 	
 	/**
 	 * Instantiates a new rC conjugate gradient.
@@ -46,11 +48,10 @@ public class RCConjugateGradient {
 
 		matrix_x = new DenseDoubleMatrix1D(SIZE);
 		matSol = new DenseDoubleMatrix1D(SIZE);
-		dd = new DoubleICC(SIZE);
-
-//		matrix_x.set(0, 0);
-//		matrix_x.set(0, 1);
+		dd = new DoubleDiagonal(SIZE);
 		
+		conjugateGradient = new DoubleCG(matrix_x);
+
 	}
 
 	/**
@@ -67,13 +68,8 @@ public class RCConjugateGradient {
 
 		dd.setMatrix(matrix_A);
 		
-		DoubleCG conjugateGradient = new DoubleCG(matrix_x);
-		
-		
-		
 		conjugateGradient.setPreconditioner(dd);
 		
-//		DoubleCG conjugateGradient = new DoubleCG(matrix_b);
 		matSol = conjugateGradient.solve(matrix_A, matrix_b, matrix_x);
 		
 	}

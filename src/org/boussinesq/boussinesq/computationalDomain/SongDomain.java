@@ -105,9 +105,9 @@ public class SongDomain extends AbstractRCAdjacencyMatrixBased {
 		for (int i = 0; i < polygonsNumber; i++) {
 			
 			source[i] = 0;
-			eta[i] = 0;
 			etaDirichlet[i] = -999;
-			bedRockElevation[i] = 0;
+			bedRockElevation[i] = 730.5;
+			eta[i] = 0;
 			porosity[i] = 0.4;
 			c[i] = 0;
 			m[i] = 1;
@@ -117,7 +117,7 @@ public class SongDomain extends AbstractRCAdjacencyMatrixBased {
 
 		c[polygonsNumber - 1] = 1;
 		m[polygonsNumber - 1] = 1;
-		etaDirichlet[0] = 1;
+		etaDirichlet[0] = 731.5;
 		
 	}
 
@@ -132,13 +132,5 @@ public class SongDomain extends AbstractRCAdjacencyMatrixBased {
 		}
 		
 	}
-
-	
-	public static void main(String[] args) throws FileNotFoundException {
-
-		new SongDomain();
-		
-	}
-
 
 }

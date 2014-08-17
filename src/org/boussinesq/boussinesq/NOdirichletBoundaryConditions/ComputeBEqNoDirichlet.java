@@ -21,7 +21,7 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 
 	Solver newton;
 	RCConjugateGradient cg;
-	
+
 	PdeTermT computeT;
 	PdeTermB computeB;
 
@@ -30,7 +30,7 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 		eta = new double[mesh.polygonsNumber];
 		newton = new Solver();
 		cg = new RCConjugateGradient(mesh.polygonsNumber);
-		
+
 		computeT = new PdeTermT();
 		computeB = new PdeTermB();
 
@@ -39,7 +39,6 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 	public void computeBEqArrays(double[] eta,
 			AbstractRCAdjacencyMatrixBased mesh) {
 
-		
 		matT = assemblePdeTerm(eta, mesh, computeT);
 		arrb = assemblePdeTerm(eta, mesh, computeB);
 
@@ -77,7 +76,8 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 
 	}
 
-	public double[] solutionMethod(double[] etaOld, double[] matT, double[] arrb, AbstractRCAdjacencyMatrixBased mesh)
+	public double[] solutionMethod(double[] etaOld, double[] matT,
+			double[] arrb, AbstractRCAdjacencyMatrixBased mesh)
 			throws IterativeSolverDoubleNotConvergedException {
 
 		double[] eta = new double[etaOld.length];
@@ -95,13 +95,10 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 		firstThings(mesh);
 
 		// initialize eta array
-		System.arraycopy(mesh.eta, 0, eta, 0,
-				mesh.eta.length);
+		System.arraycopy(mesh.eta, 0, eta, 0, mesh.eta.length);
 
-		// mesh.source = new
-		// double[mesh.polygonsNumber];
-		// mesh.outflow = new
-		// double[mesh.polygonsNumber];
+		mesh.source = new double[mesh.polygonsNumber];
+		mesh.outflow = new double[mesh.polygonsNumber];
 
 		temporalLoop(mesh);
 
@@ -126,6 +123,7 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 			try {
 				openTxtFile(t);
 			} catch (IOException e1) {
+
 				e1.printStackTrace();
 			}
 
@@ -134,6 +132,7 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 			try {
 				eta = solutionMethod(eta, matT, arrb, mesh);
 			} catch (IterativeSolverDoubleNotConvergedException e) {
+
 				e.printStackTrace();
 			}
 
@@ -142,6 +141,7 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 			try {
 				writeSolution(t, eta, mesh);
 			} catch (IOException e) {
+
 				e.printStackTrace();
 			}
 

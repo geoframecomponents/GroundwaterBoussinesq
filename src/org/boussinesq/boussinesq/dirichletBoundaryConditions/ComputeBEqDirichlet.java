@@ -26,7 +26,6 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 	double volumeDirichlet;
 
 	Solver newton;
-	RCConjugateGradient cg;
 	PdeTermT computeT;
 	PdeTermB computeB;
 	ComputeTDirichlet cTDirichlet;
@@ -43,8 +42,7 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 		eta = new double[mesh.polygonsNumber];
 		rcIndexDiagonalElement = new RCIndexDiagonalElement();
 		cMEd = new MachineEpsilon();
-		newton = new Solver();
-		cg = new RCConjugateGradient(mesh.polygonsNumber);
+		newton = new Solver(mesh);
 
 		computeT = new PdeTermT();
 		computeB = new PdeTermB();
@@ -117,10 +115,21 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 			throws IterativeSolverDoubleNotConvergedException {
 
 		double[] eta = new double[etaOld.length];
-
-		eta = newton.newtonIteration(arrb, matT, indexDiag, etaOld, cg,
+		
+		eta = newton.newtonIteration(arrb, matT, indexDiag, etaOld,
 				tolerance, mesh);
 
+//		for (int i = 0; i < mesh.polygonsNumber; i++){
+//			
+//			if (eta[i] < mesh.bedRockElevation[i]){
+//				
+//				eta[i] = mesh.bedRockElevation[i];
+//				
+//			}
+//			
+//		}
+		
+		
 		return eta;
 
 	}
@@ -146,8 +155,6 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 	public void temporalLoop(AbstractRCAdjacencyMatrixBased mesh) {
 
-		int contatore = 0;
-
 		EtaInitialization etaInit = new EtaInitialization();
 
 		for (int t = 0; t < TimeSimulation.SIMULATIONTIME; t += TimeSimulation.TIMESTEP) {
@@ -158,8 +165,6 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 			//
 			// }
 
-			// t = Double.parseDouble(df.format(t));
-
 			eta = etaInit.etaInitialization(eta, mesh);
 
 			TextIO.putln("Time step " + (double) t / 3600);
@@ -167,7 +172,7 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 			try {
 				openTxtFile(t);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+			
 				e1.printStackTrace();
 			}
 
@@ -178,7 +183,7 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 			try {
 				eta = solutionMethod(eta, matTNoDirichlet, arrb, mesh);
 			} catch (IterativeSolverDoubleNotConvergedException e) {
-				// TODO Auto-generated catch block
+			
 				e.printStackTrace();
 			}
 
@@ -187,11 +192,9 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 			try {
 				writeSolution(t, eta, mesh);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			
 				e.printStackTrace();
 			}
-
-			contatore++;
 
 		}
 
