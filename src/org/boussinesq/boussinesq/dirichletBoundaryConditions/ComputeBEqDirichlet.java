@@ -53,8 +53,6 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 	public void computeBEqArrays(double[] eta,
 			AbstractRCAdjacencyMatrixBased mesh) {
-		
-		
 
 		double rowSum = 0;
 
@@ -90,7 +88,6 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 			}
 		}
 
-
 		matTDirichlet = cTDirichlet.computeTDirichlet(matT, mesh);
 		matTNoDirichlet = cTNoDirichlet.computeTNoDirichlet(matT, indexDiag,
 				mesh);
@@ -115,21 +112,20 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 			throws IterativeSolverDoubleNotConvergedException {
 
 		double[] eta = new double[etaOld.length];
-		
-		eta = newton.newtonIteration(arrb, matT, indexDiag, etaOld,
-				tolerance, mesh);
 
-//		for (int i = 0; i < mesh.polygonsNumber; i++){
-//			
-//			if (eta[i] < mesh.bedRockElevation[i]){
-//				
-//				eta[i] = mesh.bedRockElevation[i];
-//				
-//			}
-//			
-//		}
-		
-		
+		eta = newton.newtonIteration(arrb, matT, indexDiag, etaOld, tolerance,
+				mesh);
+
+		for (int i = 0; i < mesh.polygonsNumber; i++) {
+
+			if (eta[i] < mesh.bedRockElevation[i]) {
+
+				eta[i] = mesh.bedRockElevation[i];
+
+			}
+
+		}
+
 		return eta;
 
 	}
@@ -149,6 +145,8 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 		System.arraycopy(mesh.eta, 0, eta, 0, mesh.eta.length);
 
+		mesh.source = new double[mesh.polygonsNumber];
+
 		temporalLoop(mesh);
 
 	}
@@ -157,13 +155,17 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 
 		EtaInitialization etaInit = new EtaInitialization();
 
+		int contatore = 0;
+
 		for (int t = 0; t < TimeSimulation.SIMULATIONTIME; t += TimeSimulation.TIMESTEP) {
 
-			// for (int i = 0; i < mesh.polygonsNumber; i++) {
-			//
-			// mesh.source[i] = mesh.rainHour[contatore];
-			//
-			// }
+			for (int i = 0; i < mesh.polygonsNumber; i++) {
+
+				mesh.source[i] = mesh.rainHour[contatore];
+
+			}
+
+			contatore++;
 
 			eta = etaInit.etaInitialization(eta, mesh);
 
@@ -172,27 +174,27 @@ public class ComputeBEqDirichlet extends ComputeBEq {
 			try {
 				openTxtFile(t);
 			} catch (IOException e1) {
-			
+
 				e1.printStackTrace();
 			}
 
 			matT = assemblePdeTerm(eta, mesh, computeT);
-			
+
 			computeBEqArrays(eta, mesh);
 
 			try {
 				eta = solutionMethod(eta, matTNoDirichlet, arrb, mesh);
 			} catch (IterativeSolverDoubleNotConvergedException e) {
-			
+
 				e.printStackTrace();
 			}
 
-			computeOutputFeatures(eta, mesh);
+			// computeOutputFeatures(eta, mesh);
 
 			try {
 				writeSolution(t, eta, mesh);
 			} catch (IOException e) {
-			
+
 				e.printStackTrace();
 			}
 

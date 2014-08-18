@@ -3,11 +3,13 @@ package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 import java.io.IOException;
 
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
+import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.ComputeBEq;
 import org.boussinesq.boussinesq.PdeTermT;
 import org.boussinesq.boussinesq.TimeSimulation;
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.Solver;
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.PdeTermB;
+import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
@@ -20,19 +22,23 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 	double[] arrb;
 
 	Solver newton;
-	RCConjugateGradient cg;
 
 	PdeTermT computeT;
 	PdeTermB computeB;
 
+	RCIndexDiagonalElement rcIndexDiagonalElement;
+	MachineEpsilon cMEd;
+
 	public ComputeBEqNoDirichlet(AbstractRCAdjacencyMatrixBased mesh) {
 
 		eta = new double[mesh.polygonsNumber];
-		newton = new Solver();
-		cg = new RCConjugateGradient(mesh.polygonsNumber);
+		newton = new Solver(mesh.polygonsNumber);
 
 		computeT = new PdeTermT();
 		computeB = new PdeTermB();
+
+		rcIndexDiagonalElement = new RCIndexDiagonalElement();
+		cMEd = new MachineEpsilon();
 
 	}
 
@@ -82,8 +88,18 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 
 		double[] eta = new double[etaOld.length];
 
-		eta = newton.newtonIteration(arrb, matT, indexDiag, etaOld, cg,
-				tolerance, mesh);
+		eta = newton.newtonIteration(arrb, matT, indexDiag, etaOld, tolerance,
+				mesh);
+		
+		for (int i = 0; i < mesh.polygonsNumber; i++){
+			
+			if (eta[i] < mesh.bedRockElevation[i]){
+				
+				eta[i] = mesh.bedRockElevation[i];
+				
+			}
+			
+		}
 
 		return eta;
 
@@ -92,7 +108,11 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 	public void computeBEq(AbstractRCAdjacencyMatrixBased mesh) {
 		// allocate the memory for eta array
 
-		firstThings(mesh);
+		// firstThings(mesh);
+		indexDiag = rcIndexDiagonalElement.computeIndexDiag(
+				mesh.polygonsNumber, mesh.Mp, mesh.Mi);
+
+		tolerance = cMEd.computeMachineEpsilonDouble();
 
 		// initialize eta array
 		System.arraycopy(mesh.eta, 0, eta, 0, mesh.eta.length);
@@ -136,16 +156,15 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 				e.printStackTrace();
 			}
 
-			computeOutputFeatures(eta, mesh);
+			// computeOutputFeatures(eta, mesh);
 
 			try {
 				writeSolution(t, eta, mesh);
 			} catch (IOException e) {
 
 				e.printStackTrace();
-			}
 
-			// countLoop++;
+			}
 
 		}
 

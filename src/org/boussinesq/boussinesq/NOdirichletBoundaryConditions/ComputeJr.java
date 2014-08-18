@@ -37,7 +37,8 @@ public class ComputeJr {
 	 * 
 	 * @return the Jacobian array of water volume stored in Row Compressed Form
 	 */
-	public double[] computeJr(int[] indexDiag, double[] arrT, double[] eta, AbstractRCAdjacencyMatrixBased mesh) {
+	public double[] computeJr(int[] indexDiag, double[] arrT, double[] eta,
+			AbstractRCAdjacencyMatrixBased mesh) {
 
 		// declaration of the array that holds the Jacobian of water volume
 		// stored
@@ -51,12 +52,13 @@ public class ComputeJr {
 
 			// equation (A6)
 			arrJr[indexDiag[i]] = arrT[indexDiag[i]]
-					+ PolygonGeometricalWetProperties.computeWetArea(eta[i], mesh.bedRockElevation[i],
-							mesh.porosity[i], mesh.planArea[i]);
+					+ PolygonGeometricalWetProperties.computeWetArea(eta[i],
+							mesh.bedRockElevation[i], mesh.porosity[i],
+							mesh.planArea[i]);
 
 		}
 
 		return arrJr;
 	}
-	
+
 }

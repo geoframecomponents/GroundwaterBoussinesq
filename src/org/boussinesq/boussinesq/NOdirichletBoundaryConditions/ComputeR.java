@@ -38,7 +38,8 @@ public class ComputeR {
 	 * 
 	 * @return the array of the residual function
 	 */
-	public double[] computeR(double[] arrT, double[] arrb, double[] eta, AbstractRCAdjacencyMatrixBased mesh) {
+	public double[] computeR(double[] arrT, double[] arrb, double[] eta,
+			AbstractRCAdjacencyMatrixBased mesh) {
 
 		// variable where allocate the matrix-vector multiplication
 		double sum = 0;
@@ -52,8 +53,9 @@ public class ComputeR {
 				sum += arrT[j] * eta[mesh.Mi[j]];
 			}
 
-			double waterVolume = PolygonGeometricalWetProperties.computeWaterVolume(eta[i],
-					mesh.bedRockElevation[i], mesh.porosity[i], mesh.planArea[i]);
+			double waterVolume = PolygonGeometricalWetProperties
+					.computeWaterVolume(eta[i], mesh.bedRockElevation[i],
+							mesh.porosity[i], mesh.planArea[i]);
 			// equation (A3)
 			arrR[i] = waterVolume + sum - arrb[i];
 
@@ -63,5 +65,5 @@ public class ComputeR {
 
 		return arrR;
 	}
-	
+
 }

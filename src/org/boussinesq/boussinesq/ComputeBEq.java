@@ -4,15 +4,10 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
-import org.boussinesq.RowCompressedForm.RCIndexDiagonalElement;
 import org.boussinesq.boussinesq.NOdirichletBoundaryConditions.Solver;
-import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
 import org.partialDifferentialEquation.nonLinearParabolicPDE.AbstractPde;
 import org.wordpress.growworkinghard.usefulClasses.FileWrite;
-//import org.wordpress.growworkinghard.usefulClasses.TextIO;
-//
-//import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
 public abstract class ComputeBEq extends AbstractPde {
 
@@ -34,15 +29,10 @@ public abstract class ComputeBEq extends AbstractPde {
 	Solver newton;
 	RCConjugateGradient cg;
 	DecimalFormat myformatter;
-	RCIndexDiagonalElement rcIndexDiagonalElement;
-	MachineEpsilon cMEd;
 
 	public ComputeBEq() {
 
 		myformatter = computePattern();
-
-		rcIndexDiagonalElement = new RCIndexDiagonalElement();
-		cMEd = new MachineEpsilon();
 
 	}
 
@@ -68,6 +58,13 @@ public abstract class ComputeBEq extends AbstractPde {
 	public void writeSolution(int time, double[] eta,
 			AbstractRCAdjacencyMatrixBased mesh) throws IOException {
 
+		
+		for (int i=0; i< mesh.polygonsNumber; i++){
+			
+			eta[i] = eta[i] - mesh.bedRockElevation[i];
+			
+		}
+		
 		// FileWrite.writeStringString("Type of simulation", simulation);
 		// FileWrite.writeStringString("Type of boundary conditions ", bc);
 		// FileWrite.writeStringIntString("Iteration number", (int)
@@ -93,23 +90,23 @@ public abstract class ComputeBEq extends AbstractPde {
 
 	}
 
-	public double computeVolume(int index, double eta,
-			AbstractRCAdjacencyMatrixBased mesh) {
-
-		double volume;
-
-		volume = PolygonGeometricalWetProperties.computeWaterVolume(eta,
-				mesh.bedRockElevation[index], mesh.porosity[index],
-				mesh.planArea[index]);
-
-		volume = volume - TimeSimulation.TIMESTEP * mesh.planArea[index]
-				* mesh.source[index] + TimeSimulation.TIMESTEP
-				* mesh.planArea[index] * mesh.c[index]
-				* Math.pow(volume / mesh.planArea[index], mesh.m[index]);
-
-		return volume;
-
-	}
+//	public double computeVolume(int index, double eta,
+//			AbstractRCAdjacencyMatrixBased mesh) {
+//
+//		double volume;
+//
+//		volume = PolygonGeometricalWetProperties.computeWaterVolume(eta,
+//				mesh.bedRockElevation[index], mesh.porosity[index],
+//				mesh.planArea[index]);
+//
+//		volume = volume - TimeSimulation.TIMESTEP * mesh.planArea[index]
+//				* mesh.source[index] + TimeSimulation.TIMESTEP
+//				* mesh.planArea[index] * mesh.c[index]
+//				* Math.pow(volume / mesh.planArea[index], mesh.m[index]);
+//
+//		return volume;
+//
+//	}
 
 	public void openTxtFile(int time) throws IOException {
 
@@ -119,34 +116,34 @@ public abstract class ComputeBEq extends AbstractPde {
 
 	}
 
-	public void computeOutputFeatures(double[] eta,
-			AbstractRCAdjacencyMatrixBased mesh) {
+//	public void computeOutputFeatures(double[] eta,
+//			AbstractRCAdjacencyMatrixBased mesh) {
+//
+//		double[] aquiferThickness = new double[mesh.polygonsNumber];
+//
+//		double[] volume = new double[mesh.polygonsNumber];
+//
+//		double[] volumeSource = new double[mesh.polygonsNumber];
+//
+//		for (int j = 0; j < eta.length; j++) {
+//
+//			volumeSource[j] = mesh.source[j] * mesh.planArea[j];
+//			aquiferThickness[j] = Math
+//					.max(0, eta[j] - mesh.bedRockElevation[j]);
+//			volume[j] = computeVolume(j, eta[j], mesh);
+//			volumeNew = volumeNew + volume[j];
+//
+//		}
+//
+//	}
 
-		double[] aquiferThickness = new double[mesh.polygonsNumber];
-
-		double[] volume = new double[mesh.polygonsNumber];
-
-		double[] volumeSource = new double[mesh.polygonsNumber];
-
-		for (int j = 0; j < eta.length; j++) {
-
-			volumeSource[j] = mesh.source[j] * mesh.planArea[j];
-			aquiferThickness[j] = Math
-					.max(0, eta[j] - mesh.bedRockElevation[j]);
-			volume[j] = computeVolume(j, eta[j], mesh);
-			volumeNew = volumeNew + volume[j];
-
-		}
-
-	}
-
-	public void firstThings(AbstractRCAdjacencyMatrixBased mesh) {
-
-		indexDiag = rcIndexDiagonalElement.computeIndexDiag(
-				mesh.polygonsNumber, mesh.Mp, mesh.Mi);
-
-		tolerance = cMEd.computeMachineEpsilonDouble();
-
-	}
+//	public void firstThings(AbstractRCAdjacencyMatrixBased mesh) {
+//
+//		indexDiag = rcIndexDiagonalElement.computeIndexDiag(
+//				mesh.polygonsNumber, mesh.Mp, mesh.Mi);
+//
+//		tolerance = cMEd.computeMachineEpsilonDouble();
+//
+//	}
 
 }
