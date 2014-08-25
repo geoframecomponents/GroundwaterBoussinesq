@@ -57,7 +57,7 @@ public class ComputeJr {
 							mesh.planArea[i]);
 
 		}
-
+		
 		return arrJr;
 	}
 

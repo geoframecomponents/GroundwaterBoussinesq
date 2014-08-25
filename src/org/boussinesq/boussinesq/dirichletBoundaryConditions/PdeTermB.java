@@ -38,7 +38,7 @@ public class PdeTermB extends AbstractPdeTerm {
 					+ " of the array of known terms is NEGATIVE");
 
 		}
-
+		
 		return temp;
 
 	}

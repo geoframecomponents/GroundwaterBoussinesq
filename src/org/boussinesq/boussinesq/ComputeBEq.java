@@ -58,10 +58,11 @@ public abstract class ComputeBEq extends AbstractPde {
 	public void writeSolution(int time, double[] eta,
 			AbstractRCAdjacencyMatrixBased mesh) throws IOException {
 
+		double[] etaPlot = new double[mesh.polygonsNumber];
 		
 		for (int i=0; i< mesh.polygonsNumber; i++){
 			
-			eta[i] = eta[i] - mesh.bedRockElevation[i];
+			etaPlot[i] = eta[i] - mesh.bedRockElevation[i];
 			
 		}
 		
@@ -84,7 +85,7 @@ public abstract class ComputeBEq extends AbstractPde {
 		// FileWrite.writeFourStringColumn("[m]", "[m]", "[m^3]", "[m^3/s]");
 		// FileWrite.writeFourDoubleColumn(eta,aquiferThickness,volume,volumeSource);
 		// FileWrite.writeStringDoubleString("Time: ", time, "[s]");
-		FileWrite.writeOneDoubleColumn(eta);
+		FileWrite.writeOneDoubleColumn(etaPlot);
 		// FileWrite.writeOneDoubleColumn(eta);
 		FileWrite.closeTxtFile();
 

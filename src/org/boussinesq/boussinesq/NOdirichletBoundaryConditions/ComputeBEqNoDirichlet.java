@@ -13,6 +13,9 @@ import org.boussinesq.machineEpsilon.MachineEpsilon;
 import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
 import org.wordpress.growworkinghard.usefulClasses.TextIO;
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
+import cern.colt.Arrays;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 
 public class ComputeBEqNoDirichlet extends ComputeBEq {
@@ -111,7 +114,7 @@ public class ComputeBEqNoDirichlet extends ComputeBEq {
 		// firstThings(mesh);
 		indexDiag = rcIndexDiagonalElement.computeIndexDiag(
 				mesh.polygonsNumber, mesh.Mp, mesh.Mi);
-
+		
 		tolerance = cMEd.computeMachineEpsilonDouble();
 
 		// initialize eta array

@@ -3,6 +3,7 @@ package org.boussinesq.boussinesq.NOdirichletBoundaryConditions;
 import org.boussinesq.RowCompressedForm.RCConjugateGradient;
 import org.meshNumericalMethods.unstructuredMesh.adjacencyMatrixBased.AbstractRCAdjacencyMatrixBased;
 
+import cern.colt.Arrays;
 import cern.colt.matrix.tdouble.DoubleMatrix1D;
 import cern.colt.matrix.tdouble.algo.solver.IterativeSolverDoubleNotConvergedException;
 import cern.colt.matrix.tdouble.impl.SparseDoubleMatrix1D;
@@ -61,14 +62,14 @@ public class Solver {
 
 			// compute Jr
 			double[] jr = cJr.computeJr(indexDiag, arrT, eta, mesh);
-
+			
 			// convert array in sparse matrix for DoubleCG class
 			matrixJr = new SparseRCDoubleMatrix2D(mesh.polygonsNumber,
 					mesh.polygonsNumber, mesh.Mp, mesh.Mi, jr);
 
 			// compute the residual function
 			double[] r = cR.computeR(arrT, arrb, eta, mesh);
-
+			
 			// convert array in sparse matrix for DoubleCG class
 			matrixr = new SparseDoubleMatrix1D(r);
 

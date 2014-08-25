@@ -25,8 +25,13 @@ public class PdeTermT extends AbstractPdeTerm {
 
 		double temp = 0;
 
+	
 		if (mesh.Mi[sideIndex] != polygonIndex) {
 
+//			System.out.println("-----------------------------------------");
+//			System.out.println("Polygon Index= " + polygonIndex);
+//			System.out.println("Side Index= " + sideIndex);
+			
 			temp = -TimeSimulation.TIMESTEP
 					* (1 / mesh.euclideanDistance[(int) mesh.Ml[sideIndex] - 1])
 					* mesh.hydrConductivity[(int) mesh.Ml[sideIndex] - 1]
@@ -40,6 +45,8 @@ public class PdeTermT extends AbstractPdeTerm {
 									0,
 									u[polygonIndex]
 											- mesh.bedRockElevation[polygonIndex]));
+			
+//			System.out.println("T = " + temp);
 
 		}
 

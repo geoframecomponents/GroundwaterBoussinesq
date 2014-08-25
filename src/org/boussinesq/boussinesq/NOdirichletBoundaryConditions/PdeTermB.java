@@ -23,7 +23,7 @@ public class PdeTermB extends AbstractPdeTerm {
 				mesh.planArea[polygonIndex]);
 
 		// delta t deve essere minore di 1/c
-		double arrB = volume
+		double temp = volume
 				+ TimeSimulation.TIMESTEP
 				* mesh.planArea[polygonIndex]
 				* mesh.source[polygonIndex]
@@ -33,14 +33,15 @@ public class PdeTermB extends AbstractPdeTerm {
 				* Math.pow(volume / mesh.planArea[polygonIndex],
 						mesh.m[polygonIndex]);
 
-		if (arrB < 0) {
+		if (temp < 0) {
 
 			TextIO.putln("WARNING!!!\nThe element " + polygonIndex
 					+ " of the array of known terms is NEGATIVE");
 
 		}
-			
-		return arrB;
+
+		return temp;
+		
 	}
 
 	public double computeMatrixTerm(double[] u,
